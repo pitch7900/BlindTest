@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{ include('header.twig') }}
+    </head>
+    <body>
+
+        {% block menu %}{% endblock %}
+        <main class="container-fluid center" role="main">
+
+            {% block interactivemenus %}{% endblock %}
+            {% block content %}{% endblock %}
+        </main>
+     
+    </body>
+    {{ include('javascripts.twig') }}
+</html>
