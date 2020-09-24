@@ -6,10 +6,11 @@ You need an account on Deezer API for developpers [Developpers Deezer](https://d
 
 You'll also need an account on Spotify WebAPI developpeur page. See : [Soptify WebAPI](https://developer.spotify.com/web-api)
 Following URL should be filled in the App declaration for Spotify :
- - http(s)://yoursiteurl:port/spotify/auth/sources
- - http(s)://yoursiteurl:port/spotify/auth/destinations
- - http(s)://yoursiteurl:port/spotify/me/about.json
- - http(s)://yoursiteurl:port
+
+- http(s)://yoursiteurl:port/spotify/auth/sources
+- http(s)://yoursiteurl:port/spotify/auth/destinations
+- http(s)://yoursiteurl:port/spotify/me/about.json
+- http(s)://yoursiteurl:port
 
 ## 1. Configuration File needed
 
@@ -69,6 +70,7 @@ For example, the project is downloaded to /var/www/BlindTest and the virtual hos
 For a build under docker see folder /Docker and run the startup.sh.
 
 It will download the git project, recreate the vendor from composer and package everything for a docker image ready to run
+
 ```bash
 #!/bin/bash
 #apt-get install -y composer git libapache2-mod-php php-mbstring
@@ -90,6 +92,7 @@ npm install gulp --save-dev
 npm install -g gulp-cli
 npm install gulp-connect-php
 npm install browser-sync
+npm install safer-buffer
 ```
 
 ## 6. Credits
