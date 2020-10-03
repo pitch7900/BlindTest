@@ -1,5 +1,3 @@
-/cli/
-/config/.env
 /vendor/
 /nbproject/private/
 node_modules
