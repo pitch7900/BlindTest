@@ -23,95 +23,21 @@ class DeezerController extends Controller {
         $this->log = new Logger('DeezerController.php');
         $this->log->pushHandler(new StreamHandler(__DIR__.'/../../logs/debug.log', Logger::DEBUG));
     }
+
+
+
     /**
-     * get the post query for searching for a track on deezer
+     * Return a json array with all blindtest playlist ID in Deezer
      * @param Request $request
      * @param Response $response
      * @return type
      */
-    public function postSearch(Request $request, Response $response) {
-        session_write_close();
-        $trackid = urlencode($request->getParsedBody()['trackid']);
-        $artist = urlencode($request->getParsedBody()['artist']);
-        $album = urlencode($request->getParsedBody()['album']);
-        $song = urlencode($request->getParsedBody()['song']);
-        $duration = urlencode($request->getParsedBody()['duration']);
-
-        $dz = new DeezerApi();
-        $this->log->debug("(postSearch) Searching for : \n\t - " . $artist . "\n\t - " . $album . "\n\t - " . $song . "\n\t - " . $duration);
-        $search = $dz->SearchIndividual($trackid, $artist, $album, $song, $duration);
-        if (isset($search['info']['error'])) {
-            return $this->response
-                            ->withStatus(404)
-                            ->withHeader('Error', 'Too many session')
-                            ->withJson($search);
-        }
+    public function getBlindtestPLaylists(Request $request, Response $response) {
+            return $response->withJson(unserialize($_SESSION['deezerapi'])->getBlindtestPLaylists());
         
-        return $response->withJson($search);
     }
-    /**
-     * Get user's information in Deezer
-     * @param Request $request
-     * @param Response $response
-     * @return type
-     */
-    public function getAboutme(Request $request, Response $response) {
-        if (!isset($_SESSION['deezerapi']) || isset(unserialize($_SESSION['deezerapi'])->getUserInformation()['error'])) {
-            return $this->response
-                            ->withStatus(401)
-                            ->withHeader('Error', 'Not logged in to Deezer');
-        } else {
-            $returninformation = unserialize($_SESSION['deezerapi'])->getUserInformation();
-            $returninformation["expiration_time"]=$_SESSION['deezer_token_expires'];
-            return $response->withJson($returninformation);
-        }
-    }
-    /**
-     * Return a json array with all user's playlist in Deezer
-     * @param Request $request
-     * @param Response $response
-     * @return type
-     */
-    public function getMyPlaylists(Request $request, Response $response) {
-        if (!isset($_SESSION['deezerapi'])) {
-            return $this->response
-                            ->withStatus(401)
-                            ->withHeader('Error', 'Not logged in to Deezer');
-        } else {
-            return $response->withJson(unserialize($_SESSION['deezerapi'])->getUserPlaylists());
-        }
-    }
-    /**
-     * Authenticate on Deezer
-     * @param Request $request
-     * @param Response $response
-     * @return type
-     */
-    public function getAuth(Request $request, Response $response,$args) {
-        $sourceordestination = $args['sourceordestination'];
-        if ($sourceordestination=="destinations") {
-            $_SESSION['destinations']="deezer"; 
-        } else {
-            $_SESSION['sources']="deezer"; 
-        }
-        if (!isset($_SESSION['deezerapi'])) {
-            $this->log->debug("(getAuth) Creating a new Deezer API class instance");
-            $_SESSION['deezerapi'] = serialize(new \App\MusicSources\DeezerApi());
-        }
 
-
-
-        $code = $request->getQueryParam('code');
-        $this->log->debug("(getAuth) Deezer code recieved");
-        $this->log->debug("(getAuth) Generating app token");
-        $token = unserialize($_SESSION['deezerapi'])->apiconnect($code);
-        $this->log->debug("(getAuth) Token set to : " . $token);
-        $_SESSION['deezer_token'] = $token;
-        return $this->response
-                        ->withStatus(303)
-                        ->withHeader('Location', $this->router->pathFor('home'))
-                        ->withHeader('Status', 'Authenticated on deezer');
-    }
+    
     /**
      * Search for a full list of track in Deezer.
      * Return a Json with track informations found
@@ -129,6 +55,7 @@ class DeezerController extends Controller {
 
         return $response->withJson(unserialize($_SESSION['deezerapi'])->SearchList($tracklist));
     }
+
     /**
      * Return the List of track to find on Deezer
      * This list is created by the function postSearchList
@@ -145,25 +72,7 @@ class DeezerController extends Controller {
             return $response->withJson(unserialize($_SESSION['deezersearchlist']));
         }
     }
-    /**
-     * Create a playlist in Deezer
-     * Return a Json with the Playlist information once created
-     * @param Request $request
-     * @param Response $response
-     * @return type
-     */
-    public function postCreatePlaylist(Request $request, Response $response) {
-        $playlistname = urlencode($request->getParsedBody()['name']);
-        $playlistpublic = urlencode($request->getParsedBody()['public']);
-        $this->log->debug("(postCreatePlaylist)recieved query to create a playlist :". $playlistname . " - " . $playlistpublic);
-        if (!isset($_SESSION['deezerapi'])) {
-            return $this->response
-                            ->withStatus(401)
-                            ->withHeader('Error', 'Not logged in to Deezer');
-        } else {
-            return $response->withJson(unserialize($_SESSION['deezerapi'])->CreatePlaylist($playlistname, $playlistpublic));
-        }
-    }
+
     /**
      * Return a playlist information in JSON format
      * @param Request $request
@@ -174,21 +83,7 @@ class DeezerController extends Controller {
         return $response->withJson(unserialize($_SESSION['deezerapi'])->GetPlaylistInfo($playlistid));
     }
     
-    /**
-     * Add tracks to a given Deezer PlaylistID
-     * @param Request $request
-     * @param Response $response
-     * @param type $args
-     * @return type
-     */
-    public function postPlaylistAddSongs(Request $request, Response $response, $args) {
-
-        $playlistid = $args['playlistid'];
-
-        $tracklist = json_decode($request->getParsedBody()['tracklist']);
-        $this->log->debug("(postPlaylistAddSongs)recieved query to add to a playlist :" . $playlistid . "\n\t" . var_export($tracklist, true));
-        return $response->withJson(unserialize($_SESSION['deezerapi'])->AddTracksToPlaylist($playlistid, $tracklist));
-    }
+  
     /**
      * Redirect to the songs.twig page. Display all songs for a given PlaylistID
      * @param Request $request
