@@ -1,9 +1,7 @@
 {% extends "main.twig" %}
 
 
-{% block headers %}
-	<link href="/css/play.css" rel="stylesheet" type="text/css"/>
-{% endblock %}
+{% block headers %}{% endblock %}
 
 
 {% block menu %}
@@ -14,8 +12,20 @@
 	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
+	<div id="BrowserError" class="row invisible">
 
-	<div id="main_page" class="container-fluid row" playlistid="{{playlistid}}">
+		<div class="alert alert-danger" role="alert">
+			<h4 class="alert-heading">Browser allert</h4>
+			<p>Your browser doesn't allow automatic music play</p>
+            <p class="mb-0">Please change the settings, it should be located near the address bar</p>
+			<hr>
+			
+			{{ include('elements/BrowserErrorFF.twig') }}
+
+		</div>
+	</div>
+	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}">
+
 
 		<div class="col-sm-3">
 
@@ -30,14 +40,16 @@
 		<div class="col-sm-9">
 			<h1>{{playlistname}}</h1>
 
-			<div id="play" class="row">
-				<div class="player circle">
-					<div class="buffering circle animated"></div>
-					<div class="triangle"></div>
-				</div>
+			<div id="Play" class="row">
+				<button class="btn btn-primary" type="button" disabled>
+					<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+					<span class="sr-only">PLaying...</span>
+					<i class="fas fa-music"></i>
+				</button>
 				{# {{dump(tracks)}} #}
 
 			</div>
+
 		</div>
 
 

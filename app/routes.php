@@ -8,7 +8,7 @@ $app->get('/spinner.html', 'HomeController:getWaitingIcons')
 
 
 
-$app->group('/deezer', function () {
+$app->group('/deezer', function ($app) {
         $this->post('/search.json', 'DeezerController:postSearch')
                 ->setName('deezer.search');
         $this->post('/searchlist.json', 'DeezerController:postSearchList')
@@ -21,10 +21,12 @@ $app->group('/deezer', function () {
                 ->setName('deezer.getplaylist');
         $this->get('/playlist/{playlistid}/info.json', 'DeezerController:getPlaylistInfo')
                 ->setName('deezer.playlist.informations');
-        $this->get('/blindtest/playlists.json', 'DeezerController:getBlindtestPlaylists')
-                ->setName('deezer.blindtest.playlist');
-        $this->get('/blindtest/playlists.json', 'DeezerController:getBlindtestPlay')
-                ->setName('deezer.blindtest.play');
-        $this->get('/blindtest/play/{trackid}.mp3', 'DeezerController:getBlindtestPlayMP3')
-                ->setName('deezer.blindtest.playmp3');
+        $app->group('/blindtest', function () {
+                $this->get('/playlists.json', 'DeezerController:getBlindtestPlaylists')
+                        ->setName('deezer.blindtest.playlist');
+                $this->get('/play/{playlistid}.html', 'DeezerController:getBlindtestPlay')
+                        ->setName('deezer.blindtest.play');
+                $this->get('/play/{trackid}.mp3', 'DeezerController:getBlindtestPlayMP3')
+                        ->setName('deezer.blindtest.playmp3');
+        });
 });
