@@ -172,9 +172,14 @@ class DeezerApi {
         $output['tracks']=array();
         foreach ($rawdata['tracks']['data'] as $track){
             if ($track['preview']!=null) {
-                array_push($output['tracks'],$track['id']);
+                $trackdata=array();
+                $trackdata['id']=$track['id'];
+                $trackdata['title']=$track['title'];
+                $trackdata['artist']=$track['artist']['name'];
+                array_push($output['tracks'],$trackdata);
             }
         }
+        shuffle($output['tracks']);
         return $output;
     }
     
