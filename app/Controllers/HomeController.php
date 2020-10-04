@@ -21,19 +21,6 @@ class HomeController extends Controller
 
 
 
-    private function DeezerArguments()
-    {
-        $userinfo = unserialize($_SESSION['deezerapi'])->getUserInformation();
-        $this->log->debug("(DeezerArguments) : " . json_encode($userinfo));
-
-        $arguments['deezerauthenticated'] = 1;
-
-        $this->log->debug("(DeezerArguments) Deezer is set as source ");
-
-        return $arguments;
-    }
-
-
 
     /**
      * Return the "Home" view 
@@ -48,7 +35,6 @@ class HomeController extends Controller
         $arguments['source'] = 'deezer';
         $arguments['playlists'] = getenv('playlistsids');
 
-        $arguments = array_merge($arguments, $this->DeezerArguments());
         $this->log->debug("home) arguments after mergin deezer " . var_export($arguments, true));
 
 

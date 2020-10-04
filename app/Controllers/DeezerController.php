@@ -7,21 +7,24 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use App\MusicSources\DeezerApi as DeezerApi;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Slim\Http\Stream;
 
 /**
  * Description of DeezerController
  *
  * @author pierre
  */
-class DeezerController extends Controller {
+class DeezerController extends Controller
+{
 
     private $log;
 
-    public function __construct($container) {
+    public function __construct($container)
+    {
 
         parent::__construct($container);
         $this->log = new Logger('DeezerController.php');
-        $this->log->pushHandler(new StreamHandler(__DIR__.'/../../logs/debug.log', Logger::DEBUG));
+        $this->log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/debug.log', Logger::DEBUG));
     }
 
 
@@ -32,12 +35,25 @@ class DeezerController extends Controller {
      * @param Response $response
      * @return type
      */
-    public function getBlindtestPLaylists(Request $request, Response $response) {
-            return $response->withJson(unserialize($_SESSION['deezerapi'])->getBlindtestPLaylists());
-        
+    public function getBlindtestPlaylists(Request $request, Response $response)
+    {
+        return $response->withJson(unserialize($_SESSION['deezerapi'])->getBlindtestPlaylists());
     }
 
-    
+    /**
+     * Return the page for playing with a given playlits ID
+     */
+    public function getBlindtestPlay(Request $request, Response $response, $args)
+    {
+        $playlistid = $args['playlistid'];
+
+        $arguments['tracks'] = (unserialize($_SESSION['deezerapi'])->getPlaylistItems($playlistid));
+
+        $arguments['playlistname'] = unserialize($_SESSION["deezerapi"])->getPlaylistName($playlistid);
+        $arguments['playlistid']=$playlistid;
+
+        return $this->view->render($response, 'play.twig', $arguments);
+    }
     /**
      * Search for a full list of track in Deezer.
      * Return a Json with track informations found
@@ -45,7 +61,8 @@ class DeezerController extends Controller {
      * @param Response $response
      * @return type
      */
-    public function postSearchList(Request $request, Response $response) {
+    public function postSearchList(Request $request, Response $response)
+    {
 
         $tracklist = json_decode($request->getParsedBody()['tracklist']);
         if (!isset($_SESSION['deezerapi'])) {
@@ -63,11 +80,12 @@ class DeezerController extends Controller {
      * @param Response $response
      * @return type
      */
-    public function getSearchList(Request $request, Response $response) {
+    public function getSearchList(Request $request, Response $response)
+    {
         if (!isset($_SESSION['deezerapi'])) {
             return $this->response
-                            ->withStatus(412)
-                            ->withHeader('Error', 'Session not initialized');
+                ->withStatus(412)
+                ->withHeader('Error', 'Session not initialized');
         } else {
             return $response->withJson(unserialize($_SESSION['deezersearchlist']));
         }
@@ -78,12 +96,31 @@ class DeezerController extends Controller {
      * @param Request $request
      * @param Response $response
      */
-    public function getPlaylistInfo(Request $request, Response $response,$args) {
+    public function getPlaylistInfo(Request $request, Response $response, $args)
+    {
         $playlistid = $args['playlistid'];
         return $response->withJson(unserialize($_SESSION['deezerapi'])->GetPlaylistInfo($playlistid));
     }
-    
-  
+
+    /**
+     * Return a mp3 stream
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     */
+    public function getBlindtestPlayMP3(Request $request, Response $response, $args)
+    {
+        $trackid = $args['trackid'];
+        $trackdata = unserialize($_SESSION['deezerapi'])->getTrackInformations($trackid);
+        $fh = fopen($trackdata['preview'], 'rb');
+        $stream = new Stream($fh);
+        return $response
+            ->withBody($stream)
+            ->withHeader('Content-Type', 'audio/mp3');
+
+        // return $response->withJson(unserialize($_SESSION['deezerapi'])->getTrackInformations($trackid));
+    }
+
     /**
      * Redirect to the songs.twig page. Display all songs for a given PlaylistID
      * @param Request $request
@@ -91,27 +128,29 @@ class DeezerController extends Controller {
      * @param type $args
      * @return type
      */
-    public function getPlaylistItems(Request $request, Response $response, $args) {
+    public function getPlaylistItems(Request $request, Response $response, $args)
+    {
         $playlistid = $args['playlistid'];
         $arguments['playlist'] = unserialize($_SESSION["deezerapi"])->getPlaylistItems($playlistid);
         $arguments['playlistname'] = unserialize($_SESSION["deezerapi"])->getPlaylistName($playlistid);
+
         $arguments['destination'] = $_SESSION['destinations'];
 
-        switch ($_SESSION['destinations']) {
-            case "deezer":
-                $arguments['destinationauthenticated'] = true;
-                $arguments['destinationplaylists'] = unserialize($_SESSION['deezerapi'])->getUserPlaylists();
-                break;
-            case "spotify":
-                $arguments['destinationauthenticated'] = true;
-                $arguments['destinationplaylists'] = unserialize($_SESSION['spotifyapi'])->getUserPlaylists();
-                break;
-            default:
-                $arguments['destinationauthenticated'] = false;
-                break;
-        }
 
         return $this->view->render($response, 'songs.twig', $arguments);
-        
+    }
+
+    /**
+     * Return the html for a playlist cover
+     */
+    public function getPlaylistCover(Request $request, Response $response, $args)
+    {
+        $playlistid = $args['playlistid'];
+
+        $arguments['playlistname'] = unserialize($_SESSION["deezerapi"])->GetPlaylistInfo($playlistid)['name'];
+        $arguments['nb_tracks'] = unserialize($_SESSION["deezerapi"])->GetPlaylistInfo($playlistid)['nb_tracks'];
+        $arguments['picture'] = unserialize($_SESSION["deezerapi"])->GetPlaylistInfo($playlistid)['picture'];
+        $arguments['id'] = unserialize($_SESSION["deezerapi"])->GetPlaylistInfo($playlistid)['id'];
+        return $this->view->render($response, 'elements/playlist.twig', $arguments);
     }
 }

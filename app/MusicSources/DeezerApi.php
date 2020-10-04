@@ -145,13 +145,36 @@ class DeezerApi {
         return $this->api("/playlist/".$playlistID)['title'];        
     }
     
+    /**
+     * Return the link to the picture of a playlist for a given PlaylistID
+     * @param int $playlistID
+     * @return string
+     */
+    public function getPlaylistPicture($playlistID) {
+        return $this->api("/playlist/".$playlistID)['picture_big'];        
+    }
+
+
+    public function getTrackInformations($trackid) {
+        $rawdata=$this->api("/track/".$trackid);
+        $this->log->debug("(getTrackInformations) ".var_export($rawdata,true));
+        return $rawdata ;  
+    }
+
     private function PlaylistInfoFormat($rawdata){
         $this->log->debug("(PlaylistInfoFormat) ".var_export($rawdata,true));
         $output['name']=$rawdata['title'];
         $output['id']=$rawdata['id'];
         $output['description']=$rawdata['description'];
         $output['tracks']=$rawdata['nb_tracks'];
-        $output['image']=$rawdata['picture'];
+        $output['picture']=$rawdata['picture_big'];
+        $output['nb_tracks']=$rawdata['nb_tracks'];
+        $output['tracks']=array();
+        foreach ($rawdata['tracks']['data'] as $track){
+            if ($track['preview']!=null) {
+                array_push($output['tracks'],$track['id']);
+            }
+        }
         return $output;
     }
     
@@ -179,7 +202,9 @@ class DeezerApi {
                 "Song" => $track["title"],
                 "Time" => intval($track["duration"])*1000,
                 "Track" => null,
-                "TotalTracks" => null
+                "TotalTracks" => null,
+                "Preview" => $track['preview'],
+                "Picture" => $track['album']['cover']
             ]);
         }
         return $list;
