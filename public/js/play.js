@@ -5,7 +5,8 @@ var audio;
 var points;
 
 var playtitle = function (index) {
-
+    $('#Start').addClass('invisible');
+    $('#Play').removeClass('invisible');
     console.log(currentplaylist.tracks[index]);
     try {
         if (currentindex != 0) { audio.pause(); }
@@ -13,7 +14,7 @@ var playtitle = function (index) {
         console.log("Can't stop the music");
     }
     $("input#YourGuess").first().val("");
-    audio = new Audio('/deezer/blindtest/play/' + currentplaylist.tracks[index].id + '.mp3');
+    audio.src='/deezer/blindtest/play/' + currentplaylist.tracks[index].id + '.mp3';
     currentlyplaying = currentplaylist.tracks[index];
     audio.play().then(() => {
         $("#answer").addClass("invisible");
@@ -25,21 +26,38 @@ var playtitle = function (index) {
         $('#MainPage').addClass('invisible');
         $('#BrowserError').removeClass('invisible');
     });
-
-
 };
+
+
+var playpause = function (){
+    if (!audio.paused) {
+        audio.pause();
+        $('#audiocontroller>i.far.fa-pause-circle').addClass('invisible');
+        $('#audiocontroller>i.far.fa-play-circle').removeClass('invisible');
+    } else {
+        audio.play();
+        $('#audiocontroller>i.far.fa-pause-circle').removeClass('invisible');
+        $('#audiocontroller>i.far.fa-play-circle').addClass('invisible');
+    }
+}
 
 function waitfor(seconds) {
     $("#waitbeforenext").html(seconds);
-    i=seconds;
-    (function loop(i) {
-        setTimeout(function () {
-            $("#waitbeforenext").html(i);
-            if (--i) loop(i); // call the function until end
-        }, 1000); // 1 second delay
-    })();
-    currentindex++;
-    playtitle(currentindex);
+    var i = seconds;
+    $('#btnsubmitanswer').prop('disabled', true);
+    var countdown = setInterval(function () {
+        i--;
+        $("#waitbeforenext").html(i);
+        if (i <= 0) {
+            clearInterval(countdown);
+            currentindex++;
+            $('#btnsubmitanswer').prop('disabled', false);
+            playtitle(currentindex);
+        }
+    }, 1000);
+
+
+
 }
 
 function removeAccentsAndSpecialChars(input) {
@@ -54,6 +72,7 @@ function removeAccentsAndSpecialChars(input) {
     r = r.replace(new RegExp(/œ/g), "oe");
     r = r.replace(new RegExp(/[ùúûü]/g), "u");
     r = r.replace(new RegExp(/[ýÿ]/g), "y");
+    r = r.replace(new RegExp(/[-\/]/g), "");
     r = r.replace(/[^\w\d\s]/gi, ' ')
     return r;
 }
@@ -66,8 +85,9 @@ var Catalog = function () {
         $.get('/deezer/playlist/' + playlistid + '/info.json', function (jsondata) {
             currentplaylist = jsondata;
             currentindex = 0;
+            audio=new Audio();
             //play first title
-            playtitle(currentindex);
+            $('#startbutton').prop('disabled', false);
 
         });
     };
@@ -84,26 +104,44 @@ var Catalog = function () {
             realartistsplitted = realartist.split(" ");
             realtitlesplitted = realtitle.split(" ");
             for (var i = 0; i < guesssplited.length; i++) {
-                if (guesssplited[i].length<2) {break ;} //less than two chars don't compare
-                if (realartist.indexOf(guesssplited[i]) != -1) {
-
-                    checkartist = true;
-                } else {
+                console.log("Guess Splited :"+guesssplited[i]+" ("+guesssplited[i].length+")");
+                if (guesssplited[i].length<=1) {break;}
+                if (guesssplited[i].length > 1 && guesssplited[i].length <= 4) {
                     for (var j = 0; j < realartistsplitted.length; j++) {
-                        if (getEditDistance(guesssplited[i], realartistsplitted[j]) <= 2) {
+                        if (guesssplited[i] === realartistsplitted[j]) {
+                            console.log(guesssplited[i] +','+ realartistsplitted[j])
                             checkartist = true;
                         }
                     }
-                }
-
-
-                if (realtitle.indexOf(guesssplited[i]) != -1) {
-
-                    checktitle = true;
-                } else {
                     for (var j = 0; j < realtitlesplitted.length; j++) {
-                        if (getEditDistance(guesssplited[i], realtitlesplitted[j]) <= 2) {
+                        if (guesssplited[i] === realtitlesplitted[j]) {
+                            console.log(guesssplited[i] +','+ realtitlesplitted[j])
                             checktitle = true;
+                        }
+                    }
+
+                } else {
+
+                    if (realartist.indexOf(guesssplited[i]) != -1) {
+
+                        checkartist = true;
+                    } else {
+                        for (var j = 0; j < realartistsplitted.length; j++) {
+                            if (getEditDistance(guesssplited[i], realartistsplitted[j]) <= 2) {
+                                checkartist = true;
+                            }
+                        }
+                    }
+
+
+                    if (realtitle.indexOf(guesssplited[i]) != -1) {
+                        checktitle = true;
+                    } else {
+
+                        for (var j = 0; j < realtitlesplitted.length; j++) {
+                            if (getEditDistance(guesssplited[i], realtitlesplitted[j]) <= 2) {
+                                checktitle = true;
+                            }
                         }
                     }
                 }
@@ -112,25 +150,27 @@ var Catalog = function () {
                 console.log(getEditDistance(guesssplited[i], currentlyplaying.artist));
                 console.log(getEditDistance(guesssplited[i], currentlyplaying.title));
             }
+
+
             event.preventDefault();
             $("#artist").removeClass();
             $("#title").removeClass();
             if (checkartist) {
-                $("#artist").addClass("form-control");
-                $("#artist").addClass("is-valid");
+                $("#artist").addClass("alert alert-success");
+
                 points++;
             } else {
-                $("#artist").addClass("form-control");
-                $("#artist").addClass("is-invalid");
+                $("#artist").addClass("alert alert-danger");
+
 
             }
             if (checktitle) {
-                $("#title").addClass("form-control");
-                $("#title").addClass("is-valid");
+                $("#title").addClass("alert alert-success");
+
                 points++;
             } else {
-                $("#title").addClass("form-control");
-                $("#title").addClass("is-invalid");
+                $("#title").addClass("alert alert-danger");
+
             }
             $("#currentscore").html(points);
             $("#answer").removeClass("invisible");

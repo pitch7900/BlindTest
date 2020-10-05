@@ -31,10 +31,7 @@ class HomeController extends Controller
     public function home(Request $request, Response $response)
     {
 
-
-        $arguments['source'] = 'deezer';
-        $arguments['playlists'] = getenv('playlistsids');
-
+        $arguments['dynamicplayists'] = unserialize($_SESSION['deezerapi'])->searchPlaylist('blind test');
         $this->log->debug("home) arguments after mergin deezer " . var_export($arguments, true));
 
 

@@ -160,6 +160,15 @@ class DeezerApi {
         $this->log->debug("(getTrackInformations) ".var_export($rawdata,true));
         return $rawdata ;  
     }
+    /**
+     * Search for a playlist based on string
+     * @param string $playliststring
+     * @return json
+     */
+    public function searchPlaylist($playliststring){
+        $url = $this->_sApiUrl . '/search/playlist?q=' . $playliststring;
+        return json_decode($this->sendRequest($url), true);
+    }
 
     private function PlaylistInfoFormat($rawdata){
         $this->log->debug("(PlaylistInfoFormat) ".var_export($rawdata,true));
@@ -176,6 +185,7 @@ class DeezerApi {
                 $trackdata['id']=$track['id'];
                 $trackdata['title']=$track['title'];
                 $trackdata['artist']=$track['artist']['name'];
+                $trackdata['coverurl']=$track['album']['cover_xl'];
                 array_push($output['tracks'],$trackdata);
             }
         }

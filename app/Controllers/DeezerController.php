@@ -117,8 +117,6 @@ class DeezerController extends Controller
         return $response
             ->withBody($stream)
             ->withHeader('Content-Type', 'audio/mp3');
-
-        // return $response->withJson(unserialize($_SESSION['deezerapi'])->getTrackInformations($trackid));
     }
 
     /**
