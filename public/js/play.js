@@ -21,6 +21,7 @@ var playtitle = function (index) {
         //Nothing to do
         $("#artistname").html(currentlyplaying.artist);
         $("#titlename").html(currentlyplaying.title);
+        $("#trackimage").attr('src',currentlyplaying.coverurl);
     }).catch((error) => {
         // alert("Please allow your browser to autoplay music");
         $('#MainPage').addClass('invisible');
@@ -55,9 +56,6 @@ function waitfor(seconds) {
             playtitle(currentindex);
         }
     }, 1000);
-
-
-
 }
 
 function removeAccentsAndSpecialChars(input) {

@@ -2,7 +2,7 @@
 
 
 {% block headers %}
-
+	<link rel="stylesheet" href="/css/progress.css">
 {% endblock %}
 
 
@@ -72,31 +72,36 @@
 		</div>
 
 		<div class="col-sm-9">
-			<h1>{{playlistname}}</h1>
+			<h4>{{playlistname}}
+				<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+			</h4>
 
-			<div id="Play" class="row invisible">
-				<button class="btn btn-primary" type="button" disabled>
-					<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-					<span class="sr-only">PLaying...</span>
-					<i class="fas fa-music"></i>
-				</button>
-                <button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
-					<i class="far fa-pause-circle"></i>
-                    <i class="far fa-play-circle invisible"></i>
-				</button>
-
-				<!-- Default form contact -->
-				<form id="FormGuess" class="text-center border border-light p-5" action="#!">
-					<input id="YourGuess" type="text" class="form-control mb-4" placeholder="">
-					<!-- Send button -->
-					<button id="btnsubmitanswer" class="btn btn-info btn-block" type="submit">Submit Answer</button>
-				</form>
-				<!-- Default form contact -->
-
+			<div id="Play" class="row invisible container-fluid">
+				<div class="col-sm-12">
+					<div class="progress md-progress">
+						<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
+						<i class="far fa-pause-circle"></i>
+						<i class="far fa-play-circle invisible"></i>
+					</button>
+				</div>
+				<div class="col-sm-9">
+					<!-- Default form -->
+					<form id="FormGuess" class="text-center" action="#!">
+						<input
+						id="YourGuess" type="text" class="form-control mb-4" placeholder="">
+						<!-- Send button -->
+						<button id="btnsubmitanswer" class="btn btn-info btn-block" type="submit">Submit Answer</button>
+					</form>
+					<!-- Default form -->
+				</div>
 			</div>
-            <div id="Start" class="row">
-                <button id="startbutton" class="btn btn-info btn-block" onclick="playtitle(currentindex);" disabled>Start the Game</button>
-            </div>
+			<div id="Start" class="row">
+				<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle(currentindex);" disabled>Start the Game</button>
+			</div>
 		</div>
 	</div>
 
