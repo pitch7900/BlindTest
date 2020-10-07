@@ -2,10 +2,10 @@ var Catalog = function () {
   
 
     var load_playlists = function(){
-        $.get('/deezer/blindtest/playlists.json', function (jsondata) {
+        $.get('/blindtest/playlists.json', function (jsondata) {
   
             jsondata.forEach(element => {
-                $.get('deezer/playlist/'+element+'/cover.html', function (htmldata) {
+                $.get('/deezer/playlist/'+element+'/cover.html', function (htmldata) {
 
                 $('#playlists').append(htmldata);
                 });

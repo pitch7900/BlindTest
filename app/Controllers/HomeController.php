@@ -31,7 +31,7 @@ class HomeController extends AbstractTwigController
      * @param Response $response
      * @return HTML
      */
-    public function __invoke(Request $request, Response $response, array $args = []): Response {
+    public function home(Request $request, Response $response, array $args = []): Response {
         $arguments['dynamicplayists'] = $this->deezer->searchPlaylist('blind test');
         $this->logger->debug("home) arguments after mergin deezer " . var_export($arguments, true));
 

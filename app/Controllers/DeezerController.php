@@ -8,7 +8,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
-
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of DeezerController
@@ -18,12 +18,15 @@ use Slim\Views\Twig;
 class DeezerController extends AbstractTwigController
 {
 
-   private $deezer;
+    private $deezer;
 
+    private $logger;
 
-    public function __construct(Twig $twig, DeezerApiInterface $deezer) {
+    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer) {
         parent::__construct($twig);
         $this->deezer = $deezer;  
+        $this->logger = $logger;
+        $this->logger->debug("Construct of DeezerController called");
     }
 
 
@@ -33,39 +36,21 @@ class DeezerController extends AbstractTwigController
      * @param Request $request
      * @param Response $response
      */
-    public function getPlaylistInfo(Request $request, Response $response, $args)
-    {
+    public function getPlaylistInfo(Request $request, Response $response, $args) {
         $playlistid = $args['playlistid'];
-        return $response->withJson($this->deezer->GetPlaylistInfo($playlistid));
+        $this->logger->debug("DeezerController::getPlaylistInfo called with playlist id : ".$playlistid);
+        $answer=$this->deezer->GetPlaylistInfo($playlistid);
+        $this->logger->debug("DeezerController::getPlaylistInfo should return : ".print_r($answer,true));
+
+        $response->getBody()->write(json_encode($answer));
+        return $response->withHeader('Content-type', 'application/json');
+
     }
-
- 
-    /**
-     * Redirect to the songs.twig page. Display all songs for a given PlaylistID
-     * @param Request $request
-     * @param Response $response
-     * @param type $args
-     * @return type
-     */
-    public function getPlaylistItems(Request $request, Response $response, $args)
-    {
-        $playlistid = $args['playlistid'];
-        $arguments['playlist'] = $this->deezer->getPlaylistItems($playlistid);
-        $arguments['playlistname'] = $this->deezer->getPlaylistName($playlistid);
-
-        $arguments['destination'] = $_SESSION['destinations'];
-
-
-        return $this->render($response, 'songs.twig', $arguments);
-    }
-
-    
 
     /**
      * Return the html for a playlist cover
      */
-    public function getPlaylistCover(Request $request, Response $response, $args)
-    {
+    public function getPlaylistCover(Request $request, Response $response, $args) {
         $playlistid = $args['playlistid'];
 
         $arguments['playlistname'] = $this->deezer->GetPlaylistInfo($playlistid)['name'];
@@ -74,4 +59,6 @@ class DeezerController extends AbstractTwigController
         $arguments['id'] = $this->deezer->GetPlaylistInfo($playlistid)['id'];
         return $this->render($response, 'elements/playlist.twig', $arguments);
     }
+
+    
 }

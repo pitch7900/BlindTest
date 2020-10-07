@@ -8,7 +8,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
-
+use Psr\Log\LoggerInterface;
 
 /**
  * Description of BlindTestController
@@ -18,11 +18,12 @@ use Slim\Views\Twig;
 class BlindTestController extends AbstractTwigController
 {
 
-   private $deezer;
+    private $deezer;
+    private $logger;
 
-
-    public function __construct(Twig $twig, DeezerApiInterface $deezer) {
+    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer) {
         parent::__construct($twig);
+        $this->logger=$logger;
         $this->deezer = $deezer;  
     }
 
@@ -34,15 +35,16 @@ class BlindTestController extends AbstractTwigController
      * @param Response $response
      * @return type
      */
-    public function getBlindtestPlaylists(Request $request, Response $response)
+    public function getPlaylists(Request $request, Response $response)
     {
-        return $response->withJson($this->deezer->getBlindtestPlaylists());
+        $response->getBody()->write(json_encode($this->deezer->getBlindtestPlaylists()));
+        return $response->withHeader('Content-type', 'application/json');
     }
 
     /**
      * Return the page for playing with a given playlits ID
      */
-    public function getBlindtestPlay(Request $request, Response $response, $args)
+    public function getPlay(Request $request, Response $response, $args)
     {
         $playlistid = $args['playlistid'];
 
@@ -61,7 +63,7 @@ class BlindTestController extends AbstractTwigController
      * @param Response $response
      * @param array $args
      */
-    public function getBlindtestPlayMP3(Request $request, Response $response, $args)
+    public function getStreamMP3(Request $request, Response $response, $args)
     {
         $trackid = $args['trackid'];
         $trackdata = $this->deezer->getTrackInformations($trackid);

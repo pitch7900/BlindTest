@@ -35,9 +35,9 @@ $app = AppFactory::create();
 
 // Set the cache file for the routes. Note that you have to delete this file
 // whenever you change the routes.
-$app->getRouteCollector()->setCacheFile(
-    $rootPath . '/cache/routes.cache'
-);
+// $app->getRouteCollector()->setCacheFile(
+//     $rootPath . '/cache/routes.cache'
+// );
 
 // Add the routing middleware.
 $app->addRoutingMiddleware();
@@ -53,4 +53,8 @@ $logErrors = true;
 $logErrorDetails = false;
 $app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
 
-require $rootPath . '/app/routes.php';
+
+// Register routes
+$routes = require $rootPath . '/app/routes.php';
+$routes($app);
+
