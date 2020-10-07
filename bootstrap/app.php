@@ -1,52 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
+use App\ContainerFactory;
+use Slim\Factory\AppFactory;
+
+use Slim\Views\Twig;
+use Slim\Views\TwigMiddleware;
+
+
 session_cache_limiter('public');
 session_start();
 
-
-require __DIR__ . '/../vendor/autoload.php';
-
-
-
-
-$app = new \Slim\App([
-    'settings' => [
-        'displayErrorDetails' => true,
-        'debug' => true
-    ]
-]);
-$app->add(new \Slim\HttpCache\Cache('public', 0));
+// Set the absolute path to the root directory.
+$rootPath = realpath(__DIR__ . '/..');
+// Set the default timezone.
+date_default_timezone_set('Europe/Zurich');
 
 
+require $rootPath . '/vendor/autoload.php';
 
-$container = $app->getContainer();
-
-
-require_once __DIR__ . '/container_view.php';
-
-$container['ErrorController'] = function ($container) {
-    return new \App\Controllers\ErrorController($container);
-};
-
+// Create the container for dependency injection.
 try {
-    $dotenv = (Dotenv\Dotenv::createImmutable(__DIR__ . '/../config/'))->load();
-} catch (\Dotenv\Exception\InvalidPathException $e) {
+    $container = ContainerFactory::create($rootPath);
+
+} catch (Exception $e) {
+    die($e->getMessage());
 }
 
 
-$container['HomeController'] = function ($container) {
-    return new \App\Controllers\HomeController($container);
-};
+// Set the container to create the App with AppFactory.
+AppFactory::setContainer($container);
+$app = AppFactory::create();
 
+// Set the cache file for the routes. Note that you have to delete this file
+// whenever you change the routes.
+$app->getRouteCollector()->setCacheFile(
+    $rootPath . '/cache/routes.cache'
+);
 
-$container['DeezerController'] = function ($container) {
-    return new \App\Controllers\DeezerController($container);
-};
+// Add the routing middleware.
+$app->addRoutingMiddleware();
 
+// Add the twig middleware.
+$app->addMiddleware(
+    TwigMiddleware::create($app, $container->get(Twig::class))
+);
 
-$_SESSION['deezerapi'] = serialize(new \App\MusicSources\DeezerApi());
+// Add error handling middleware.
+$displayErrorDetails = true;
+$logErrors = true;
+$logErrorDetails = false;
+$app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
 
-
-$_SESSION['sources'] = "deezer";
-
-require __DIR__ . '/../app/routes.php';
+require $rootPath . '/app/routes.php';

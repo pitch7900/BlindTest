@@ -1,6 +1,6 @@
 {
-    "name": "vendor/i-tunes2-deezer",
-    "description": "Description of project iTunes2Deezer.",
+    "name": "vendor/blindtest",
+    "description": "Description of project Blindtest.",
     "authors": [
         {
             "name": "pierre",
@@ -9,18 +9,16 @@
     ],
     "license": "proprietary",
     "require": {
-        "slim/twig-view": "^2.4",
-        "twig/twig": "^2.5",
-        "slim/slim": "^3.11",
-        "slim/http-cache": "^0.4.0",
-        "psr/log": "^1.1",
-        "psr/container": "* 1.0.0",
-        "psr/http-factory": "* 1.0.1",
-        "slim/psr7": "0.6",
-        "rodneyrehm/plist": "dev-master",
         "vlucas/phpdotenv": "v4.1.0",
         "hamburgscleanest/guzzle-advanced-throttle": "v4.1.1",
-        "monolog/monolog": "2.0.2"
+        "monolog/monolog": "2.0.2",
+        "php": "^7.4",
+        "nyholm/psr7": "^1.3",
+        "nyholm/psr7-server": "^1.0",
+        "php-di/php-di": "^6.2",
+        "slim/twig-view": "^3.1",
+        "slim/slim": "^4.5",
+        "psr/log": "^1.1"
     },
     "config": {
         "preferred-install": "dist"
