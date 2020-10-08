@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
+use App\Config\StaticPlaylists;
 
 return [
     LoggerInterface::class => function (ContainerInterface $container): LoggerInterface {
@@ -43,5 +44,9 @@ return [
     DeezerApiInterface::class => function (ContainerInterface $container): DeezerApiInterface {
         $deezerapi = new DeezerApi($container->get(LoggerInterface::class));
         return $deezerapi;
+    },
+    StaticPlaylists::class => function (ContainerInterface $container): StaticPlaylists {
+        $playlists = new StaticPlaylists();
+        return $playlists;
     },
 ];
