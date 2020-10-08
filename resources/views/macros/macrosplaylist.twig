@@ -17,13 +17,20 @@
 
 				<!-- Title -->
 				<h4 class="card-title">
-					<a href="{{ link }}" target="_blank">{{playlistname}}</a>
+					{{playlistname}}
 				</h4>
+
 				<!-- Text -->
 				<p class="card-text">{{nb_tracks}}
 					tracks</p>
 				<!-- Button -->
-				<a href="/blindtest/play/{{id}}.html" class="btn btn-primary">Play</a>
+
+				<a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
+					<i class="fas fa-play"></i>
+					Play</a>
+				<a href="{{ link }}" target="_blank" class="btn btn-light col-sm-12">
+					<i class="fab fa-deezer"></i>
+					Link to deezer</a>
 
 			</div>
 
