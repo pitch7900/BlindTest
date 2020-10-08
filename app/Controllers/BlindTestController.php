@@ -10,6 +10,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
 
+use Slim\Psr7\Factory\StreamFactory;
+use GuzzleHttp\Psr7\Stream;
+
+
 /**
  * Description of BlindTestController
  *
@@ -37,8 +41,7 @@ class BlindTestController extends AbstractTwigController
      */
     public function getPlaylists(Request $request, Response $response)
     {
-        $response->getBody()->write(json_encode($this->deezer->getBlindtestPlaylists()));
-        return $response->withHeader('Content-type', 'application/json');
+        return $this->withJSON($response,$this->deezer->getBlindtestPlaylists());
     }
 
     /**
@@ -58,7 +61,7 @@ class BlindTestController extends AbstractTwigController
  
    
     /**
-     * Return a mp3 stream
+     * Return an mp3 stream
      * @param Request $request
      * @param Response $response
      * @param array $args
@@ -67,11 +70,10 @@ class BlindTestController extends AbstractTwigController
     {
         $trackid = $args['trackid'];
         $trackdata = $this->deezer->getTrackInformations($trackid);
-        $fh = fopen($trackdata['preview'], 'rb');
-        $stream = new Stream($fh);
-        return $response
-            ->withBody($stream)
-            ->withHeader('Content-Type', 'audio/mp3');
+        //$stream=(new  StreamFactory())->createStreamFromFile($trackdata['preview'],'rb');
+        $this->logger->debug("BlindtestController::getStreamMP3 MP3 TrackID : ".$trackid." should be : ".$trackdata['preview']);
+        return $this->withMP3($response,$trackdata['preview'],'rb');
+
     }
 
 }

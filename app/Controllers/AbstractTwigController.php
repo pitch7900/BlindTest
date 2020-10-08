@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
+use Slim\Psr7\Factory\StreamFactory;
 
 abstract class AbstractTwigController extends AbstractController
 {
@@ -34,5 +35,23 @@ abstract class AbstractTwigController extends AbstractController
     protected function render(Response $response, string $template, array $renderData = []): Response
     {
         return $this->twig->render($response, $template, $renderData);
+    }
+    /**
+     * Return the payload as JSON
+     * @author Pierre Christensen <pierre.christensen@gmail.com>
+     * @param Response $response
+     * @param array    $payload
+     * @return Response
+     */
+    protected function withJSON(Response $response, array $payload = []): Response
+    {
+        $response->getBody()->write(json_encode($payload));
+        return $response->withHeader('Content-type', 'application/json');
+    }
+
+    protected function withMP3(Response $response, string $mp3filepath): Response
+    {
+        $stream=(new StreamFactory())->createStreamFromFile($mp3filepath,'rb');
+        return $response->withHeader('Content-type', 'audio/mp3')->withBody($stream);
     }
 }

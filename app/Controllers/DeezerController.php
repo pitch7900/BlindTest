@@ -39,12 +39,9 @@ class DeezerController extends AbstractTwigController
     public function getPlaylistInfo(Request $request, Response $response, $args) {
         $playlistid = $args['playlistid'];
         $this->logger->debug("DeezerController::getPlaylistInfo called with playlist id : ".$playlistid);
-        $answer=$this->deezer->GetPlaylistInfo($playlistid);
-        $this->logger->debug("DeezerController::getPlaylistInfo should return : ".print_r($answer,true));
-
-        $response->getBody()->write(json_encode($answer));
-        return $response->withHeader('Content-type', 'application/json');
-
+        $payload=$this->deezer->GetPlaylistInfo($playlistid);
+        $this->logger->debug("DeezerController::getPlaylistInfo should return : ".print_r($payload,true));
+        return $this->withJSON($response,$payload);
     }
 
     /**
