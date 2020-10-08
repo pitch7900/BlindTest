@@ -12,25 +12,17 @@ Following URL should be filled in the App declaration for Spotify :
 - http(s)://yoursiteurl:port/spotify/me/about.json
 - http(s)://yoursiteurl:port
 
-## 1. Configuration File needed
+## Configuration File needed
 
 You'll need to create a /config/.env file with following parameters:
 
 ```ini
-SITEURL="https://<Your site url>"
-DEEZER_APIKEY="Deezer api key"
-DEEZER_APISECRETKEY="Deezer secret key"
-SPOTIFY_APIKEY="Spotify api key"
-SPOTIFY_APISECRETKEY="Spotify secret key"
+SITEURL="http(s)://<yoursiteurl:port>"
+playlistsids="1913917022, 7708037842,7821141762, 789794642, 248297032, 878989033, 1470022445, 867825522, 620264073, 1413309725, 1977689462, 1724212365, 745674991, 2021626162, 2159765062, 6122298184, 4676818664, 6030306984, 1728093421, 6200785264, 5782150322, 6080610264, 1057779131, 5014738124, 2004964442, 1913763402, 1419215845, 1950632062, 1045800791, 4135818362, 5922972724, 1276784581, 4135981802, 1437011185, 1471284255, 715215865, 5714797982, 1405240385, 2322259622, 735402575, 6122724024, 5337198442, 1950353862, 5958115324, 6126745404, 1294679255"
+
 ```
 
-If "/config" directory and .env files are missing, then a configuration interface will appear (See chapter 2)
-
-## 2. If the configuration file has not been created
-
-A menu will pop up to help you fill the basic informations need to allow the app to run
-
-## 3. Installation
+## Installation
 
 Download the project from github,remove the vendor folder and reinstall composer packages
 
@@ -65,7 +57,7 @@ For example, the project is downloaded to /var/www/BlindTest and the virtual hos
 </VirtualHost>
 ```
 
-## 4. Docker
+## Docker
 
 For a build under docker see folder /Docker and run the startup.sh.
 
@@ -85,7 +77,7 @@ docker build .
 echo "Start now the container with : docker-compose up --build"
 ```
 
-## 5. gulp installation
+## gulp installation
 
 ```bash
 npm install gulp --save-dev
@@ -95,7 +87,7 @@ npm install browser-sync
 npm install safer-buffer
 ```
 
-## 6. Credits
+## Credits
 
 - Throttler : https://github.com/hamburgscleanest/guzzle-advanced-throttle
 - Deezer Wrapper : https://github.com/mbuonomo/Deezer-API-PHP-class/

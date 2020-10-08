@@ -1,26 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+use App\MusicSources\Deezer\DeezerApi;
+use App\MusicSources\Deezer\DeezerApiInterface;
+use App\Preferences;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Views\Twig;
+use Psr\Log\LoggerInterface;
+use App\Config\StaticPlaylists;
 
-class HomeController extends Controller
+class HomeController extends AbstractTwigController
 {
 
-    private $log;
+    private $deezer;
+    private $logger;
+    private $staticplaylists;
 
-    public function __construct($container)
-    {
-        parent::__construct($container);
-        $this->log = new Logger('HomeController.php');
-        $this->log->pushHandler(new StreamHandler(__DIR__ . '/../../logs/debug.log', Logger::DEBUG));
+    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer, StaticPlaylists $staticplaylists) {
+        parent::__construct($twig);
+        $this->logger = $logger;
+        $this->deezer = $deezer;
+        $this->staticplaylists = $staticplaylists;
+        $this->logger->debug("Construct of HomeController called");
     }
-
-
-
 
     /**
      * Return the "Home" view 
@@ -28,15 +34,14 @@ class HomeController extends Controller
      * @param Response $response
      * @return HTML
      */
-    public function home(Request $request, Response $response)
-    {
+    public function home(Request $request, Response $response, array $args = []): Response {
+        $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
+        $arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
+        // die(var_dump($arguments['staticplaylists']));
+        $this->logger->debug("home) arguments after mergin deezer " . var_export($arguments, true));
 
-        $arguments['dynamicplayists'] = unserialize($_SESSION['deezerapi'])->searchPlaylist('blind test');
-        $this->log->debug("home) arguments after mergin deezer " . var_export($arguments, true));
-
-
-        $this->log->debug("home) arguments global " . var_export($arguments, true));
-        return $this->view->render($response, 'home.twig', $arguments);
+        $this->logger->debug("home) arguments global " . var_export($arguments, true));
+        return $this->render($response, 'home.twig', $arguments);
     }
 
 
@@ -46,8 +51,7 @@ class HomeController extends Controller
      * @param Response $response
      * @return type
      */
-    public function getWaitingIcons(Request $request, Response $response)
-    {
-        return $this->view->render($response, 'waiting.twig');
+    public function getWaitingIcons(Request $request, Response $response, array $args = []): Response  {
+        return $this->render($response, 'waiting.twig');
     }
 }

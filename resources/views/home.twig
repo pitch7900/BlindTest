@@ -12,20 +12,15 @@
 
 	<div id="main_page" class="container-fluid row">
 
-		<div class="col-sm-3">
-
-			<div class="sidenavbar" linkstyle="btn btn-primary">
-				<ul class="">
-					<div class="input-group flex-nowrap"></div>
-				</ul>
-				<ul class="sidenavbarlist"></ul>
-
-			</div>
-		</div>
-		<div class="col-sm-9">
+		
+		<div class="col-sm-12">
 			<div id="playlists" class="row">
-				{% for playlist in dynamicplayists.data %}
-					{{ macroplaylist.playlistcard(playlist.id,playlist.title,playlist.picture_xl,playlist.nb_tracks) }}
+				{% for playlist in dynamicplaylists.data %}
+					{{ macroplaylist.playlistcard(playlist.id,playlist.title,playlist.picture_xl,playlist.nb_tracks,playlist.link) }}
+				{% endfor %}
+
+				{% for playlist in staticplaylists %}
+					{{ macroplaylist.playlistcard(playlist.id,playlist.title,playlist.picture_xl,playlist.nb_tracks,playlist.link) }}
 				{% endfor %}
 				
 			</div>

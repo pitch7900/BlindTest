@@ -1,32 +1,42 @@
 <?php
 
-$app->get('/', 'HomeController:home')
+declare(strict_types=1);
+
+use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
+use App\Controllers\DeezerController;
+use App\Controllers\HomeController;
+use App\Controllers\BlindTestController;
+
+return function (App $app) {
+  
+        $app->get('/', HomeController::class. ':home')
         ->setName('home');
 
-$app->get('/spinner.html', 'HomeController:getWaitingIcons')
-        ->setName('getWaitingIcons');
+        $app->get('/spinner.html', HomeController::class .':getWaitingIcons') 
+                        ->setName('getWaitingIcons');
 
+   
 
-
-$app->group('/deezer', function ($app) {
-        $this->post('/search.json', 'DeezerController:postSearch')
-                ->setName('deezer.search');
-        $this->post('/searchlist.json', 'DeezerController:postSearchList')
-                ->setName('deezer.searchlist');
-        $this->get('/searchlist.json', 'DeezerController:getSearchList')
-                ->setName('deezer.searchlist');
-        $this->get('/playlist/{playlistid}/items.html', 'DeezerController:getPlaylistItems')
-                ->setName('deezer.getplaylistitems');
-        $this->get('/playlist/{playlistid}/cover.html', 'DeezerController:getPlaylistCover')
-                ->setName('deezer.getplaylist');
-        $this->get('/playlist/{playlistid}/info.json', 'DeezerController:getPlaylistInfo')
-                ->setName('deezer.playlist.informations');
-        $app->group('/blindtest', function () {
-                $this->get('/playlists.json', 'DeezerController:getBlindtestPlaylists')
-                        ->setName('deezer.blindtest.playlist');
-                $this->get('/play/{playlistid}.html', 'DeezerController:getBlindtestPlay')
-                        ->setName('deezer.blindtest.play');
-                $this->get('/play/{trackid}.mp3', 'DeezerController:getBlindtestPlayMP3')
-                        ->setName('deezer.blindtest.playmp3');
+        $app->group('/deezer', function (RouteCollectorProxy $group) {
+                $group->post('/search.json', DeezerController::class . ':postSearch')
+                        ->setName('deezer.search');
+                $group->post('/searchlist.json', DeezerController::class . ':postSearchList')
+                        ->setName('deezer.searchlist');
+                $group->get('/playlist/{playlistid}/cover.html', DeezerController::class . ':getPlaylistCover')
+                        ->setName('deezer.getplaylist');
+                $group->get('/playlist/{playlistid}/info.json', DeezerController::class . ':getPlaylistInfo')
+                        ->setName('deezer.playlist.informations');
         });
-});
+
+
+
+        $app->group('/blindtest', function (RouteCollectorProxy $group) {
+                $group->get('/playlists.json', BlindTestController::class . ':getPlaylists')
+                        ->setName('blindtest.playlist');
+                $group->get('/play/{playlistid}.html', BlindTestController::class . ':getPlay')
+                        ->setName('blindtest.play');
+                $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')
+                        ->setName('blindtest.streammp3');
+        });
+};

@@ -14,7 +14,7 @@ var playtitle = function (index) {
         console.log("Can't stop the music");
     }
     $("input#YourGuess").first().val("");
-    audio.src='/deezer/blindtest/play/' + currentplaylist.tracks[index].id + '.mp3';
+    audio.src='/blindtest/play/' + currentplaylist.tracks[index].id + '.mp3';
     currentlyplaying = currentplaylist.tracks[index];
     audio.play().then(() => {
         $("#answer").addClass("invisible");

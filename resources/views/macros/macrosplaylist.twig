@@ -1,4 +1,4 @@
-{% macro playlistcard(id,playlistname,picture,nb_tracks) %}
+{% macro playlistcard(id,playlistname,picture,nb_tracks,link) %}
 
 
 	<div
@@ -17,13 +17,13 @@
 
 				<!-- Title -->
 				<h4 class="card-title">
-					<a>{{playlistname}}</a>
+					<a href="{{ link }}" target="_blank">{{playlistname}}</a>
 				</h4>
 				<!-- Text -->
 				<p class="card-text">{{nb_tracks}}
 					tracks</p>
 				<!-- Button -->
-				<a href="/deezer/blindtest/play/{{id}}.html" class="btn btn-primary">Play</a>
+				<a href="/blindtest/play/{{id}}.html" class="btn btn-primary">Play</a>
 
 			</div>
 

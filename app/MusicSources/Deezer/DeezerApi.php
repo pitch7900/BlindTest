@@ -1,9 +1,7 @@
 <?php
 
-namespace App\MusicSources;
-
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+namespace App\MusicSources\Deezer;
+use Psr\Log\LoggerInterface;;
 use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
 
 /**
@@ -13,31 +11,55 @@ use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
  *
  * For more informations about the api please visit http://www.deezer.com/fr/developers/simpleapi
  *
- * @author Mathieu BUONOMO <mbuonomo@gmail.com>
- * @version 0.1
+ * @author Mathieu BUONOMO <mbuonomo@gmail.com>,Pierre Christensen <pchristensen@gmail.com>
+ * @version 0.2
+ * 
  */
-class DeezerApi {
-
-    private $log;
-
-    
+class DeezerApi implements DeezerApiInterface{
     /**
      * This is the url to call the API
      *
      * @var string
      */
     private $_sApiUrl = "https://api.deezer.com";
+
+    /**
+     * Max queries per $_sApiRequestInterval
+     * @var string
+     */
     private $_sApiMaxRequest = "50";
+
+    /**
+     * Interval for max queries used in _sApiMaxRequest
+     * @var string
+     */
     private $_sApiRequestInterval = "5";
+
+    /**
+     * @var GuzzleAdvancedThrottle\RequestLimitRuleset
+     */
     private $ThrottlerRules;
+
+    /**
+     * @var \GuzzleHttp\HandlerStack
+     */
     private $ThrottlerStack;
+
+    /**
+     * Is initialiezd
+     * @var boolean
+     */
     public $initialized;
 
-    public function __construct() {
-        
-        $this->log = new Logger('DeezerApi.php');
-        $this->log->pushHandler(new StreamHandler(__DIR__.'/../../logs/debug.log', Logger::DEBUG));
-        $this->log->debug("(__contruct) New DeeZerApi Constructor called");
+    /**
+     * Preferences
+     * @var LoggerInterface;
+     */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger) {
+        $this->logger=$logger;
+        $this->logger->debug("DeezerApi::__contruct New DeeZerApi Constructor called");
         $this->initiateThrotller();
         $this->initialized = true;
     }
@@ -87,19 +109,19 @@ class DeezerApi {
         $RequestToBeDone = true;
         do {
             try {
-                $this->log->debug("(sendRequest) Deezer request recieved : " . $sUrl);
+                $this->logger->debug("DeezerApi::sendRequest Deezer request recieved : " . $sUrl);
                 $response = $client->get($sUrl);
                 $output = $response->getBody();
                 $RequestToBeDone = false;
             } catch (\Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException $e) {
-                $this->log->debug("(sendRequest) Too many requests. Waiting 1 second");
+                $this->logger->debug("DeezerApi::sendRequest Too many requests. Waiting 1 second");
                 sleep(1);
             }
         } while ($RequestToBeDone);
 
 
         if ($output === false) {
-            $this->log->debug("(sendRequest) Error curl : " . curl_error($c), E_USER_WARNING);
+            $this->logger->debug("DeezerApi::sendRequest Error curl : " . curl_error($c), E_USER_WARNING);
             //trigger_error('Erreur curl : ' . curl_error($response), E_USER_WARNING);
         } else {
             //curl_close($response);
@@ -112,12 +134,17 @@ class DeezerApi {
         return json_decode($this->sendRequest($url), true);
     }
 
+    /**
+     * Return an array with blindtests playlist IDs
+     * @return array
+     */
     public function getBlindtestPLaylists(){
         $ids=getenv('playlistsids');
+        $this->logger->debug("DeezerApi::getBlindtestPLaylists Blindtest playlists IDs : " . print_r($ids,true));
 
         $ids=preg_replace("/[^0-9,]/", "", $ids );
         $ids=explode(",",$ids);
-        $this->log->debug("(getBlindtestPLaylists) Blindtest playlists IDs : " . print_r($ids,true));
+        $this->logger->debug("DeezerApi::getBlindtestPLaylists Blindtest playlists IDs : " . print_r($ids,true));
         return $ids;
     }
 
@@ -157,7 +184,7 @@ class DeezerApi {
 
     public function getTrackInformations($trackid) {
         $rawdata=$this->api("/track/".$trackid);
-        $this->log->debug("(getTrackInformations) ".var_export($rawdata,true));
+        $this->logger->debug("DeezerApi::getTrackInformations ".var_export($rawdata,true));
         return $rawdata ;  
     }
     /**
@@ -171,7 +198,7 @@ class DeezerApi {
     }
 
     private function PlaylistInfoFormat($rawdata){
-        $this->log->debug("(PlaylistInfoFormat) ".var_export($rawdata,true));
+        $this->logger->debug("DeezerApi::PlaylistInfoFormat ".var_export($rawdata,true));
         $output['name']=$rawdata['title'];
         $output['id']=$rawdata['id'];
         $output['description']=$rawdata['description'];
@@ -206,10 +233,10 @@ class DeezerApi {
     public function getPlaylistItems($playlistID) {
 
         $playlist = $this->api("/playlist/" . $playlistID);
-//        $this->log->debug("(getPlaylistItems)" . var_export($playlist, true));
+//        $this->logger->debug("(getPlaylistItems)" . var_export($playlist, true));
         $list = array();
         foreach ($playlist['tracks']['data'] as $track) {
-            $this->log->debug("(getPlaylistItems)" . var_export($track, true));
+            $this->logger->debug("DeezerApi::getPlaylistItems " . var_export($track, true));
             
             array_push($list, ["ID" => $track["id"],
                 "Artist" => $track["artist"]["name"],
