@@ -20,7 +20,8 @@
         "slim/slim": "^4.5",
         "psr/log": "^1.1",
         "slim/http": "^1.0",
-        "slim/psr7": "^1.2"
+        "slim/psr7": "^1.2",
+        "illuminate/database": "6.8"
     },
     "config": {
         "preferred-install": "dist"

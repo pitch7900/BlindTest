@@ -9,10 +9,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
-
-use Slim\Psr7\Factory\StreamFactory;
-use GuzzleHttp\Psr7\Stream;
-
+use App\Games\Game;
+use App\Games\Games;
 
 /**
  * Description of BlindTestController
@@ -21,33 +19,33 @@ use GuzzleHttp\Psr7\Stream;
  */
 class BlindTestController extends AbstractTwigController
 {
-
+    /**
+     * @var DeezerApiInterface $deezer
+     */
     private $deezer;
-    private $logger;
-
-    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer) {
-        parent::__construct($twig);
-        $this->logger=$logger;
-        $this->deezer = $deezer;  
-    }
-
-
 
     /**
-     * Return a json array with all blindtest playlist ID in Deezer
-     * @param Request $request
-     * @param Response $response
-     * @return type
+     * @var LoggerInterface $logger
      */
-    public function getPlaylists(Request $request, Response $response)
-    {
-        return $this->withJSON($response,$this->deezer->getBlindtestPlaylists());
+    private $logger;
+
+    /**
+     * @var Games $games
+     */
+    private $games;
+
+    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer, Games $games) {
+        parent::__construct($twig);
+        $this->logger = $logger;
+        $this->deezer = $deezer;  
+        $this->games = $games;
     }
+
 
     /**
      * Return the page for playing with a given playlits ID
      */
-    public function getPlay(Request $request, Response $response, $args)
+    public function getNewPlay(Request $request, Response $response, $args)
     {
         $playlistid = $args['playlistid'];
 
@@ -55,6 +53,29 @@ class BlindTestController extends AbstractTwigController
 
         $arguments['playlistname'] = $this->deezer->getPlaylistName($playlistid);
         $arguments['playlistid']=$playlistid;
+
+
+        $game=New Game($this->logger,$args['playlistid'],
+            $this->deezer->getPlaylistName($playlistid),
+            $this->deezer->getPlaylistItems($playlistid),
+            $this->deezer->getPlaylistPicture($playlistid));
+        $this->games->add($game);
+        return $response->withHeader('Location', '/blindtest/game/'.$game->getGameID().'.html')->withStatus(302);
+    }
+
+
+    /**
+     * Return the page for playing with a given playlits ID
+     */
+    public function getGame(Request $request, Response $response, $args)
+    {
+        $gameid = $args['gameid'];
+        $game=$this->games->get($gameid);
+
+        $arguments['tracks'] = $game->getTrackList();
+
+        $arguments['playlistname'] = $game->getName();
+        $arguments['playlistid']=$game->getID();
 
         return $this->render($response, 'play.twig', $arguments);
     }

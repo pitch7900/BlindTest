@@ -37,12 +37,7 @@ interface DeezerApiInterface {
     public function sendRequest($sUrl);
 
    
-    
-    /**
-     * Return an array with blindtests playlist IDs
-     * @return array
-     */
-    public function getBlindtestPLaylists();
+
 
     
     /**

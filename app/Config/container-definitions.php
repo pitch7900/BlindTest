@@ -11,6 +11,7 @@ use Slim\Views\Twig;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
+use App\Games\Games;
 
 return [
     LoggerInterface::class => function (ContainerInterface $container): LoggerInterface {
@@ -49,4 +50,8 @@ return [
         $playlists = new StaticPlaylists();
         return $playlists;
     },
+    Games::class => function (ContainerInterface $container): Games {
+        $games = new Games($container->get(LoggerInterface::class));
+        return $games;
+    }
 ];
