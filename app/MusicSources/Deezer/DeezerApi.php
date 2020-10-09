@@ -121,7 +121,7 @@ class DeezerApi implements DeezerApiInterface{
 
 
         if ($output === false) {
-            $this->logger->debug("DeezerApi::sendRequest Error curl : " . curl_error($c), E_USER_WARNING);
+            $this->logger->debug("DeezerApi::sendRequest Error curl : " . curl_error($response), E_USER_WARNING);
             //trigger_error('Erreur curl : ' . curl_error($response), E_USER_WARNING);
         } else {
             //curl_close($response);
