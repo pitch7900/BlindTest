@@ -9,8 +9,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
-use App\Games\Game;
-use App\Games\Games;
+use App\Database\Game;
+use App\Database\Games;
+use App\Database\Playlist;
 
 /**
  * Description of BlindTestController
@@ -34,11 +35,10 @@ class BlindTestController extends AbstractTwigController
      */
     private $games;
 
-    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer, Games $games) {
+    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer) {
         parent::__construct($twig);
         $this->logger = $logger;
         $this->deezer = $deezer;  
-        $this->games = $games;
     }
 
 
@@ -54,13 +54,15 @@ class BlindTestController extends AbstractTwigController
         $arguments['playlistname'] = $this->deezer->getPlaylistName($playlistid);
         $arguments['playlistid']=$playlistid;
 
-
-        $game=New Game($this->logger,$args['playlistid'],
-            $this->deezer->getPlaylistName($playlistid),
-            $this->deezer->getPlaylistItems($playlistid),
-            $this->deezer->getPlaylistPicture($playlistid));
-        $this->games->add($game);
-        return $response->withHeader('Location', '/blindtest/game/'.$game->getGameID().'.html')->withStatus(302);
+        // $games = Games::create(['playlists'=>$args['playlistid']]);
+        // $playlist = Playlist::create()
+        // $game=New Game($this->logger,$args['playlistid'],
+        //     $this->deezer->getPlaylistName($playlistid),
+        //     $this->deezer->getPlaylistItems($playlistid),
+        //     $this->deezer->getPlaylistPicture($playlistid));
+        // $this->games->add($game);
+        // return $response->withHeader('Location', '/blindtest/game/'.$game->getGameID().'.html')->withStatus(302);
+        die("Stop here");
     }
 
 

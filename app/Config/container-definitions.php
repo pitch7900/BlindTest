@@ -49,9 +49,5 @@ return [
     StaticPlaylists::class => function (ContainerInterface $container): StaticPlaylists {
         $playlists = new StaticPlaylists();
         return $playlists;
-    },
-    Games::class => function (ContainerInterface $container): Games {
-        $games = new Games($container->get(LoggerInterface::class));
-        return $games;
     }
 ];
