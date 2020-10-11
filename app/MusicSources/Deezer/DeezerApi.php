@@ -209,7 +209,7 @@ class DeezerApi implements DeezerApiInterface
             $this->logger->debug("DeezerApi::getTrackInformations " . var_export($rawdata, true));
         }
 
-        return Track::find($trackid)->first()->toArray();
+        return Track::find($trackid)->toArray();
     }
     /**
      * Search for a playlist based on string
@@ -229,7 +229,7 @@ class DeezerApi implements DeezerApiInterface
             $this->logger->debug("DeezerApi::PlaylistInfoFormat add playlist to DB");
             $this->DBaddPlaylist($playlistID);
         }
-        $playlist = Playlist::find($playlistID)->first();
+        $playlist = Playlist::find($playlistID);
 
 
         $output['name'] = $playlist->playlistname;
@@ -245,14 +245,14 @@ class DeezerApi implements DeezerApiInterface
 
         $output['tracks'] = array();
         foreach ($playlisttracks->get()->playlisttracks_track as $trackid) {
-            $track = Track::find($trackid)->first();
+            $track = Track::find($trackid);
 
             $trackdata = array();
             $trackdata['id'] = $track->id;
             $trackdata['title'] = $track->track_title;
-            $artist = Artist::find($track->track_artist)->first();
+            $artist = Artist::find($track->track_artist);
             $trackdata['artist'] = $artist->artist_name;
-            $album = Album::find($track->track_album)->first();
+            $album = Album::find($track->track_album);
             $trackdata['coverurl'] = $album->album_cover;
             array_push($output['tracks'], $trackdata);
         }

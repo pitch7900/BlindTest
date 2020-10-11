@@ -36,9 +36,15 @@ return function (App $app) {
                         ->setName('blindtest.play');
                 $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
                         ->setName('blindtest.playjsondata');
+                $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')
+                        ->setName('blindtest.playjsondata');
+                $group->get('/game/{gamesid}/current.mp3', BlindTestController::class . ':getStreamMP3Current')
+                        ->setName('blindtest.playjsondata');
                 $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')
                         ->setName('blindtest.newplay');
                 $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')
                         ->setName('blindtest.streammp3');
+                $group->post('/play/checkanswer/{trackid}.json', BlindTestController::class . ':postCheckAnswer')
+                        ->setName('blindtest.checkanswer');
         });
 };

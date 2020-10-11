@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 11, 2020 at 09:43 AM
+-- Generation Time: Oct 11, 2020 at 04:28 PM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -89,6 +89,8 @@ DROP TABLE IF EXISTS `games`;
 CREATE TABLE IF NOT EXISTS `games` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `games_playlist` bigint(20) NOT NULL,
+  `games_currenttrackindex` bigint(20) DEFAULT '0',
+  `games_currenttrack_starttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

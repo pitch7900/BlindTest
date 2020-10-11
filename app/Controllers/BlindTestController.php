@@ -11,6 +11,9 @@ use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
 use App\Database\Game;
 use App\Database\Games;
+use App\Database\Album;
+use App\Database\Artist;
+use App\Database\Track;
 use App\Database\Playlist;
 
 /**
@@ -65,14 +68,9 @@ class BlindTestController extends AbstractTwigController
             ]);
             $order++;
         }
-        // $playlist = Playlist::create()
-        // $game=New Game($this->logger,$args['playlistid'],
-        //     $this->deezer->getPlaylistName($playlistid),
-        //     $this->deezer->getPlaylistItems($playlistid),
-        //     $this->deezer->getPlaylistPicture($playlistid));
-        // $this->games->add($game);
+        
         return $response->withHeader('Location', '/blindtest/game/'.$games->id.'.html')->withStatus(302);
-        // die("Stop here");
+
     }
 
 
@@ -97,7 +95,9 @@ class BlindTestController extends AbstractTwigController
         return $this->render($response, 'play.twig', $arguments);
     }
     
-
+    /**
+     * Return Game Json for a give GameID
+     */
     public function getGameJson(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
@@ -114,7 +114,77 @@ class BlindTestController extends AbstractTwigController
         $arguments['gamesid']=$gamesid;
         return $this->withJson($response,$arguments);
     }
-   
+    
+    /**
+     * only remove accents from the passed string.
+     * @param string $string
+     * @param string $tolower
+     * @return string
+     */
+    private static function removeAccents($string, $tolower = true) {
+        $unwanted_array = array('Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E',
+            'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I', 'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 'Ù' => 'U',
+            'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c',
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o',
+            'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ğ' => 'G', 'İ' => 'I', 'Ş' => 'S', 'ğ' => 'g', 'ı' => 'i', 'ş' => 's', 'ü' => 'u',
+            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', '-' => '', '\/'=>'');
+        $newstring = strtr($string, $unwanted_array);
+
+
+        if ($tolower) {
+            $newstring = strtolower($newstring);
+        }
+
+        return $newstring;
+    }
+    public function postGameCheckCurrent(Request $request, Response $response, $args){
+        $guess = $this->removeAccents(utf8_encode($request->getParam('guess')));
+        $this->logger->debug("BlindtestController::postGameCheckCurrent guess is : ".$guess);
+        $gamesid = $args['gamesid'];
+        $this->logger->debug("BlindtestController::postGameCheckCurrent gamesid : ".$gamesid);
+        $games=Games::find($gamesid);
+        $currentTrackIndex=$games->games_currenttrackindex;
+        $currenttrack=Game::where('game_gamesid',$gamesid)
+                        ->where('game_order',$currentTrackIndex   )
+                        ->get();
+        $this->logger->debug("BlindtestController::postGameCheckCurrent CurrentTrack : ".var_dump($currenttrack,true));
+        $trackid = $currenttrack->game_track;
+        $this->logger->debug("BlindtestController::postGameCheckCurrent Trackid : ".$trackid);
+        
+
+        $track=Track::find($trackid);
+        $artist=Artist::find($track->track_artist);
+        $album=Album::find($track->track_album);
+        $games->games_currenttrackindex=$currentTrackIndex+1;
+        $games->save();
+        return $this->withJson($response,['guess'=>$guess,
+            'title'=>$track->track_title,
+            'picture'=>$album->album_cover,
+            'artist'=>$artist->artist_name]);
+    }
+
+    public function postCheckAnswer(Request $request, Response $response, $args){
+        $gamesid = $args['gamesid'];
+        $guess = $this->removeAccents(utf8_encode($request->getParam('guess')));
+        $trackid = $args['trackid'];
+        $track=Track::find($trackid);
+
+        return $this->withJson( $response,['guess'=>$guess]);
+    }
+
+    public function getStreamMP3Current(Request $request, Response $response, $args){
+        $gamesid = intval($args['gamesid']);
+        $games=Games::find($gamesid);
+        $currentTrackIndex=$games->games_currenttrackindex;
+        $currentgame=Game::where('game_gamesid',$gamesid)
+                        ->where('game_order',$currentTrackIndex)
+                        ->get();
+        die(var_dump($currentgame->game_track,true));
+        $trackid = $currentgame->game_track;
+        $trackdata = $this->deezer->getTrackInformations($trackid);
+        $this->logger->debug("BlindtestController::getStreamMP3Current MP3 TrackID : ".$trackid." should be : ".$trackdata['track_preview']);
+        return $this->withMP3($response,$trackdata['track_preview'],'rb');
+    }
     /**
      * Return an mp3 stream
      * @param Request $request
@@ -125,12 +195,8 @@ class BlindTestController extends AbstractTwigController
     {
         $trackid = $args['trackid'];
         $trackdata = $this->deezer->getTrackInformations($trackid);
-        //$stream=(new  StreamFactory())->createStreamFromFile($trackdata['preview'],'rb');
-        
         $this->logger->debug("BlindtestController::getStreamMP3 MP3 TrackID : ".$trackid." should be : ".$trackdata['track_preview']);
-        // die(var_dump($trackdata,true));
         return $this->withMP3($response,$trackdata['track_preview'],'rb');
-
     }
 
 }

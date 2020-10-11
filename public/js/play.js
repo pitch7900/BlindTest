@@ -3,26 +3,27 @@ var currentplaylist;
 var currentindex;
 var audio;
 var points;
+var gamesid;
 
-var playtitle = function (index) {
+var playtitle = function () {
     $('#Start').addClass('invisible');
     $('#Play').removeClass('invisible');
-    console.log(currentplaylist.tracks[index]);
+    // console.log(currentplaylist.tracks[index]);
     try {
-        if (currentindex != 0) { audio.pause(); }
+        audio.pause();
     } catch (e) {
         console.log("Can't stop the music");
     }
     $("input#YourGuess").first().val("");
-    console.log(currentplaylist.tracks[index].game_track);
-    audio.src='/blindtest/play/' + currentplaylist.tracks[index].game_track + '.mp3';
-    currentlyplaying = currentplaylist.tracks[index];
+    // console.log(currentplaylist.tracks[index].game_track);
+    audio.src = '/blindtest/game/' + gamesid + '/current.mp3';
+    // currentlyplaying = currentplaylist.tracks[index];
     audio.play().then(() => {
         $("#answer").addClass("invisible");
         //Nothing to do
-        $("#artistname").html(currentlyplaying.artist);
-        $("#titlename").html(currentlyplaying.title);
-        $("#trackimage").attr('src',currentlyplaying.coverurl);
+        // $("#artistname").html(currentlyplaying.artist);
+        // $("#titlename").html(currentlyplaying.title);
+        // $("#trackimage").attr('src',currentlyplaying.coverurl);
     }).catch((error) => {
         // alert("Please allow your browser to autoplay music");
         $('#MainPage').addClass('invisible');
@@ -31,7 +32,7 @@ var playtitle = function (index) {
 };
 
 
-var playpause = function (){
+var playpause = function () {
     if (!audio.paused) {
         audio.pause();
         $('#audiocontroller>i.far.fa-pause-circle').addClass('invisible');
@@ -52,9 +53,8 @@ function waitfor(seconds) {
         $("#waitbeforenext").html(i);
         if (i <= 0) {
             clearInterval(countdown);
-            currentindex++;
             $('#btnsubmitanswer').prop('disabled', false);
-            playtitle(currentindex);
+            playtitle();
         }
     }, 1000);
 }
@@ -82,100 +82,104 @@ var Catalog = function () {
         // playlistid = $('#MainPage').attr('playlistid');
         gamesid = $('#MainPage').attr('gamesid');
         console.log(gamesid);
-        $.get('/blindtest/game/'+gamesid+'.json' , function (jsondata) {
-            console.log(jsondata);
-            currentplaylist = jsondata;
-            currentindex = 0;
-            audio=new Audio();
-            //play first title
-            $('#startbutton').prop('disabled', false);
+        // $.get('/blindtest/game/'+gamesid+'.json' , function (jsondata) {
+        //     console.log(jsondata);
+        //     currentplaylist = jsondata;
+        //     currentindex = 0;
+        //     
+        //     //play first title
 
-        });
+
+        // });
+        audio = new Audio();
+        $('#startbutton').prop('disabled', false);
     };
 
     var handler_CheckAnswer = function () {
         $("form#FormGuess").submit(function (event) {
-            guessentered = removeAccentsAndSpecialChars($("input#YourGuess").first().val().toLowerCase());
+            guessentered = $("input#YourGuess").first().val().toLowerCase();
             console.log("Guess is " + guessentered);
-            guesssplited = guessentered.split(" ");
-            checkartist = false;
-            checktitle = false;
-            realartist = removeAccentsAndSpecialChars(currentlyplaying.artist);
-            realtitle = removeAccentsAndSpecialChars(currentlyplaying.title);
-            realartistsplitted = realartist.split(" ");
-            realtitlesplitted = realtitle.split(" ");
-            for (var i = 0; i < guesssplited.length; i++) {
-                console.log("Guess Splited :"+guesssplited[i]+" ("+guesssplited[i].length+")");
-                if (guesssplited[i].length<=1) {break;}
-                if (guesssplited[i].length > 1 && guesssplited[i].length <= 4) {
-                    for (var j = 0; j < realartistsplitted.length; j++) {
-                        if (guesssplited[i] === realartistsplitted[j]) {
-                            console.log(guesssplited[i] +','+ realartistsplitted[j])
-                            checkartist = true;
-                        }
-                    }
-                    for (var j = 0; j < realtitlesplitted.length; j++) {
-                        if (guesssplited[i] === realtitlesplitted[j]) {
-                            console.log(guesssplited[i] +','+ realtitlesplitted[j])
-                            checktitle = true;
-                        }
-                    }
-
+            // console.log("Should search answer for track "+currentplaylist.tracks[currentindex].game_track);
+            $.post('/blindtest/game/' + gamesid + '/check.json', { guess: guessentered }, function (jsondata) {
+                console.log(jsondata);
+                $("#artist").removeClass();
+                $("#title").removeClass();
+                checkartist = false;
+                checktitle = false;
+                if (checkartist) {
+                    $("#artist").addClass("alert alert-success");
+                    points++;
                 } else {
-
-                    if (realartist.indexOf(guesssplited[i]) != -1) {
-
-                        checkartist = true;
-                    } else {
-                        for (var j = 0; j < realartistsplitted.length; j++) {
-                            if (getEditDistance(guesssplited[i], realartistsplitted[j]) <= 2) {
-                                checkartist = true;
-                            }
-                        }
-                    }
-
-
-                    if (realtitle.indexOf(guesssplited[i]) != -1) {
-                        checktitle = true;
-                    } else {
-
-                        for (var j = 0; j < realtitlesplitted.length; j++) {
-                            if (getEditDistance(guesssplited[i], realtitlesplitted[j]) <= 2) {
-                                checktitle = true;
-                            }
-                        }
-                    }
+                    $("#artist").addClass("alert alert-danger");
                 }
-                console.log("artist : " + currentlyplaying.artist.toLowerCase().indexOf(guesssplited[i]));
-                console.log("title : " + currentlyplaying.title.toLowerCase().indexOf(guesssplited[i]));
-                console.log(getEditDistance(guesssplited[i], currentlyplaying.artist));
-                console.log(getEditDistance(guesssplited[i], currentlyplaying.title));
-            }
+                if (checktitle) {
+                    $("#title").addClass("alert alert-success");
+                    points++;
+                } else {
+                    $("#title").addClass("alert alert-danger");
+                }
+                $("#currentscore").html(points);
+                $("#answer").removeClass("invisible");
+                waitfor(4);
+            });
+            // guesssplited = guessentered.split(" ");
+            // checkartist = false;
+            // checktitle = false;
+            // realartist = removeAccentsAndSpecialChars(currentlyplaying.artist);
+            // realtitle = removeAccentsAndSpecialChars(currentlyplaying.title);
+            // realartistsplitted = realartist.split(" ");
+            // realtitlesplitted = realtitle.split(" ");
+            // for (var i = 0; i < guesssplited.length; i++) {
+            //     console.log("Guess Splited :"+guesssplited[i]+" ("+guesssplited[i].length+")");
+            //     if (guesssplited[i].length<=1) {break;}
+            //     if (guesssplited[i].length > 1 && guesssplited[i].length <= 4) {
+            //         for (var j = 0; j < realartistsplitted.length; j++) {
+            //             if (guesssplited[i] === realartistsplitted[j]) {
+            //                 console.log(guesssplited[i] +','+ realartistsplitted[j])
+            //                 checkartist = true;
+            //             }
+            //         }
+            //         for (var j = 0; j < realtitlesplitted.length; j++) {
+            //             if (guesssplited[i] === realtitlesplitted[j]) {
+            //                 console.log(guesssplited[i] +','+ realtitlesplitted[j])
+            //                 checktitle = true;
+            //             }
+            //         }
+
+            //     } else {
+
+            //         if (realartist.indexOf(guesssplited[i]) != -1) {
+
+            //             checkartist = true;
+            //         } else {
+            //             for (var j = 0; j < realartistsplitted.length; j++) {
+            //                 if (getEditDistance(guesssplited[i], realartistsplitted[j]) <= 2) {
+            //                     checkartist = true;
+            //                 }
+            //             }
+            //         }
+
+
+            //         if (realtitle.indexOf(guesssplited[i]) != -1) {
+            //             checktitle = true;
+            //         } else {
+
+            //             for (var j = 0; j < realtitlesplitted.length; j++) {
+            //                 if (getEditDistance(guesssplited[i], realtitlesplitted[j]) <= 2) {
+            //                     checktitle = true;
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     console.log("artist : " + currentlyplaying.artist.toLowerCase().indexOf(guesssplited[i]));
+            //     console.log("title : " + currentlyplaying.title.toLowerCase().indexOf(guesssplited[i]));
+            //     console.log(getEditDistance(guesssplited[i], currentlyplaying.artist));
+            //     console.log(getEditDistance(guesssplited[i], currentlyplaying.title));
+            // }
 
 
             event.preventDefault();
-            $("#artist").removeClass();
-            $("#title").removeClass();
-            if (checkartist) {
-                $("#artist").addClass("alert alert-success");
 
-                points++;
-            } else {
-                $("#artist").addClass("alert alert-danger");
-
-
-            }
-            if (checktitle) {
-                $("#title").addClass("alert alert-success");
-
-                points++;
-            } else {
-                $("#title").addClass("alert alert-danger");
-
-            }
-            $("#currentscore").html(points);
-            $("#answer").removeClass("invisible");
-            waitfor(4);
         });
 
     };
