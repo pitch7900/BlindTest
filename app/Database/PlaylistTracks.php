@@ -11,15 +11,9 @@ class PlaylistTracks extends Model {
     public $timestamps = true;
     protected $table = 'playlistTracks';
     protected $primaryKey = 'id';
-    protected $fillable = ['playlist','track'];
+    protected $fillable = ['playlisttracks_playlist','playlisttracks_track'];
     
-    public function toArray(){
-        return [
-            'id'=>$this->id,
-            'playlist'=>$this->playlist,
-            'track'=>$this->track
-        ];
-    }
+  
     
     /**
      * Return XML formatted data for an entry

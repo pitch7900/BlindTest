@@ -11,11 +11,8 @@ class Games extends Model {
    public $timestamps = true;
    protected $table = 'games';
    protected $primaryKey = 'id';
-   protected $fillable = ['playlist'];
-   /**
-    * @var LoggerInterface $logger
-    */
-   private $logger;
+   protected $fillable = ['games_playlist'];
+  
 
    /**
     * @var array $gamelist

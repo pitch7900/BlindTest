@@ -49,20 +49,29 @@ class BlindTestController extends AbstractTwigController
     {
         $playlistid = $args['playlistid'];
 
-        $arguments['tracks'] = $this->deezer->getPlaylistItems($playlistid);
+        $tracks = $this->deezer->getPlaylistItems($playlistid);
+        shuffle($tracks);
+        
 
-        $arguments['playlistname'] = $this->deezer->getPlaylistName($playlistid);
-        $arguments['playlistid']=$playlistid;
-
-        // $games = Games::create(['playlists'=>$args['playlistid']]);
+        $games = Games::create(['games_playlist'=>$playlistid]);
+        $order=0;
+        $gamesid=$games->id;
+        foreach ($tracks as $track){
+            Game::create([
+                'game_track'=>$track['id'],
+                'game_order' => $order,
+                'game_gamesid' => $gamesid
+            ]);
+            $order++;
+        }
         // $playlist = Playlist::create()
         // $game=New Game($this->logger,$args['playlistid'],
         //     $this->deezer->getPlaylistName($playlistid),
         //     $this->deezer->getPlaylistItems($playlistid),
         //     $this->deezer->getPlaylistPicture($playlistid));
         // $this->games->add($game);
-        // return $response->withHeader('Location', '/blindtest/game/'.$game->getGameID().'.html')->withStatus(302);
-        die("Stop here");
+        return $response->withHeader('Location', '/blindtest/game/'.$games->id.'.html')->withStatus(302);
+        // die("Stop here");
     }
 
 

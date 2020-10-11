@@ -11,16 +11,8 @@ class Artist extends Model {
     public $timestamps = true;
     protected $table = 'artist';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','name','link','tracklist'];
-    
-    public function toArray(){
-        return [
-            'id'=>$this->id,
-            'name'=>$this->name,
-            'link'=>$this->link,
-            'tracklist'=>$this->tracklist
-        ];
-    }
+    protected $fillable = ['id','artist_name','artist_link','artist_tracklist'];
+
     
     
     /**

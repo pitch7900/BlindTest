@@ -11,21 +11,10 @@ class Track extends Model {
     public $timestamps = true;
     protected $table = 'track';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','title','link','preview','artist','album','duration'];
+    protected $fillable = ['id','track_title','track_link','track_preview','track_artist','track_album','track_duration'];
     
     
-    public function toArray()
-    {
-        return [
-            'id'=>$this->id,
-            'title'=>$this->title,
-            'link'=>$this->link,
-            'preview'=>$this->preview,
-            'artist'=>Artist::find($this['artist'])->first()->toArray(),
-            'album'=>Album::find($this['album'])->first()->toArray(),
-            'duration'=>$this->duration
-        ];
-    }
+  
     /**
      * Return XML formatted data for an entry
      * @return type

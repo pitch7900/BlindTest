@@ -11,16 +11,9 @@ class Album extends Model {
     public $timestamps = true;
     protected $table = 'album';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','title','tracklist','cover'];
+    protected $fillable = ['id','album_title','album_tracklist','album_cover'];
     
-    public function toArray(){
-        return [
-            'id'=>$this->id,
-            'title'=>$this->title,
-            'tracklist'=>$this->tracklist,
-            'cover'=>$this->cover
-        ];
-    }
+   
     
     /**
      * Return XML formatted data for an entry

@@ -10,7 +10,7 @@ class Game  extends Model {
    public $timestamps = true;
    protected $table = 'game';
    protected $primaryKey = 'id';
-   protected $fillable = ['gameid','trackid','order'];
+   protected $fillable = ['game_gameid','game_track','game_order'];
    /**
     * @var LoggerInterface $logger
     */
