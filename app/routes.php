@@ -32,8 +32,10 @@ return function (App $app) {
 
 
         $app->group('/blindtest', function (RouteCollectorProxy $group) {
-                $group->get('/game/{gameid}.html', BlindTestController::class . ':getGame')
+                $group->get('/game/{gamesid}.html', BlindTestController::class . ':getGameHTML')
                         ->setName('blindtest.play');
+                $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
+                        ->setName('blindtest.playjsondata');
                 $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')
                         ->setName('blindtest.newplay');
                 $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')

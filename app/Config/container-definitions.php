@@ -33,14 +33,16 @@ return [
         $preferences = $container->get(Preferences::class);
 
         // Instantiate twig.
-        return Twig::create(
+        $twig = Twig::create(
             $preferences->getRootPath() . '/resources/views',
             [
                 'cache' => $preferences->getRootPath() . '/cache',
                 'auto_reload' => true,
-                'debug' => false,
+                'debug' => true,
             ]
         );
+        $twig->addExtension(new \Twig\Extension\DebugExtension());
+        return $twig;
     },
     DeezerApiInterface::class => function (ContainerInterface $container): DeezerApiInterface {
         $deezerapi = new DeezerApi($container->get(LoggerInterface::class));

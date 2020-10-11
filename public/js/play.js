@@ -14,7 +14,8 @@ var playtitle = function (index) {
         console.log("Can't stop the music");
     }
     $("input#YourGuess").first().val("");
-    audio.src='/blindtest/play/' + currentplaylist.tracks[index].id + '.mp3';
+    console.log(currentplaylist.tracks[index].game_track);
+    audio.src='/blindtest/play/' + currentplaylist.tracks[index].game_track + '.mp3';
     currentlyplaying = currentplaylist.tracks[index];
     audio.play().then(() => {
         $("#answer").addClass("invisible");
@@ -78,9 +79,11 @@ function removeAccentsAndSpecialChars(input) {
 var Catalog = function () {
     var load_playlist = function () {
         points = 0;
-        playlistid = $('#MainPage').attr('playlistid');
-        console.log(playlistid);
-        $.get('/deezer/playlist/' + playlistid + '/info.json', function (jsondata) {
+        // playlistid = $('#MainPage').attr('playlistid');
+        gamesid = $('#MainPage').attr('gamesid');
+        console.log(gamesid);
+        $.get('/blindtest/game/'+gamesid+'.json' , function (jsondata) {
+            console.log(jsondata);
             currentplaylist = jsondata;
             currentindex = 0;
             audio=new Audio();

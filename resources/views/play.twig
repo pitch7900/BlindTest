@@ -2,7 +2,7 @@
 
 
 {% block headers %}
-	<link rel="stylesheet" href="/css/progress.css">
+	
 {% endblock %}
 
 
@@ -14,19 +14,18 @@
 	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
+	{# {{ dump(tracks) }} #}
 	<div id="BrowserError" class="row invisible">
 
 		<div class="alert alert-danger" role="alert">
-			<h4 class="alert-heading">Browser allert</h4>
-			<p>Your browser doesn't allow automatic music play</p>
-			<p class="mb-0">Please change the settings, it should be located near the address bar</p>
-			<hr>
-
-			{{ include('elements/BrowserErrorFF.twig') }}
+			<h4 class="alert-heading">Whoop's someting went wrong</h4>
+			<p>We were not able to play this music</p>
+			<p class="mb-0">Please check your browser permissions or retry later</p>
+			
 
 		</div>
 	</div>
-	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}">
+	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}" >
 		<div class="col-sm-3">
 			<div id="score">
 				<h1>

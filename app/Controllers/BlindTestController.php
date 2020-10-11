@@ -57,8 +57,9 @@ class BlindTestController extends AbstractTwigController
         $order=0;
         $gamesid=$games->id;
         foreach ($tracks as $track){
+            $this->logger->debug("BlindTestController::getNewPlay inserting trackid :" .$track['playlisttracks_track']);
             Game::create([
-                'game_track'=>$track['id'],
+                'game_track'=>$track['playlisttracks_track'],
                 'game_order' => $order,
                 'game_gamesid' => $gamesid
             ]);
@@ -78,19 +79,41 @@ class BlindTestController extends AbstractTwigController
     /**
      * Return the page for playing with a given playlits ID
      */
-    public function getGame(Request $request, Response $response, $args)
+    public function getGameHTML(Request $request, Response $response, $args)
     {
-        $gameid = $args['gameid'];
-        $game=$this->games->get($gameid);
+        $gamesid = $args['gamesid'];
+        // $game=Game::where('game_gamesid',$gamesid)
+        //     ->join('track', 'game.game_track', '=', 'track.id')
+        //     ->whereNotNull('track_preview')
+        //     ->select('game_track')
+        //     ->get();
 
-        $arguments['tracks'] = $game->getTrackList();
-
-        $arguments['playlistname'] = $game->getName();
-        $arguments['playlistid']=$game->getID();
+        // $arguments['tracks'] = $game->toArray();
+        $playlistid=Games::find($gamesid)->games_playlist;
+        $arguments['playlistname'] = Playlist::find($playlistid)->name;
+        $arguments['playlistid']=$playlistid;
+        $arguments['gamesid']=$gamesid;
 
         return $this->render($response, 'play.twig', $arguments);
     }
- 
+    
+
+    public function getGameJson(Request $request, Response $response, $args)
+    {
+        $gamesid = $args['gamesid'];
+        $game=Game::where('game_gamesid',$gamesid)
+            ->join('track', 'game.game_track', '=', 'track.id')
+            ->whereNotNull('track_preview')
+            ->select('game_track')
+            ->get();
+
+        $arguments['tracks'] = $game->toArray();
+        $playlistid=Games::find($gamesid)->games_playlist;
+        $arguments['playlistname'] = Playlist::find($playlistid)->name;
+        $arguments['playlistid']=$playlistid;
+        $arguments['gamesid']=$gamesid;
+        return $this->withJson($response,$arguments);
+    }
    
     /**
      * Return an mp3 stream
@@ -103,8 +126,10 @@ class BlindTestController extends AbstractTwigController
         $trackid = $args['trackid'];
         $trackdata = $this->deezer->getTrackInformations($trackid);
         //$stream=(new  StreamFactory())->createStreamFromFile($trackdata['preview'],'rb');
-        $this->logger->debug("BlindtestController::getStreamMP3 MP3 TrackID : ".$trackid." should be : ".$trackdata['preview']);
-        return $this->withMP3($response,$trackdata['preview'],'rb');
+        
+        $this->logger->debug("BlindtestController::getStreamMP3 MP3 TrackID : ".$trackid." should be : ".$trackdata['track_preview']);
+        // die(var_dump($trackdata,true));
+        return $this->withMP3($response,$trackdata['track_preview'],'rb');
 
     }
 
