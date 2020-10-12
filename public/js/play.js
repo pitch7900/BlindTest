@@ -100,27 +100,32 @@ var Catalog = function () {
             guessentered = $("input#YourGuess").first().val().toLowerCase();
             console.log("Guess is " + guessentered);
             // console.log("Should search answer for track "+currentplaylist.tracks[currentindex].game_track);
-            $.post('/blindtest/game/' + gamesid + '/check.json', { guess: guessentered }, function (jsondata) {
+            $.post('/blindtest/game/' + gamesid + '/check.json', { guess: guessentered }).done(function (jsondata) {
+                alert("TEST");
                 console.log(jsondata);
-                $("#artist").removeClass();
-                $("#title").removeClass();
-                checkartist = false;
-                checktitle = false;
-                if (checkartist) {
-                    $("#artist").addClass("alert alert-success");
-                    points++;
-                } else {
-                    $("#artist").addClass("alert alert-danger");
-                }
-                if (checktitle) {
-                    $("#title").addClass("alert alert-success");
-                    points++;
-                } else {
-                    $("#title").addClass("alert alert-danger");
-                }
-                $("#currentscore").html(points);
-                $("#answer").removeClass("invisible");
-                waitfor(4);
+                // console.log("Should check the answer");
+                // $("#trackimage").attr('src',jsondata.picture);
+                // $("#artistname").html(jsondata.artist);
+                // $("#titlename").html(jsondata.title);
+                // $("#artist").removeClass();
+                // $("#title").removeClass();
+                // checkartist = false;
+                // checktitle = false;
+                // if (checkartist) {
+                //     $("#artist").addClass("alert alert-success");
+                //     points++;
+                // } else {
+                //     $("#artist").addClass("alert alert-danger");
+                // }
+                // if (checktitle) {
+                //     $("#title").addClass("alert alert-success");
+                //     points++;
+                // } else {
+                //     $("#title").addClass("alert alert-danger");
+                // }
+                // $("#currentscore").html(points);
+                // $("#answer").removeClass("invisible");
+                // waitfor(4);
             });
             // guesssplited = guessentered.split(" ");
             // checkartist = false;
@@ -178,7 +183,7 @@ var Catalog = function () {
             // }
 
 
-            event.preventDefault();
+            // event.preventDefault();
 
         });
 

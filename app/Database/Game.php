@@ -2,8 +2,6 @@
 
 namespace App\Database;
 
-
-use Psr\Log\LoggerInterface;;
 use Illuminate\Database\Eloquent\Model;
 
 class Game  extends Model {
@@ -11,11 +9,4 @@ class Game  extends Model {
    protected $table = 'game';
    protected $primaryKey = 'id';
    protected $fillable = ['game_gamesid','game_track','game_order'];
-   /**
-    * @var LoggerInterface $logger
-    */
-   private $logger;
-
-   
-
 }

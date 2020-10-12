@@ -69,7 +69,7 @@ class BlindTestController extends AbstractTwigController
             $order++;
         }
         
-        return $response->withHeader('Location', '/blindtest/game/'.$games->id.'.html')->withStatus(302);
+        return $response->withHeader('Location','/blindtest/game/'.$games->id.'/game.html')->withStatus(302);
 
     }
 
@@ -80,13 +80,7 @@ class BlindTestController extends AbstractTwigController
     public function getGameHTML(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        // $game=Game::where('game_gamesid',$gamesid)
-        //     ->join('track', 'game.game_track', '=', 'track.id')
-        //     ->whereNotNull('track_preview')
-        //     ->select('game_track')
-        //     ->get();
-
-        // $arguments['tracks'] = $game->toArray();
+      
         $playlistid=Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->name;
         $arguments['playlistid']=$playlistid;
@@ -140,15 +134,21 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args){
         $guess = $this->removeAccents(utf8_encode($request->getParam('guess')));
         $this->logger->debug("BlindtestController::postGameCheckCurrent guess is : ".$guess);
-        $gamesid = $args['gamesid'];
-        $this->logger->debug("BlindtestController::postGameCheckCurrent gamesid : ".$gamesid);
+        $gamesid = intval($args['gamesid']);
         $games=Games::find($gamesid);
         $currentTrackIndex=$games->games_currenttrackindex;
-        $currenttrack=Game::where('game_gamesid',$gamesid)
-                        ->where('game_order',$currentTrackIndex   )
-                        ->get();
-        $this->logger->debug("BlindtestController::postGameCheckCurrent CurrentTrack : ".var_dump($currenttrack,true));
-        $trackid = $currenttrack->game_track;
+        $currentgame=Game::where([
+                            ['game_gamesid','=',$gamesid],
+                            ['game_order','=',$currentTrackIndex]
+                        ])
+                        ->first();
+    
+        $trackid = $currentgame->game_track;
+        $trackdata = $this->deezer->getTrackInformations($trackid);
+
+
+        $this->logger->debug("BlindtestController::postGameCheckCurrent CurrentTrack : ".var_dump($trackdata,true));
+
         $this->logger->debug("BlindtestController::postGameCheckCurrent Trackid : ".$trackid);
         
 
@@ -176,10 +176,12 @@ class BlindTestController extends AbstractTwigController
         $gamesid = intval($args['gamesid']);
         $games=Games::find($gamesid);
         $currentTrackIndex=$games->games_currenttrackindex;
-        $currentgame=Game::where('game_gamesid',$gamesid)
-                        ->where('game_order',$currentTrackIndex)
-                        ->get();
-        die(var_dump($currentgame->game_track,true));
+        $currentgame=Game::where([
+                            ['game_gamesid','=',$gamesid],
+                            ['game_order','=',$currentTrackIndex]
+                        ])
+                        ->first();
+    
         $trackid = $currentgame->game_track;
         $trackdata = $this->deezer->getTrackInformations($trackid);
         $this->logger->debug("BlindtestController::getStreamMP3Current MP3 TrackID : ".$trackid." should be : ".$trackdata['track_preview']);
