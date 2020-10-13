@@ -45,7 +45,7 @@ abstract class AbstractTwigController extends AbstractController
      */
     protected function withJSON(Response $response, array $payload = []): Response
     {
-        $response->getBody()->write(json_encode($payload));
+        $response->getBody()->write(($payload));
         return $response->withHeader('Content-type', 'application/json');
     }
 

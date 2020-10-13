@@ -100,7 +100,7 @@ var Catalog = function () {
             guessentered = $("input#YourGuess").first().val().toLowerCase();
             console.log("Guess is " + guessentered);
             // console.log("Should search answer for track "+currentplaylist.tracks[currentindex].game_track);
-            $.post('/blindtest/game/' + gamesid + '/check.json', { guess: guessentered }).done(function (jsondata) {
+            $.post('/blindtest/game/' + gamesid + '/check.json', { guess: guessentered },function (jsondata) {
                 alert("TEST");
                 console.log(jsondata);
                 // console.log("Should check the answer");
@@ -126,7 +126,7 @@ var Catalog = function () {
                 // $("#currentscore").html(points);
                 // $("#answer").removeClass("invisible");
                 // waitfor(4);
-            });
+            },'json');
             // guesssplited = guessentered.split(" ");
             // checkartist = false;
             // checktitle = false;
