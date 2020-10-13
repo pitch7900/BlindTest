@@ -324,7 +324,7 @@ class DeezerApi implements DeezerApiInterface
             'id' => $album['id'],
             'album_title' => $album['title'],
             'album_tracklist' => $album['tracklist'],
-            'album_cover' => $album['cover']
+            'album_cover' => $album['cover_xl']
         ]);
         return $album['id'];
     }
@@ -368,7 +368,7 @@ class DeezerApi implements DeezerApiInterface
             'playlist_link' => $playlist['link'],
             'playlist_picture' => $playlist['picture_xl']
         ]);
-        //add to database
+        //Add each Track to database
         foreach ($tracks as $track) {
             $this->DBaddTrack($track);
             PlaylistTracks::updateOrCreate([
