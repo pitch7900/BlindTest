@@ -20,6 +20,8 @@ date_default_timezone_set('Europe/Zurich');
 
 require $rootPath . '/vendor/autoload.php';
 
+require_once __DIR__ . '/database.php';
+
 // Create the container for dependency injection.
 try {
     $container = ContainerFactory::create($rootPath);

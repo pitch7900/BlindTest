@@ -11,6 +11,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
+use App\Games\Games;
 
 return [
     ExceptionDemoController::class => function (ContainerInterface $container): ExceptionDemoController {
@@ -25,7 +26,7 @@ return [
     BlindtestController::class => function (ContainerInterface $container): BlindtestController {
         return new BlindtestController($container->get(Twig::class),
             $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class),
+            $container->get(DeezerApiInterface::class)
         );
     },
     HomeController::class => function (ContainerInterface $container): HomeController {

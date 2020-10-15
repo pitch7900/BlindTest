@@ -32,11 +32,19 @@ return function (App $app) {
 
 
         $app->group('/blindtest', function (RouteCollectorProxy $group) {
-                $group->get('/playlists.json', BlindTestController::class . ':getPlaylists')
-                        ->setName('blindtest.playlist');
-                $group->get('/play/{playlistid}.html', BlindTestController::class . ':getPlay')
+                $group->get('/game/{gamesid}/game.html', BlindTestController::class . ':getGameHTML')
                         ->setName('blindtest.play');
+                $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
+                        ->setName('blindtest.playjsondata');
+                $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')
+                        ->setName('blindtest.playjsondata');
+                
+                $group->get('/game/{gamesid}/currenttrack.json', BlindTestController::class . ':getCurrentTrackJson')
+                        ->setName('blindtest.getcurrenttrackjson');
+                $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')
+                        ->setName('blindtest.newplay');
                 $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')
                         ->setName('blindtest.streammp3');
+                
         });
 };

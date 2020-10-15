@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
 use Slim\Psr7\Factory\StreamFactory;
+use Slim\Psr7\Stream;
 
 abstract class AbstractTwigController extends AbstractController
 {
@@ -45,13 +46,22 @@ abstract class AbstractTwigController extends AbstractController
      */
     protected function withJSON(Response $response, array $payload = []): Response
     {
-        $response->getBody()->write(json_encode($payload));
-        return $response->withHeader('Content-type', 'application/json');
+        $stream = (new StreamFactory())->createStream(json_encode($payload), 'rb');
+
+        $response = $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->withHeader('Expires','Mon, 26 Jul 1997 05:00:00 GMT^')
+            ->withBody($stream)
+            ->withStatus(200);
+        return $response;
     }
 
     protected function withMP3(Response $response, string $mp3filepath): Response
     {
-        $stream=(new StreamFactory())->createStreamFromFile($mp3filepath,'rb');
-        return $response->withHeader('Content-type', 'audio/mp3')->withBody($stream);
+        $stream = (new StreamFactory())->createStreamFromFile($mp3filepath, 'rb');
+        return $response->withHeader('Content-type', 'audio/mp3')->withBody($stream)
+            ->withHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->withHeader('Expires','Mon, 26 Jul 1997 05:00:00 GMT^');
     }
 }

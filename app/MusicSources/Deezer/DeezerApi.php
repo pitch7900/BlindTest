@@ -1,7 +1,14 @@
 <?php
 
 namespace App\MusicSources\Deezer;
+
+use App\Database\Playlist;
+use App\Database\Track;
+use App\Database\Artist;
+use App\Database\Album;
+use App\Database\PlaylistTracks;
 use Psr\Log\LoggerInterface;;
+
 use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
 
 /**
@@ -15,7 +22,8 @@ use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
  * @version 0.2
  * 
  */
-class DeezerApi implements DeezerApiInterface{
+class DeezerApi implements DeezerApiInterface
+{
     /**
      * This is the url to call the API
      *
@@ -57,26 +65,29 @@ class DeezerApi implements DeezerApiInterface{
      */
     private $logger;
 
-    public function __construct(LoggerInterface $logger) {
-        $this->logger=$logger;
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
         $this->logger->debug("DeezerApi::__contruct New DeeZerApi Constructor called");
         $this->initiateThrotller();
         $this->initialized = true;
     }
-    
-    
+
+
     /**
      * Return a true if this class is correctly initialized
      * @return boolean
      */
-    public function isInitialized() {
+    public function isInitialized()
+    {
         return $this->initialized;
     }
 
     /**
      * Initialize Throttler with values set in the class
      */
-    private function initiateThrotller() {
+    private function initiateThrotller()
+    {
         $this->ThrottlerRules = new GuzzleAdvancedThrottle\RequestLimitRuleset([
             $this->_sApiUrl => [
                 [
@@ -93,7 +104,8 @@ class DeezerApi implements DeezerApiInterface{
      * @param string $sUrl 
      * @return void
      */
-    public function sendRequest($sUrl) {
+    public function sendRequest($sUrl)
+    {
         $this->ThrottlerStack = new \GuzzleHttp\HandlerStack();
         $this->ThrottlerStack->setHandler(new \GuzzleHttp\Handler\CurlHandler());
 
@@ -102,10 +114,10 @@ class DeezerApi implements DeezerApiInterface{
         $this->ThrottlerStack->push($throttle());
 
         $client = new \GuzzleHttp\Client([
-                'base_uri' => $this->_sApiUrl, 
-                'handler' => $this->ThrottlerStack,
-                'verify' => false
-            ]);
+            'base_uri' => $this->_sApiUrl,
+            'handler' => $this->ThrottlerStack,
+            'verify' => false
+        ]);
         $RequestToBeDone = true;
         do {
             try {
@@ -121,7 +133,7 @@ class DeezerApi implements DeezerApiInterface{
 
 
         if ($output === false) {
-            $this->logger->debug("DeezerApi::sendRequest Error curl : " . curl_error($c), E_USER_WARNING);
+            $this->logger->debug("DeezerApi::sendRequest Error curl : " . curl_error($response), E_USER_WARNING);
             //trigger_error('Erreur curl : ' . curl_error($response), E_USER_WARNING);
         } else {
             //curl_close($response);
@@ -129,24 +141,13 @@ class DeezerApi implements DeezerApiInterface{
         }
     }
 
-    private function search_params($param) {
+    private function search_params($param)
+    {
         $url = $this->_sApiUrl . '/search?q=' . $param;
         return json_decode($this->sendRequest($url), true);
     }
 
-    /**
-     * Return an array with blindtests playlist IDs
-     * @return array
-     */
-    public function getBlindtestPLaylists(){
-        $ids=getenv('playlistsids');
-        $this->logger->debug("DeezerApi::getBlindtestPLaylists Blindtest playlists IDs : " . print_r($ids,true));
 
-        $ids=preg_replace("/[^0-9,]/", "", $ids );
-        $ids=explode(",",$ids);
-        $this->logger->debug("DeezerApi::getBlindtestPLaylists Blindtest playlists IDs : " . print_r($ids,true));
-        return $ids;
-    }
 
     /**
      * Call the api
@@ -156,101 +157,248 @@ class DeezerApi implements DeezerApiInterface{
      * @return array
      * @author Mathieu BUONOMO
      */
-    private function api($sUrl) {
-        $sGet = $this->_sApiUrl . $sUrl ;
+    private function api($sUrl)
+    {
+        $sGet = $this->_sApiUrl . $sUrl;
         return json_decode($this->sendRequest($sGet), true);
     }
 
 
-    
+
     /**
      * Return the name of a playlist for a given PlaylistID
      * @param int $playlistID
      * @return string
      */
-    public function getPlaylistName($playlistID) {
-        return $this->api("/playlist/".$playlistID)['title'];        
+    public function getPlaylistName($playlistID)
+    {
+        $playlist = Playlist::find($playlistID);
+        //Track is not in the DB yet. Add it.
+        if (empty($playlist)) {
+            $this->DBaddPlaylist($playlistID);
+        }
+        return Playlist::find($playlistID)->playlist_name;
     }
-    
+
     /**
      * Return the link to the picture of a playlist for a given PlaylistID
      * @param int $playlistID
      * @return string
      */
-    public function getPlaylistPicture($playlistID) {
-        return $this->api("/playlist/".$playlistID)['picture_big'];        
+    public function getPlaylistPicture($playlistID)
+    {
+        $playlist = Playlist::find($playlistID);
+        //Track is not in the DB yet. Add it.
+        if (empty($playlist)) {
+            $this->DBaddPlaylist($playlistID);
+        }
+        return Playlist::find($playlistID)->playlist_picture;
     }
 
+    /**
+     * Retrieve track information
+     * @param int $trackid
+     */
+    public function getTrackInformations($trackid)
+    {
+        $track = Track::find($trackid);
+        //Track is not in the DB yet. Add it.
+        if (empty($track)) {
+            $rawdata = $this->api("/track/" . $trackid);
+            $this->DBaddTrack($rawdata);
+            $this->logger->debug("DeezerApi::getTrackInformations " . var_export($rawdata, true));
+        }
 
-    public function getTrackInformations($trackid) {
-        $rawdata=$this->api("/track/".$trackid);
-        $this->logger->debug("DeezerApi::getTrackInformations ".var_export($rawdata,true));
-        return $rawdata ;  
+        return Track::find($trackid)->toArray();
     }
     /**
      * Search for a playlist based on string
      * @param string $playliststring
      * @return json
      */
-    public function searchPlaylist($playliststring){
+    public function searchPlaylist($playliststring)
+    {
         $url = $this->_sApiUrl . '/search/playlist?q=' . $playliststring;
         return json_decode($this->sendRequest($url), true);
     }
 
-    private function PlaylistInfoFormat($rawdata){
-        $this->logger->debug("DeezerApi::PlaylistInfoFormat ".var_export($rawdata,true));
-        $output['name']=$rawdata['title'];
-        $output['id']=$rawdata['id'];
-        $output['description']=$rawdata['description'];
-        $output['tracks']=$rawdata['nb_tracks'];
-        $output['picture']=$rawdata['picture_big'];
-        $output['nb_tracks']=$rawdata['nb_tracks'];
-        $output['tracks']=array();
-        foreach ($rawdata['tracks']['data'] as $track){
-            if ($track['preview']!=null) {
-                $trackdata=array();
-                $trackdata['id']=$track['id'];
-                $trackdata['title']=$track['title'];
-                $trackdata['artist']=$track['artist']['name'];
-                $trackdata['coverurl']=$track['album']['cover_xl'];
-                array_push($output['tracks'],$trackdata);
-            }
+    private function PlaylistInfoFormat($playlistID)
+    {
+        $playlist = Playlist::find($playlistID);
+        if (empty($playlist)) {
+            $this->logger->debug("DeezerApi::PlaylistInfoFormat add playlist to DB");
+            $this->DBaddPlaylist($playlistID);
         }
-        shuffle($output['tracks']);
+        $playlist = Playlist::find($playlistID);
+
+
+        $output['name'] = $playlist->playlistname;
+        $output['id'] = $playlist->id;
+
+
+
+        $output['description'] = $playlist->playlistname;
+        $output['picture'] = $playlist->picture;
+
+        $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID);
+        $output['nb_tracks'] = $playlisttracks->count();
+
+        $output['tracks'] = array();
+        foreach ($playlisttracks->get()->playlisttracks_track as $trackid) {
+            $track = Track::find($trackid);
+
+            $trackdata = array();
+            $trackdata['id'] = $track->id;
+            $trackdata['title'] = $track->track_title;
+            $artist = Artist::find($track->track_artist);
+            $trackdata['artist'] = $artist->artist_name;
+            $album = Album::find($track->track_album);
+            $trackdata['coverurl'] = $album->album_cover;
+            array_push($output['tracks'], $trackdata);
+        }
+
         return $output;
     }
-    
-    public function GetPlaylistInfo($playlistID) {
-        return $this->PlaylistInfoFormat($this->api("/playlist/".$playlistID));      
+
+    public function GetPlaylistInfo($playlistID)
+    {
+        return $this->PlaylistInfoFormat($playlistID);
     }
-    
+
+    private function getTrackArray($track)
+    {
+        $array = [
+            "id" => $track["id"],
+            // "Artist" => $track["artist"]["name"],
+            "artist" => $track["artist"],
+            // "Album" => $track["album"]["title"],
+            "album" => $track["album"],
+            "title" => $track["title"],
+            "link" => $track["link"],
+            "duration" => $track["duration"],
+            // "Time" => intval($track["duration"]) * 1000,
+            // "Track" => null,
+            // "TotalTracks" => null,
+            "preview" => $track['preview'],
+            // "Picture" => $track['album']['cover']
+        ];
+        return $array;
+    }
+    /**
+     * For playlists with more than 400 tracks
+     */
+    private function getLargePlaylistTracks($playlistID)
+    {
+        $url = "/playlist/" . $playlistID . "/tracks";
+        $tracklist = array();
+        do {
+            $tracks = $this->api($url);
+            if (array_key_exists('next', $tracks)) {
+                $url = str_replace($this->_sApiUrl, '', $tracks['next']);
+            }
+            foreach ($tracks['data'] as $track) {
+                // $this->logger->debug("DeezerApi::getLargePlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
+
+                array_push($tracklist, $this->getTrackArray($track));
+            }
+        } while (array_key_exists('next', $tracks));
+        return $tracklist;
+    }
+    /**
+     * ['id','name','link','tracklist']
+     */
+    private function DBaddArtist($artist)
+    {
+        Artist::updateOrCreate([
+            'id' => $artist['id'],
+            'artist_name' => $artist['name'],
+            'artist_link' => $artist['link'],
+            'artist_tracklist' => $artist['tracklist']
+        ]);
+
+        return $artist['id'];
+    }
+    private function DBaddAlbum($album)
+    {
+        Album::updateOrCreate([
+            'id' => $album['id'],
+            'album_title' => $album['title'],
+            'album_tracklist' => $album['tracklist'],
+            'album_cover' => $album['cover_xl']
+        ]);
+        return $album['id'];
+    }
+    private function DBaddTrack($track)
+    {
+        $this->logger->debug("DeezerApi::DBaddTrack Add track : \n" . print_r($track, true));
+        $this->DBaddAlbum($track['album']);
+        $this->DBaddArtist($track['artist']);
+        Track::updateOrCreate([
+            'id' => $track['id'],
+            'track_title' => $track['title'],
+            'track_link' => $track['link'],
+            'track_preview' => $track['preview'],
+            'track_artist' => $track['artist']['id'],
+            'track_album' => $track['album']['id'],
+            'track_duration' => $track['duration']
+        ]);
+        return $track['id'];
+    }
+
+    private function DBaddPlaylist($playlistID)
+    {
+        $tracks = array();
+        $playlist = $this->api("/playlist/" . $playlistID);
+
+        if ($playlist['nb_tracks'] <= 400) {
+            $this->logger->debug("DeezerApi::DBaddPlaylist Playlist has " . $playlist['nb_tracks'] . " tracks. Do normal search");
+
+            foreach ($playlist['tracks']['data'] as $track) {
+                // $this->logger->debug("DeezerApi::DBaddPlaylist \n" . json_encode($track, JSON_PRETTY_PRINT));
+
+                array_push($tracks, $this->getTrackArray($track));
+            }
+        } else {
+            $this->logger->debug("DeezerApi::DBaddPlaylist Playlist has " . $playlist['nb_tracks'] . " tracks. Do Extended search");
+            $tracks = $this->getLargePlaylistTracks($playlistID);
+        }
+        Playlist::updateOrCreate([
+            'id' => $playlist['id'],
+            'playlist_title' => $playlist['title'],
+            'playlist_link' => $playlist['link'],
+            'playlist_picture' => $playlist['picture_xl']
+        ]);
+        //Add each Track to database
+        foreach ($tracks as $track) {
+            $this->DBaddTrack($track);
+            PlaylistTracks::updateOrCreate([
+                'playlisttracks_track' => $track['id'],
+                'playlisttracks_playlist' => $playlist['id']
+            ]);
+        }
+    }
 
     /**
      * Return all tracks for a given PlaylistID
      * @param type $playlistID
      * @return array
      */
-    public function getPlaylistItems($playlistID) {
-
-        $playlist = $this->api("/playlist/" . $playlistID);
-//        $this->logger->debug("(getPlaylistItems)" . var_export($playlist, true));
-        $list = array();
-        foreach ($playlist['tracks']['data'] as $track) {
-            $this->logger->debug("DeezerApi::getPlaylistItems " . var_export($track, true));
-            
-            array_push($list, ["ID" => $track["id"],
-                "Artist" => $track["artist"]["name"],
-                "Album" => $track["album"]["title"],
-                "Song" => $track["title"],
-                "Time" => intval($track["duration"])*1000,
-                "Track" => null,
-                "TotalTracks" => null,
-                "Preview" => $track['preview'],
-                "Picture" => $track['album']['cover']
-            ]);
+    public function getPlaylistItems($playlistID)
+    {
+        $playlist = Playlist::find($playlistID);
+        //playlist is not in the DB yet. Add it.
+        if (empty($playlist)) {
+            $this->DBaddPlaylist($playlistID);
         }
-        return $list;
+        $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
+        $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
+            ->join('playlist', 'playlisttracks.playlisttracks_playlist', '=', 'playlist.id')
+            ->join('track', 'playlisttracks.playlisttracks_track', '=', 'track.id')
+            ->join('album', 'track.track_album', '=', 'album.id')
+            ->join('artist', 'track.track_artist', '=', 'artist.id')
+            ->get();
+        // die(print_r($tracklist->toJson(), true));
+
+        return $tracklist->toArray();
     }
-
-
 }

@@ -25,7 +25,7 @@ class HomeController extends AbstractTwigController
         $this->logger = $logger;
         $this->deezer = $deezer;
         $this->staticplaylists = $staticplaylists;
-        $this->logger->debug("Construct of HomeController called");
+        $this->logger->debug("HomeController::_construct Constructor of HomeController called");
     }
 
     /**
@@ -38,9 +38,9 @@ class HomeController extends AbstractTwigController
         $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
         $arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
         // die(var_dump($arguments['staticplaylists']));
-        $this->logger->debug("home) arguments after mergin deezer " . var_export($arguments, true));
+        $this->logger->debug("HomeController::home arguments after mergin deezer " . var_export($arguments, true));
 
-        $this->logger->debug("home) arguments global " . var_export($arguments, true));
+        $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));
         return $this->render($response, 'home.twig', $arguments);
     }
 

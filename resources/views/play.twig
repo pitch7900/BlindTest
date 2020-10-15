@@ -1,9 +1,7 @@
 {% extends "main.twig" %}
 
 
-{% block headers %}
-	<link rel="stylesheet" href="/css/progress.css">
-{% endblock %}
+{% block headers %}{% endblock %}
 
 
 {% block menu %}
@@ -14,35 +12,33 @@
 	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
+	{# {{ dump(tracks) }} #}
 	<div id="BrowserError" class="row invisible">
 
 		<div class="alert alert-danger" role="alert">
-			<h4 class="alert-heading">Browser allert</h4>
-			<p>Your browser doesn't allow automatic music play</p>
-			<p class="mb-0">Please change the settings, it should be located near the address bar</p>
-			<hr>
-
-			{{ include('elements/BrowserErrorFF.twig') }}
+			<h4 class="alert-heading">Whoop's someting went wrong</h4>
+			<p>We were not able to play this music</p>
+			<p class="mb-0">Please check your browser permissions or retry later</p>
+			<button class="btn btn-primary" type="button" onclick="postcheckanswer();">
+				<i class="fas fa-forward"></i>
+				Skip this song
+			</button>
 
 		</div>
 	</div>
-	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}">
-		<div class="col-sm-3">
-			<div id="score">
-				<h1>
-					<span id="currentscore">0</span>
-					Points
-				</h1>
-			</div>
-			<div
-				id="answer" class="invisible">
+	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
+
+		<div class="col-sm-6">
+
+			<div id="answer" class="invisible">
+				<h1>The answer was</h1>
 				<!-- Card -->
 				<div
 					class="card">
 
 					<!-- Card image -->
 					<img
-					id="trackimage" class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+					id="trackimage" class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap" witdh="50%">
 
 					<!-- Card content -->
 					<div
@@ -71,7 +67,7 @@
 			</div>
 		</div>
 
-		<div class="col-sm-9">
+		<div class="col-sm-12">
 			<h4>{{playlistname}}
 				<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
 			</h4>
@@ -88,7 +84,8 @@
 						<i class="far fa-play-circle invisible"></i>
 					</button>
 				</div>
-				<div class="col-sm-9">
+				<div
+					class="col-sm-9">
 					<!-- Default form -->
 					<form id="FormGuess" class="text-center" action="#!">
 						<input
@@ -100,13 +97,16 @@
 				</div>
 			</div>
 			<div id="Start" class="row">
-				<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle(currentindex);" disabled>Start the Game</button>
+				<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
 			</div>
 		</div>
 	</div>
 
 
-</div>{% endblock %}{% block javascripts %}
+</div>{% endblock %}
 
-<script src="/js/levenshtein.js" type="text/javascript"></script>
-<script src="/js/play.js" type="text/javascript"></script>{% endblock %}
+{% block javascripts %}
+
+<script src="/js/play.js" type="text/javascript"></script>
+
+{% endblock %}
