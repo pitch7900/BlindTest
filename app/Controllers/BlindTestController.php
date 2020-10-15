@@ -51,7 +51,7 @@ class BlindTestController extends AbstractTwigController
      */
     public function getNewPlay(Request $request, Response $response, $args)
     {
-        $playlistid = $args['playlistid'];
+        $playlistid = intval($args['playlistid']);
 
         $tracks = $this->deezer->getPlaylistItems($playlistid);
         shuffle($tracks);
