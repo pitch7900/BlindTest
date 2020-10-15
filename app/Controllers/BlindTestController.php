@@ -192,8 +192,10 @@ class BlindTestController extends AbstractTwigController
      */
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
-        $guess = $this->removeAccents(utf8_encode($request->getParam('guess')));
-        $this->logger->debug("BlindtestController::postGameCheckCurrent guess is : " . $guess);
+        $guess=$request->getParam('guess');
+        
+
+
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
         $currentTrackIndex = $games->games_currenttrackindex;
@@ -207,20 +209,32 @@ class BlindTestController extends AbstractTwigController
  
         $this->logger->debug("BlindtestController::postGameCheckCurrent Trackid : " . $trackid);
 
-
-        $track = Track::find($trackid);
+            $checkartist=false;
+            $checktitle=false;
+            $track = Track::find($trackid);
         $artist = Artist::find($track->track_artist);
         $album = Album::find($track->track_album);
         $games->games_currenttrackindex = $currentTrackIndex + 1;
         $games->save();
+
+        if ($guess!=null){
+            $guess = $this->removeAccents(utf8_encode($guess));
+            $this->logger->debug("BlindtestController::postGameCheckCurrent guess is : " . $guess);
+            $checkartist=$this->compareAnswers($artist->artist_name,$guess);
+            $checktitle=$this->compareAnswers($track->track_title,$guess);
+
+        } else {
+            $this->logger->debug("BlindtestController::postGameCheckCurrent Guess entered was NULL");
+        }
+        
 
         return $this->withJson($response, [
             'guess' => $guess,
             'title' => $track->track_title,
             'picture' => $album->album_cover,
             'artist' => $artist->artist_name,
-            'checkartist' => $this->compareAnswers($artist->artist_name,$guess),
-            'checktitle' => $this->compareAnswers($track->track_title,$guess)
+            'checkartist' => $checkartist,
+            'checktitle' => $checktitle
         ]);
     }
 
