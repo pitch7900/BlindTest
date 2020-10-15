@@ -119,9 +119,10 @@ class BlindTestController extends AbstractTwigController
     }
 
     /**
-     * only remove accents from the passed string.
-     * @param string $string
-     * @param string $tolower
+     * removeAccents
+     * Only remove accents from the passed string.
+     * @param  mixed $string
+     * @param  mixed $tolower
      * @return string
      */
     private static function removeAccents($string, $tolower = true)
@@ -193,8 +194,6 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
         $guess=$request->getParam('guess');
-        
-
 
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
