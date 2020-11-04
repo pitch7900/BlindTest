@@ -330,7 +330,7 @@ class DeezerApi implements DeezerApiInterface
                 $url = str_replace($this->_sApiUrl, '', $tracks['next']);
             }
             foreach ($tracks['data'] as $track) {
-                // $this->logger->debug("DeezerApi::getLargePlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
+                $this->logger->debug("DeezerApi::getLargePlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
 
                 array_push($tracklist, $this->getTrackArray($track));
             }
@@ -346,8 +346,9 @@ class DeezerApi implements DeezerApiInterface
      */
     private function DBaddArtist(array $artist): int
     {
-        $artist = Artist::find($artist['id']);
-        if (is_null($artist)) {
+        $artistdb = Artist::find($artist['id']);
+        $this->logger->debug("DeezerApi::DBaddArtist Adding album : ".print_r($artist,true));
+        if (is_null($artistdb)) {
             Artist::updateOrCreate([
                 'id' => $artist['id'],
                 'artist_name' => $artist['name'],
@@ -365,8 +366,10 @@ class DeezerApi implements DeezerApiInterface
      */
     private function DBaddAlbum(array $album): int
     {
-        $album = Album::find($album['id']);
-        if (is_null($album)) {
+        $this->logger->debug("DeezerApi::DBaddAlbum Adding album : ".print_r($album,true));
+        $albumdb = Album::find($album['id']);
+        
+        if (is_null($albumdb)) {
             Album::updateOrCreate([
                 'id' => $album['id'],
                 'album_title' => $album['title'],
@@ -387,8 +390,8 @@ class DeezerApi implements DeezerApiInterface
         $this->logger->debug("DeezerApi::DBaddTrack Add track : \n" . print_r($track, true));
         $this->DBaddAlbum($track['album']);
         $this->DBaddArtist($track['artist']);
-        $track = Track::find($track['id']);
-        if (is_null($track)) {
+        $trackdb = Track::find($track['id']);
+        if (is_null($trackdb)) {
             Track::updateOrCreate([
                 'id' => $track['id'],
                 'track_title' => $track['title'],
@@ -417,7 +420,7 @@ class DeezerApi implements DeezerApiInterface
             $this->logger->debug("DeezerApi::DBaddPlaylist Playlist has " . $playlist_json['nb_tracks'] . " tracks. Do normal search");
 
             foreach ($playlist_json['tracks']['data'] as $track) {
-                // $this->logger->debug("DeezerApi::DBaddPlaylist \n" . json_encode($track, JSON_PRETTY_PRINT));
+                $this->logger->debug("DeezerApi::DBaddPlaylist \n" . json_encode($track, JSON_PRETTY_PRINT));
 
                 array_push($tracks, $this->getTrackArray($track));
             }
@@ -433,14 +436,17 @@ class DeezerApi implements DeezerApiInterface
                 'playlist_link' => $playlist_json['link'],
                 'playlist_picture' => $playlist_json['picture_xl']
             ]);
+            $playlist = Playlist::find($playlist_json['id']);
         }
         //Add each Track to database
         foreach ($tracks as $track) {
-            $this->DBaddTrack($track);
-            PlaylistTracks::updateOrCreate([
-                'playlisttracks_track' => $track['id'],
-                'playlisttracks_playlist' => $playlist['id']
-            ]);
+            if (strlen($track['preview'])>0) {
+                $this->DBaddTrack($track);
+                PlaylistTracks::updateOrCreate([
+                    'playlisttracks_track' => $track['id'],
+                    'playlisttracks_playlist' => $playlist['id']
+                ]);
+            }
         }
         return intval($playlistID);
     }
@@ -455,9 +461,11 @@ class DeezerApi implements DeezerApiInterface
         $playlist = Playlist::find($playlistID);
         //playlist is not in the DB yet. Add it.
         if (empty($playlist)) {
+            $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID not in DB cache adding it");
             $this->DBaddPlaylist($playlistID);
+        } else {
+            $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
         }
-        $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
         $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
             ->join('playlist', 'playlisttracks.playlisttracks_playlist', '=', 'playlist.id')
             ->join('track', 'playlisttracks.playlisttracks_track', '=', 'track.id')
