@@ -1,0 +1,33 @@
+<head> 
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+            
+</head>
+
+<body>
+<pre id="output"></pre>
+<script>
+var output = document.getElementById('output');
+
+try {
+    var source    = new EventSource('Server.php');
+    source.onopen = function () {
+        output.appendChild(document.createElement('hr'));
+
+        return;
+    };
+    source.addEventListener('tick', function (evt) {
+        var samp       = document.createElement('samp');
+        samp.innerHTML = evt.data + '\n';
+        output.appendChild(samp);
+        console.log(samp);
+        return;
+    });
+} catch (e) {
+    console.log(e);
+}
+</script>
+
+</body>

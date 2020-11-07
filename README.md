@@ -37,6 +37,20 @@ For example, the project is downloaded to /var/www/BlindTest and the virtual hos
 </VirtualHost>
 ```
 
+## Configuration
+
+A configuration file should be created in /config/.env.
+This file should contain DB access credential like following exemple
+
+```ini
+SQL_HOST = "localhost"
+SQL_PORT = 3306
+SQL_DATABASE = "blindtest"
+SQL_USERNAME = "blindtest"
+SQL_PASSWORD = "blindtestpassword"
+PUBLIC_HOST = "http://localhost:8081"
+````
+
 ## Docker
 
 For a build under docker see folder /Docker and run the startup.sh.
@@ -45,7 +59,6 @@ It will download the git project, recreate the vendor from composer and package 
 
 ```bash
 #!/bin/bash
-#apt-get install -y composer git libapache2-mod-php php-mbstring
 git clone https://github.com/pitch7900/BlindTest.git
 rm -rf ./BlindTest/vendor
 mv BlindTest BlindTest
@@ -71,5 +84,3 @@ npm install safer-buffer
 
 - Throttler : <https://github.com/hamburgscleanest/guzzle-advanced-throttle>
 - Deezer Wrapper : <https://github.com/mbuonomo/Deezer-API-PHP-class/>
-- Seconds to HMS in twig : <https://caffeinecreations.ca/blog/twig-macro-convert-seconds-to-hhmmss/>
-- Logger (monolog) : <https://packagist.org/packages/monolog/monolog>, <https://github.com/Seldaek/monolog>

@@ -11,7 +11,7 @@ use Slim\Views\Twig;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
-use App\Games\Games;
+use Hoa\Eventsource\Server;
 
 return [
     LoggerInterface::class => function (ContainerInterface $container): LoggerInterface {

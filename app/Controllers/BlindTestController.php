@@ -33,6 +33,7 @@ class BlindTestController extends AbstractTwigController
      */
     private $logger;
 
+ 
 
     public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer)
     {
@@ -71,6 +72,10 @@ class BlindTestController extends AbstractTwigController
         }
 
         return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(302);
+    }
+
+    public function postGameWriting(Request $request, Response $response, $args){
+        
     }
 
 

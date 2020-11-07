@@ -34,6 +34,8 @@ return function (App $app) {
         $app->group('/blindtest', function (RouteCollectorProxy $group) {
                 $group->get('/game/{gamesid}/game.html', BlindTestController::class . ':getGameHTML')
                         ->setName('blindtest.play');
+                $group->post('/game/{gamesid}/writing', BlindTestController::class . ':postGameWriting')
+                        ->setName('blindtest.writing');
                 $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
                         ->setName('blindtest.playjsondata');
                 $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')

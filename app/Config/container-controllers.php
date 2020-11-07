@@ -11,7 +11,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
-use App\Games\Games;
+use Hoa\Eventsource\Server;
 
 return [
     ExceptionDemoController::class => function (ContainerInterface $container): ExceptionDemoController {

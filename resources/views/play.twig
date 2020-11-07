@@ -12,7 +12,9 @@
 	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
-	{# {{ dump(tracks) }} #}
+	<h4>{{playlistname}}
+		<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+	</h4>
 	<div id="BrowserError" class="row invisible">
 
 		<div class="alert alert-danger" role="alert">
@@ -28,85 +30,91 @@
 	</div>
 	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
-		<div class="col-sm-6">
+		<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
 
 			<div id="answer" class="invisible">
-				<h1>The answer was</h1>
-				<!-- Card -->
-				<div
-					class="card">
+				<h3>The answer was</h3>
+				<div class="card mb-3">
+					<div class="row no-gutters">
+						<div
+							class="col-md-4">
+							<!-- Card image -->
+							<img id="trackimage" class="card-img" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg">
 
-					<!-- Card image -->
-					<img
-					id="trackimage" class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap" witdh="50%">
+						</div>
+						<div class="col-md-8">
+							<div
+								class="card-body">
 
-					<!-- Card content -->
+
+								<!-- Card content -->
+								<div
+									class="card-body">
+
+									<!-- Title -->
+									<h4 class="card-title">
+										<div id="artist" role="alert">
+											<span id="artistname"></span>
+										</div>
+									</h4>
+									<p id="title" role="alert" class="card-text">
+
+										<span id="titlename"></span>
+
+									</p>
+
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+					<!-- Card -->
+				</div>
+				<h4>
+					<span id="waitbeforenext"></span>s before next song
+				</h4>
+			</div>
+
+			<div class="col-sm-12">
+
+
+				<div id="Play" class="row invisible container-fluid">
+					<div class="col-sm-12">
+						<div class="progress md-progress">
+							<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
+							<i class="far fa-pause-circle"></i>
+							<i class="far fa-play-circle invisible"></i>
+						</button>
+					</div>
 					<div
-						class="card-body">
-
-						<!-- Title -->
-						<h4 class="card-title">
-							<div id="artist" role="alert">
-								<span id="artistname"></span>
-							</div>
-						</h4>
-						<p>
-							<div id="title" role="alert">
-								<span id="titlename"></span>
-							</div>
-						</p>
-						<h4>
-							<span id="waitbeforenext"></span>s before next song
-						</h4>
+						class="col-sm-9">
+						<!-- Default form -->
+						<form id="FormGuess" class="text-center" action="#!">
+							<input
+							id="YourGuess" type="text" class="form-control mb-4" placeholder="">
+							<!-- Send button -->
+							<button id="btnsubmitanswer" class="btn btn-info btn-block" type="submit">Submit Answer</button>
+						</form>
+						<!-- Default form -->
 					</div>
-
 				</div>
-				<!-- Card -->
-
-
+				<div id="Start" class="row">
+					<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
+				</div>
 			</div>
 		</div>
 
-		<div class="col-sm-12">
-			<h4>{{playlistname}}
-				<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-			</h4>
 
-			<div id="Play" class="row invisible container-fluid">
-				<div class="col-sm-12">
-					<div class="progress md-progress">
-						<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-					</div>
-				</div>
-				<div class="col-sm-3">
-					<button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
-						<i class="far fa-pause-circle"></i>
-						<i class="far fa-play-circle invisible"></i>
-					</button>
-				</div>
-				<div
-					class="col-sm-9">
-					<!-- Default form -->
-					<form id="FormGuess" class="text-center" action="#!">
-						<input
-						id="YourGuess" type="text" class="form-control mb-4" placeholder="">
-						<!-- Send button -->
-						<button id="btnsubmitanswer" class="btn btn-info btn-block" type="submit">Submit Answer</button>
-					</form>
-					<!-- Default form -->
-				</div>
-			</div>
-			<div id="Start" class="row">
-				<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
-			</div>
-		</div>
 	</div>
-
-
-</div>{% endblock %}
+{% endblock %}
 
 {% block javascripts %}
 
-<script src="/js/play.js" type="text/javascript"></script>
+	<script src="/js/play.js" type="text/javascript"></script>
 
 {% endblock %}
