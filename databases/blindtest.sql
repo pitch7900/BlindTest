@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 11, 2020 at 04:28 PM
+-- Generation Time: Nov 07, 2020 at 07:37 AM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -156,6 +156,28 @@ CREATE TABLE IF NOT EXISTS `track` (
   KEY `artist` (`track_artist`),
   KEY `album` (`track_album`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(256) NOT NULL,
+  `email` varchar(256) NOT NULL,
+  `emailchecklink` varchar(256) NOT NULL,
+  `emailchecklinktimeout` timestamp NOT NULL,
+  `emailchecked` tinyint(1) NOT NULL,
+  `resetpasswordlink` varchar(256) NOT NULL,
+  `resetpasswordlinktimeout` timestamp NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `password` varchar(1024) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Constraints for dumped tables
