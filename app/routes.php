@@ -8,6 +8,7 @@ use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
 
+
 return function (App $app) {
   
         $app->get('/', HomeController::class. ':home')

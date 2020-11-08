@@ -22,7 +22,10 @@
         "slim/http": "^1.0",
         "slim/psr7": "^1.2",
         "illuminate/database": "^6",
-        "hoa/eventsource": "~3.0"
+        "hoa/eventsource": "~3.0",
+        "slim/flash": "^0.4.0",
+        "cartalyst/sentinel": "3",
+        "odan/session": "^5.0"
     },
     "config": {
         "preferred-install": "dist"

@@ -74,6 +74,7 @@ var postcheckanswer = function (guessentered) {
       $("#trackimage").attr("src", jsondata.picture);
       $("#artistname").html(jsondata.artist);
       $("#titlename").html(jsondata.title);
+      $("#track_link").attr("href",jsondata.track_link);
       $("#artist").removeClass();
       $("#title").removeClass();
       checkartist = jsondata.checkartist;

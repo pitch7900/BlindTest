@@ -7,6 +7,8 @@ use Slim\Factory\AppFactory;
 
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
+
+
 use Dotenv\Dotenv;
 
 session_cache_limiter('public');
@@ -52,12 +54,14 @@ $app = AppFactory::create();
 
 
 // Add the routing middleware.
-$app->addRoutingMiddleware();
+// $app->addRoutingMiddleware();
 
 // Add the twig middleware.
-$app->addMiddleware(
-    TwigMiddleware::create($app, $container->get(Twig::class))
-);
+// $app->addMiddleware(
+//     TwigMiddleware::create($app, $container->get(Twig::class))
+// );
+
+(require __DIR__ . '/middleware.php')($app);
 
 // Add error handling middleware.
 $displayErrorDetails = true;

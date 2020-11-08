@@ -237,6 +237,7 @@ class BlindTestController extends AbstractTwigController
             'title' => $track->track_title,
             'picture' => $album->album_cover,
             'artist' => $artist->artist_name,
+            'track_link' => $track->track_link,
             'checkartist' => $checkartist,
             'checktitle' => $checktitle
         ]);
