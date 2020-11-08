@@ -51,16 +51,7 @@ $app = AppFactory::create();
 //     $rootPath . '/cache/routes.cache'
 // );
 
-
-
-// Add the routing middleware.
-// $app->addRoutingMiddleware();
-
-// Add the twig middleware.
-// $app->addMiddleware(
-//     TwigMiddleware::create($app, $container->get(Twig::class))
-// );
-
+//Call middleware functions
 (require __DIR__ . '/middleware.php')($app);
 
 // Add error handling middleware.
