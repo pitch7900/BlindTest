@@ -9,7 +9,7 @@ use SimpleXMLElement;
  */
 class PlaylistTracks extends Model {
     public $timestamps = true;
-    protected $table = 'playlistTracks';
+    protected $table = 'playlisttracks';
     protected $primaryKey = 'id';
     protected $fillable = ['playlisttracks_playlist','playlisttracks_track'];
     
