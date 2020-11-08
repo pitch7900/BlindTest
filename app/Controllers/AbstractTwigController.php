@@ -57,6 +57,14 @@ abstract class AbstractTwigController extends AbstractController
         return $response;
     }
 
+    protected function withRedirect(Response $response, string $path): Response
+    {
+        $response = $response
+            ->withHeader('Location', $path)
+            ->withStatus(302);
+        return $response;
+    }
+
     protected function withMP3(Response $response, string $mp3filepath): Response
     {
         $stream = (new StreamFactory())->createStreamFromFile($mp3filepath, 'rb');

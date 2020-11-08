@@ -4,4 +4,4 @@ node_modules
 /logs/*
 /cache/*
 /composer.lock
-/config/*.json
+/config/.env

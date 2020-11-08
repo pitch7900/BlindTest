@@ -33,6 +33,7 @@ class BlindTestController extends AbstractTwigController
      */
     private $logger;
 
+ 
 
     public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer)
     {
@@ -51,7 +52,7 @@ class BlindTestController extends AbstractTwigController
      */
     public function getNewPlay(Request $request, Response $response, $args)
     {
-        $playlistid = $args['playlistid'];
+        $playlistid = intval($args['playlistid']);
 
         $tracks = $this->deezer->getPlaylistItems($playlistid);
         shuffle($tracks);
@@ -71,6 +72,10 @@ class BlindTestController extends AbstractTwigController
         }
 
         return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(302);
+    }
+
+    public function postGameWriting(Request $request, Response $response, $args){
+        
     }
 
 
@@ -119,9 +124,10 @@ class BlindTestController extends AbstractTwigController
     }
 
     /**
-     * only remove accents from the passed string.
-     * @param string $string
-     * @param string $tolower
+     * removeAccents
+     * Only remove accents from the passed string.
+     * @param  mixed $string
+     * @param  mixed $tolower
      * @return string
      */
     private static function removeAccents($string, $tolower = true)
@@ -193,8 +199,6 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
         $guess=$request->getParam('guess');
-        
-
 
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
@@ -233,6 +237,7 @@ class BlindTestController extends AbstractTwigController
             'title' => $track->track_title,
             'picture' => $album->album_cover,
             'artist' => $artist->artist_name,
+            'track_link' => $track->track_link,
             'checkartist' => $checkartist,
             'checktitle' => $checktitle
         ]);

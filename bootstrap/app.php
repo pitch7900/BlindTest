@@ -9,6 +9,8 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 
 
+use Dotenv\Dotenv;
+
 session_cache_limiter('public');
 session_start();
 
@@ -20,6 +22,14 @@ date_default_timezone_set('Europe/Zurich');
 
 require $rootPath . '/vendor/autoload.php';
 
+try {
+	$dotenv = Dotenv::createImmutable($rootPath .'/config/');
+	$dotenv->load();
+} catch (InvalidPathException $e) {
+	die("Unable to load configuration file");
+}
+
+//Load DB configuration
 require_once __DIR__ . '/database.php';
 
 // Create the container for dependency injection.
@@ -41,15 +51,8 @@ $app = AppFactory::create();
 //     $rootPath . '/cache/routes.cache'
 // );
 
-
-
-// Add the routing middleware.
-$app->addRoutingMiddleware();
-
-// Add the twig middleware.
-$app->addMiddleware(
-    TwigMiddleware::create($app, $container->get(Twig::class))
-);
+//Call middleware functions
+(require __DIR__ . '/middleware.php')($app);
 
 // Add error handling middleware.
 $displayErrorDetails = true;

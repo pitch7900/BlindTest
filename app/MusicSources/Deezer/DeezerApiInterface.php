@@ -72,7 +72,7 @@ interface DeezerApiInterface {
      * @param type $playlistID
      * @return array
      */
-    public function getPlaylistItems($playlistID);
+    public function getPlaylistItems(int $playlistID): array;
 
 
 }

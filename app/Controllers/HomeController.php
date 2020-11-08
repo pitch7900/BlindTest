@@ -19,7 +19,16 @@ class HomeController extends AbstractTwigController
     private $deezer;
     private $logger;
     private $staticplaylists;
-
+    
+    /**
+     * __construct
+     *
+     * @param  mixed $twig
+     * @param  mixed $logger
+     * @param  mixed $deezer
+     * @param  mixed $staticplaylists
+     * @return void
+     */
     public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer, StaticPlaylists $staticplaylists) {
         parent::__construct($twig);
         $this->logger = $logger;
@@ -28,11 +37,14 @@ class HomeController extends AbstractTwigController
         $this->logger->debug("HomeController::_construct Constructor of HomeController called");
     }
 
+         
     /**
+     * home
      * Return the "Home" view 
-     * @param Request $request
-     * @param Response $response
-     * @return HTML
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return Response
      */
     public function home(Request $request, Response $response, array $args = []): Response {
         $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
