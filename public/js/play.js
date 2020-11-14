@@ -2,7 +2,7 @@ var currenttrackid;
 var audio;
 var points;
 var gamesid;
-var coutndown;
+var countdown;
 
 function StartCountDown() {
   var seconds = 30;
@@ -56,7 +56,11 @@ var playtitle = function () {
   $("input#YourGuess").first().val("");
   $("#YourGuess").focus();
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
-    audio = new Audio();
+    console.log(audio);
+    if (typeof audio !== 'undefined') {
+      console.log("Creating new Audio Stream");
+      audio = new Audio();
+    }
     audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
 
     audio
@@ -158,7 +162,10 @@ var Catalog = (function () {
     gamesid = $("#MainPage").attr("gamesid");
     // console.log(gamesid);
 
-    audio = new Audio();
+    if (typeof audio !== 'undefined') {
+      console.log("Creating new Audio Stream");
+      audio = new Audio();
+    }
     $("#startbutton").prop("disabled", false);
   };
 

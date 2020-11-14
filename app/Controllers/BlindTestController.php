@@ -199,7 +199,7 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
         $guess=$request->getParam('guess');
-
+        $this->logger->debug("BlindtestController::postGameCheckCurrent Guess is  : " . $guess);
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
         $currentTrackIndex = $games->games_currenttrackindex;

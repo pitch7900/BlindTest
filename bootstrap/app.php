@@ -52,6 +52,16 @@ $app = AppFactory::create();
 // );
 
 //Call middleware functions
+$_SERVER['app'] = &$app;
+
+if (!function_exists('app'))
+{
+    function app()
+    {
+        return $_SERVER['app'];
+    }
+}
+
 (require __DIR__ . '/middleware.php')($app);
 
 // Add error handling middleware.
