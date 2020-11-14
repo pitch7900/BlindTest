@@ -58,6 +58,7 @@ var playtitle = function () {
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
     console.log(audio);
     if (typeof audio !== 'undefined') {
+      console.log("Creating new Audio Stream");
       audio = new Audio();
     }
     audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
@@ -161,7 +162,10 @@ var Catalog = (function () {
     gamesid = $("#MainPage").attr("gamesid");
     // console.log(gamesid);
 
-    audio = new Audio();
+    if (typeof audio !== 'undefined') {
+      console.log("Creating new Audio Stream");
+      audio = new Audio();
+    }
     $("#startbutton").prop("disabled", false);
   };
 
