@@ -57,7 +57,7 @@ var playtitle = function () {
   $("#YourGuess").focus();
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
     console.log(audio);
-    if (typeof audio !== 'undefined') {
+    if (typeof audio === 'undefined') {
       console.log("Creating new Audio Stream");
       audio = new Audio();
     }
@@ -162,7 +162,7 @@ var Catalog = (function () {
     gamesid = $("#MainPage").attr("gamesid");
     // console.log(gamesid);
 
-    if (typeof audio !== 'undefined') {
+    if (typeof audio === 'undefined') {
       console.log("Creating new Audio Stream");
       audio = new Audio();
     }
