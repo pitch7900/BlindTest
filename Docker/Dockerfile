@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 LABEL version="1.0"
-LABEL description="musicmigrator"
+LABEL description="BlindTest"
 LABEL os="Ubuntu"
 
 ENV TZ=Europe/Paris
@@ -17,15 +17,15 @@ RUN apt-get -y install \
                php-xml
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY Dockerfile /Dockerfile
-RUN echo "ServerName MusicMigrator" >> /etc/apache2/apache2.conf
+RUN echo "ServerName BlindTest" >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite headers
 EXPOSE 80/tcp
 COPY startservices.sh /opt/startservices.sh
 RUN chmod +x /opt/startservices.sh
-WORKDIR /var/www/MusicMigrator
+WORKDIR /var/www/BlindTest
 RUN mkdir -p /docker-entrypoint-init.d 
-COPY musicmigrator.tar.gz /tmp/musicmigrator.tar.gz
-RUN tar -zxvf /tmp/musicmigrator.tar.gz -C /var/www/
+COPY BlindTest.tar.gz /tmp/BlindTest.tar.gz
+RUN tar -zxvf /tmp/BlindTest.tar.gz -C /var/www/
 ENTRYPOINT ["/opt/startservices.sh"]
 
 
