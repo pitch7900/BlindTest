@@ -12,7 +12,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
 use App\Config\Auth;
-use App\Middleware\RedirectIfNotAuthenticatedMiddleware;
+
 use Slim\App;
 
 return [
@@ -57,10 +57,5 @@ return [
     Auth::class => function (ContainerInterface $container): Auth {
         $auth = new Auth();
         return $auth;
-    },
-    RedirectIfNotAuthenticatedMiddleware::class => function (App $app): RedirectIfNotAuthenticatedMiddleware {
-        
-        $RedirectIfNotAuthenticatedMiddleware = new RedirectIfNotAuthenticatedMiddleware($app->getRouteCollector()->getRouteParser());
-        return $RedirectIfNotAuthenticatedMiddleware;
     }
 ];

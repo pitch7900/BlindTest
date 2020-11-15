@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Config\StaticPlaylists;
-use App\Controllers\ExceptionDemoController;
+
 use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
@@ -15,9 +15,6 @@ use Slim\Views\Twig;
 
 
 return [
-    ExceptionDemoController::class => function (ContainerInterface $container): ExceptionDemoController {
-        return new ExceptionDemoController();
-    },
     DeezerController::class => function (ContainerInterface $container): DeezerController {
         return new DeezerController($container->get(Twig::class),
             $container->get(LoggerInterface::class),
