@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\MusicSources\Deezer\DeezerApi;
+
 use App\MusicSources\Deezer\DeezerApiInterface;
-use App\Preferences;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
@@ -49,7 +48,7 @@ class HomeController extends AbstractTwigController
     public function home(Request $request, Response $response, array $args = []): Response {
         $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
         $arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
-        // die(var_dump($arguments['staticplaylists']));
+
         $this->logger->debug("HomeController::home arguments after mergin deezer " . var_export($arguments, true));
 
         $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));

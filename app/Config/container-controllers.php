@@ -7,11 +7,12 @@ use App\Controllers\ExceptionDemoController;
 use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
+use App\Controllers\AuthController;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
-use Hoa\Eventsource\Server;
+
 
 return [
     ExceptionDemoController::class => function (ContainerInterface $container): ExceptionDemoController {
@@ -36,5 +37,10 @@ return [
             $container->get(StaticPlaylists::class)
         );
     },
+    AuthController::class => function (ContainerInterface $container): AuthController {
+        return new AuthController($container->get(Twig::class), 
+            $container->get(LoggerInterface::class)
+        );
+    }
 
 ];
