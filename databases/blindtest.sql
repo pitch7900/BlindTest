@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 07, 2020 at 07:37 AM
+-- Generation Time: Nov 17, 2020 at 06:04 AM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -166,13 +166,13 @@ CREATE TABLE IF NOT EXISTS `track` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nickname` varchar(256) NOT NULL,
+  `nickname` varchar(256) DEFAULT NULL,
   `email` varchar(256) NOT NULL,
-  `emailchecklink` varchar(256) NOT NULL,
-  `emailchecklinktimeout` timestamp NOT NULL,
-  `emailchecked` tinyint(1) NOT NULL,
-  `resetpasswordlink` varchar(256) NOT NULL,
-  `resetpasswordlinktimeout` timestamp NOT NULL,
+  `emailchecklink` varchar(256) DEFAULT NULL,
+  `emailchecklinktimeout` timestamp NULL DEFAULT NULL,
+  `emailchecked` tinyint(1) DEFAULT '0',
+  `resetpasswordlink` varchar(256) DEFAULT NULL,
+  `resetpasswordlinktimeout` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `password` varchar(1024) NOT NULL,

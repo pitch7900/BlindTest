@@ -4,8 +4,19 @@ declare(strict_types=1);
 
 namespace App\Authentication;
 
+/**
+ * From https://www.php.net/manual/fr/function.uniqid.php
+ * UUID - Generate a UUID 
+ */
 class UUID
-{
+{  
+  /**
+   * Generate v3 UUID
+   *
+   * @param  mixed $namespace
+   * @param  mixed $name
+   * @return void
+   */
   public static function v3($namespace, $name)
   {
     if (!self::is_valid($namespace)) return false;
@@ -46,7 +57,12 @@ class UUID
       substr($hash, 20, 12)
     );
   }
-
+  
+  /**
+   * Generate v4 UUID
+   *
+   * @return string
+   */
   public static function v4()
   {
     return sprintf(
@@ -74,7 +90,14 @@ class UUID
       mt_rand(0, 0xffff)
     );
   }
-
+  
+  /**
+   * Generate v5 UUID
+   *
+   * @param  mixed $namespace
+   * @param  mixed $name
+   * @return void
+   */
   public static function v5($namespace, $name)
   {
     if (!self::is_valid($namespace)) return false;
@@ -115,8 +138,14 @@ class UUID
       substr($hash, 20, 12)
     );
   }
-
-  public static function is_valid($uuid)
+  
+  /**
+   * is_valid UUI is valid
+   *
+   * @param  mixed $uuid
+   * @return bool
+   */
+  public static function is_valid($uuid):bool
   {
     return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?' .
       '[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;

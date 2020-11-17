@@ -66,7 +66,14 @@ class AuthMiddleware
         $this->logger->debug("AuthMiddleware::__construct() Called");
         
     }
-
+    
+    /**
+     * __invoke
+     *
+     * @param  mixed $request
+     * @param  mixed $handler
+     * @return ResponseInterface
+     */
     public function __invoke(ServerRequestInterface  $request, RequestHandlerInterface  $handler): ResponseInterface
     {
         $response = $handler->handle($request);
@@ -74,8 +81,6 @@ class AuthMiddleware
         $this->logger->debug("AuthMiddleware::__invoke() SessionID is : ".session_id() . " / " . $this->auth->getSessionId());
         if (!$this->auth->getAuthentified()) {
             $routeParser = $this->app->getRouteCollector()->getRouteParser();
-            // $this->logger->debug("AuthMiddleware::__construct() ".print_r($routeParser,true));
-            // die(var_dump($routeParser,true));
             $signinroute = $routeParser->urlFor('auth.login');
             $this->logger->debug("AuthMiddleware::__invoke() Not authentified. Should redirect to login page " . $signinroute);
             $this->logger->debug("AuthMiddleware::__invoke() " . print_r($_SESSION,true));
@@ -86,8 +91,6 @@ class AuthMiddleware
         } else {
             $this->logger->debug("AuthMiddleware::__invoke() User ".$this->auth->getUserId()." Authentified. Continue");
         }
-
-        //die("Called invoke");
 
         return $response;
     }

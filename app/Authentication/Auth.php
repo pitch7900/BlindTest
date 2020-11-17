@@ -9,7 +9,6 @@ use Carbon\Carbon;
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use Psr\Log\LoggerInterface;
 
@@ -18,7 +17,12 @@ use Psr\Log\LoggerInterface;
  * Manage authentication
  */
 class Auth
-{
+{    
+    /**
+     * logger
+     *
+     * @var mixed
+     */
     private $logger;
 
     /**
@@ -29,52 +33,89 @@ class Auth
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-        if (isset($_SESSION['authentified'])){
+        if (isset($_SESSION['authentified'])) {
             $this->logger->debug('Auth::__contruct SuperGlobal Variable Session authentified is set to ' . $_SESSION['authentified']);
         } else {
             $this->setAuthentified(false);
         }
-        
     }
 
 
-   
+    
+    /**
+     * unvalidate : Logout user. Remove $_SESSION variable for authentication
+     *
+     * @return void
+     */
     private function unvalidate()
     {
         $this->setAuthentified(false);
         unset($_SESSION["userid"]);
     }
-
+    
+    /**
+     * getSessionId : Get PHP Session ID
+     *
+     * @return string
+     */
     public function getSessionId(): string
     {
         return session_id();
     }
-
+    
+    /**
+     * setUserID : Set database user id for current session
+     *
+     * @param  mixed $userid
+     * @return void
+     */
     private function setUserID($userid)
     {
         $_SESSION["userid"] = $userid;
     }
-
+    
+    /**
+     * getUserId : Return database user id
+     *
+     * @return int
+     */
     public function getUserId(): int
     {
         return $_SESSION["userid"];
     }
-
+    
+    /**
+     * getUserEmail : Return user email addresse
+     *
+     * @return string
+     */
     public function getUserEmail(): string
     {
         $user = User::find($this->getUserId());
         return  $user->email;
     }
-
+    
+    /**
+     * getUserNickName : return user nickname
+     *
+     * @return string
+     */
     public function getUserNickName(): string
     {
         return  User::find($this->getUserId())->nickname;
     }
-
+    
+    /**
+     * checkPassword : Check password for a given email address
+     *
+     * @param  mixed $email
+     * @param  mixed $password
+     * @return bool
+     */
     public function checkPassword(string $email, string $password): bool
     {
         $email = strtolower($email);
-        $this->logger->debug("Auth::checkPasswod() should check password for ".$email);
+        $this->logger->debug("Auth::checkPasswod() should check password for " . $email);
         $user = User::where([
             ['email', '=', $email]
         ])->first();
@@ -94,22 +135,45 @@ class Auth
         $this->setAuthentified(false);
         return false;
     }
-
+    
+    /**
+     * getAuthentified : return if user is authentified or not 
+     *
+     * @return void
+     */
     public function getAuthentified()
     {
         return $_SESSION['authentified'];
     }
-
+    
+    /**
+     * setAuthentified : Change the authentification satus
+     *
+     * @param  mixed $authentified
+     * @return void
+     */
     private function setAuthentified(bool $authentified)
     {
         $_SESSION['authentified'] = $authentified;
     }
-
+    
+    /**
+     * signout user and remove all $_SESSION entries
+     *
+     * @return void
+     */
     public function signout()
     {
         $this->unvalidate();
     }
-
+    
+    /**
+     * addUser : Add a user and Send an email link to validate the email address as valid
+     *
+     * @param  mixed $email
+     * @param  mixed $encryptedpassword
+     * @return bool
+     */
     public function addUser(string $email, string $encryptedpassword): bool
     {
         $email = strtolower($email);
@@ -140,19 +204,19 @@ class Auth
                 // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
                 $mail->isSMTP();                                            // Send using SMTP
 
-                $mail->Host       = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
                 if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
                     $this->logger->debug("Auth::addUser() Use SMTP Auth for email");
-                    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-                    $mail->Username   =  $_ENV['SMTP_USERNAME'];                     // SMTP username
-                    $mail->Password   = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
+                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
                 }
                 if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
                     $this->logger->debug("Auth::addUser() Use SSL for email");
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
                 }
-                $mail->Port       = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
                 //Recipients
                 $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
@@ -173,7 +237,7 @@ class Auth
                     $_ENV['PUBLIC_HOST'] . "/auth/checkmail/" . $v4uuid;
 
                 $mail->send();
-                //echo 'Message has been sent';
+                
                 $this->logger->debug("Auth::addUser() Mail sent to $email");
             } catch (Exception $e) {
                 $this->logger->error("Auth::addUser() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
@@ -182,7 +246,13 @@ class Auth
         }
         return true;
     }
-
+    
+    /**
+     * validateEmail : check the email is valid (Answer of the addUser email)
+     *
+     * @param  mixed $uuid
+     * @return bool
+     */
     public function validateEmail(string $uuid): bool
     {
         $user = User::where([
@@ -214,8 +284,35 @@ class Auth
         }
         return false;
     }
+    
+    /**
+     * resetPassword : set a new password for the uuid passed
+     *
+     * @param  mixed $uuid
+     * @param  mixed $encryptedpassword
+     * @return void
+     */
+    public function resetPassword(string $uuid, string $encryptedpassword):void
+    {
+        if ($this->checkUUIDpasswordreset($uuid)){
+            $user = User::where([
+                ['resetpasswordlink', 'like', $uuid]
+            ])->first();
+            //reset the password
+            $user->password = $encryptedpassword;
+            //Set the reset link to now, for avoiding attacks
+            $user->resetpasswordlinktimeout = Carbon::createFromTimestamp(time());
+            $user->save();
+        }
+    }
 
-    public function resetPassword(string $uuid, string $encryptedpassword)
+    /**
+     * checkUUIDpasswordreest : check if UUID is valid
+     *
+     * @param  mixed $uuid
+     * @return bool
+     */
+    public function checkUUIDpasswordreset(string $uuid): bool
     {
         $user = User::where([
             ['resetpasswordlink', 'like', $uuid]
@@ -225,16 +322,18 @@ class Auth
             $validationtime = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $time);
             $currenttime =  Carbon::createFromTimestamp(time());
             if ($validationtime->gte($currenttime)) {
-                $this->logger->debug("Auth::resetPassword() Password reseted for user" . $user->email);
-                //reset the password
-                $user->password = $encryptedpassword;
-                //Set the reset link to now, for avoiding attacks
-                $user->resetpasswordlinktimeout = Carbon::createFromTimestamp(time());
-                $user->save();
+                return true;
             }
         }
+        return false;
     }
-
+    
+    /**
+     * sendResetPasswordLink : Create a UUID for password reset with 15 min validity and send the email with reset link
+     *
+     * @param  mixed $email
+     * @return bool
+     */
     public function sendResetPasswordLink(string $email): bool
     {
         $email = strtolower($email);
@@ -256,19 +355,19 @@ class Auth
                 // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
                 $mail->isSMTP();                                            // Send using SMTP
 
-                $mail->Host       = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
                 if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
                     $this->logger->debug("Auth::resetPassword() Use SMTP Auth for email");
-                    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-                    $mail->Username   =  $_ENV['SMTP_USERNAME'];                     // SMTP username
-                    $mail->Password   = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
+                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
                 }
                 if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
                     $this->logger->debug("Auth::resetPassword() Use SSL for email");
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
                 }
-                $mail->Port       = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
                 //Recipients
                 $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
@@ -279,7 +378,7 @@ class Auth
                 // Content
                 $mail->isHTML(true);                                  // Set email format to HTML
                 $mail->Subject = 'Password reset for Blindtest';
-                $mail->Body    = "<p>Hello,</p>" . "\r\n" .
+                $mail->Body = "<p>Hello,</p>" . "\r\n" .
                     "<p>Please find below an URL to reset your password." . "</p>\r\n" .
                     "<p>This link is valid for 15 minutes." . "</p>\r\n" .
                     '<p><a href="' . $_ENV['PUBLIC_HOST'] . '/auth/resetpassword/' . $v4uuid . '" >Validate my email address</a>' . "</p>\r\n" .
@@ -293,7 +392,7 @@ class Auth
                     "Note : If you're not at the origin of this password reset, simply ignore this email" . "\r\n";;
 
                 $mail->send();
-                //echo 'Message has been sent';
+                
                 $this->logger->debug("Auth::resetPassword() Mail sent to $email");
             } catch (Exception $e) {
                 $this->logger->error("Auth::resetPassword() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
