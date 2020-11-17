@@ -38,8 +38,6 @@ class Auth
         }
     }
 
-
-    
     /**
      * unvalidate : Logout user. Remove $_SESSION variable for authentication
      *
@@ -221,8 +219,6 @@ class Auth
             }
     }
 
-
-
     /**
      * sendValidationEmail : Send a validation email with link to validate email
      *
@@ -367,6 +363,7 @@ class Auth
         $user->nickname=$nickname;
         $user->save();
     }
+
     /**
      * resetPassword : set a new password for the uuid passed
      *
@@ -387,7 +384,13 @@ class Auth
             $user->save();
         }
     }
-
+    
+    /**
+     * changePassword
+     *
+     * @param  mixed $newencryptedpasssword
+     * @return void
+     */
     public function changePassword(string $newencryptedpasssword){
         User::find($this->getUserId())->password=$newencryptedpasssword;
     }
