@@ -23,6 +23,8 @@ return function (App $app) {
                         ->setName('auth.forgotpassword');
                 $group->get('/checkmail/{uuid}', AuthController::class . ':checkmail')
                         ->setName('auth.checkmail');
+                $group->get('/validate/{uuid}', AuthController::class . ':validateemail')
+                        ->setName('auth.validatemail');
                 $group->get('/resetpassword/{uuid}', AuthController::class . ':resetpassword')
                         ->setName('auth.resetpassword');
                 $group->post('/resetpassword/{uuid}', AuthController::class . ':postresetpassword')
@@ -35,7 +37,7 @@ return function (App $app) {
                         ->setName('auth.signin.post');
         })->add(new GuestMiddleware($app));
 
-        
+
 
         $app->group('/user', function (RouteCollectorProxy $group) {
                 $group->get('/signout', AuthController::class . ':signout')
@@ -44,6 +46,10 @@ return function (App $app) {
                         ->setName('auth.changepassword');
                 $group->get('/preferences', AuthController::class . ':preferences')
                         ->setName('auth.preferences');
+                $group->post('/changepassword', AuthController::class . ':postchangepassword')
+                        ->setName('auth.changepassword.post');
+                $group->post('/preferences', AuthController::class . ':postpreferences')
+                        ->setName('auth.preferences.post');
         })->add(new AuthMiddleware($app));
 
         $app->get('/spinner.html', HomeController::class . ':getWaitingIcons')

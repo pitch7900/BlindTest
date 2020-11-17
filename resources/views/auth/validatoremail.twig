@@ -1,0 +1,29 @@
+{% extends "main.twig" %}
+
+{% block menu %}{% endblock %}
+
+{% block interactivemenus %}{% endblock %}
+{% block content %}
+
+	<div class="container-fluid row">
+		<div class="col-sm-8 mx-auto">
+
+			<div class="text-center">
+
+				<img src="/img/deezer.png"/>
+				<h1 class="h3 mb-3 font-weight-normal">Email validated for {{email}}</h1>
+				<div class="col-sm-8 mx-auto">
+					<a href="{{ url_for('auth.login')}}">
+						Login
+					</a>
+				</div>
+			</div>
+
+
+		</div>
+
+	{% endblock %}
+
+	{% block javascripts %}
+		
+	{% endblock %}

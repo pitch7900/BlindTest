@@ -1,21 +1,32 @@
 {% extends "main.twig" %}
 
-{% block menu %}
+{% block menu %}{% endblock %}
 
-{% endblock %}
-
-{% block interactivemenus %}
-
-{% endblock %}
+{% block interactivemenus %}{% endblock %}
 {% block content %}
 
-<div class="container-fluid row">
+	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
 			<img src="/img/deezer.png"/>
 			<h1 class="h3 mb-3 font-weight-normal center">Email validation</h1>
+			
+			{% if (approval) %}
+			<p>An email will been sent to your email address, please check and clik on the link provided</p>
+				<div class="card text-white bg-warning">
+					<div class="card-header">Registration</div>
+					<div class="card-body">
+						<h5 class="card-title">Warning
+						</h5>
+						<p class="card-text">The registration should be approved by an administrator first.
+							<br>
+							As this process is manual, it can take long</p>
+					</div>
+				</div>
+			{% else %}
 			<p>An email has been sent to your email address, please check and clik on the link provided</p>
+			{% endif %}
 		</div>
-		
+
 	</div>
 
 {% endblock %}

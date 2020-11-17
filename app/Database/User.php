@@ -11,6 +11,6 @@ class User extends Model {
     public $timestamps = true;
     protected $table = 'user';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','nickname','email','emailchecklink','emailchecklinktimeout','emailchecked','resetpasswordlink','resetpasswordlinktimeout','password'];
+    protected $fillable = ['id','nickname','email','emailchecklink','emailchecklinktimeout','emailchecked','resetpasswordlink','resetpasswordlinktimeout','password','approvaleuuid','adminapproved'];
        
 }
