@@ -54,7 +54,8 @@ SMTP_PORT = "457"
 SMTP_USERNAME = "webmaster@domain.com"
 SMTP_PASSSWORD = "password"
 SMTP_MAILFROM = "webmaster@domain.com"
-
+SMTP_USESSL = "true"
+SMTP_USEAUTH = "true"
 ````
 
 ## Docker

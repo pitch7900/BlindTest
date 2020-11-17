@@ -8,8 +8,8 @@ use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
 use App\Controllers\AuthController;
-use App\Middleware\GuestMiddleware;
-use App\Middleware\AuthMiddleware;
+use App\Middleware\GuestMiddleware; //Used for public pages like authentication
+use App\Middleware\AuthMiddleware; //Used for private pages that requiere authentication
 
 
 return function (App $app) {
