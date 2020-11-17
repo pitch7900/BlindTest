@@ -11,7 +11,7 @@ use Slim\Views\Twig;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
-use App\Config\Auth;
+use App\Authentication\Auth;
 
 use Slim\App;
 
@@ -55,7 +55,7 @@ return [
         return $playlists;
     },
     Auth::class => function (ContainerInterface $container): Auth {
-        $auth = new Auth();
+        $auth = new Auth($container->get(LoggerInterface::class));
         return $auth;
     }
 ];

@@ -24,7 +24,9 @@
         "illuminate/database": "^6",
         "hoa/eventsource": "~3.0",
         "slim/flash": "^0.4.0",
-        "cartalyst/sentinel": "3"
+        "cartalyst/sentinel": "3",
+        "nesbot/carbon": "^2.41",
+        "phpmailer/phpmailer": "^6.1"
     },
     "config": {
         "preferred-install": "dist"

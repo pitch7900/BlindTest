@@ -11,7 +11,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
 use Psr\Log\LoggerInterface;
-use App\Config\Auth;
+use App\Authentication\Auth;
 
 
 class GuestMiddleware

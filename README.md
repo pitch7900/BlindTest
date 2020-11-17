@@ -49,6 +49,12 @@ SQL_DATABASE = "blindtest"
 SQL_USERNAME = "blindtest"
 SQL_PASSWORD = "blindtestpassword"
 PUBLIC_HOST = "http://localhost:8081"
+SMTP_SERVER = "mail.domain.com"
+SMTP_PORT = "457"
+SMTP_USERNAME = "webmaster@domain.com"
+SMTP_PASSSWORD = "password"
+SMTP_MAILFROM = "webmaster@domain.com"
+
 ````
 
 ## Docker

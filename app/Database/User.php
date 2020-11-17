@@ -3,7 +3,7 @@
 namespace App\Database;
 
 use Illuminate\Database\Eloquent\Model;
-use SimpleXMLElement;
+
 /**
  * Class Track for Illuminate (DB) queries
  */

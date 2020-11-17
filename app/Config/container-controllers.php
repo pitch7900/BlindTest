@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Authentication\Auth;
 use App\Config\StaticPlaylists;
 
 use App\Controllers\DeezerController;
@@ -36,7 +37,8 @@ return [
     },
     AuthController::class => function (ContainerInterface $container): AuthController {
         return new AuthController($container->get(Twig::class), 
-            $container->get(LoggerInterface::class)
+            $container->get(LoggerInterface::class),
+            $container->get(Auth::class)
         );
     }
 

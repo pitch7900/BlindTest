@@ -9,20 +9,14 @@
 {% endblock %}
 {% block content %}
 
-<div class="text-center">
-	
-		<img src="/img/deezer.png"/>
-		<h1 class="h3 mb-3 font-weight-normal">You have been signed out</h1>
+<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
-			<a href="{{ url_for('auth.login')}}">
-				Login
-			</a>
-			<span>.</span>
-			<a href="{{ url_for('auth.signin') }}">
-				Create login
-			</a>
+			<img src="/img/deezer.png"/>
+			<h1 class="h3 mb-3 font-weight-normal center">Email validation</h1>
+			<p>An email has been sent to your email address, please check and clik on the link provided</p>
 		</div>
-</div>
+		
+	</div>
 
 {% endblock %}
 

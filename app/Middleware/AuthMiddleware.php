@@ -11,7 +11,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
 use Psr\Log\LoggerInterface;
-use App\Config\Auth;
+use App\Authentication\Auth;
 
 
 class AuthMiddleware
@@ -72,21 +72,22 @@ class AuthMiddleware
         $response = $handler->handle($request);
         $this->logger->debug("AuthMiddleware::__invoke() Called");
         $this->logger->debug("AuthMiddleware::__invoke() SessionID is : ".session_id() . " / " . $this->auth->getSessionId());
-        if (!$this->auth->check()) {
+        if (!$this->auth->getAuthentified()) {
             $routeParser = $this->app->getRouteCollector()->getRouteParser();
             // $this->logger->debug("AuthMiddleware::__construct() ".print_r($routeParser,true));
             // die(var_dump($routeParser,true));
             $signinroute = $routeParser->urlFor('auth.login');
-            $this->logger->debug("AuthMiddleware::__construct() Not authentified. Should redirect to login page " . $signinroute);
+            $this->logger->debug("AuthMiddleware::__invoke() Not authentified. Should redirect to login page " . $signinroute);
+            $this->logger->debug("AuthMiddleware::__invoke() " . print_r($_SESSION,true));
             $response = $handler->handle($request)
             ->withHeader('Location',  $signinroute)
-            ->withStatus(302);
+            ->withStatus(301);
             return $response;
         } else {
-            $this->logger->debug("AuthMiddleware::__construct() Authentified ");
+            $this->logger->debug("AuthMiddleware::__invoke() User ".$this->auth->getUserId()." Authentified. Continue");
         }
 
-        die("Called invoke");
+        //die("Called invoke");
 
         return $response;
     }
