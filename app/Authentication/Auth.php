@@ -6,8 +6,6 @@ namespace App\Authentication;
 
 use App\Database\User;
 use Carbon\Carbon;
-// Import PHPMailer classes into the global namespace
-// These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Psr\Log\LoggerInterface;
@@ -357,7 +355,13 @@ class Auth
         }
         return false;
     }
-    
+        
+    /**
+     * setNickname : change nickname for current user's session
+     *
+     * @param  mixed $nickname
+     * @return void
+     */
     public function setNickname(string $nickname){
         $user = User::find($this->getUserId());
         $user->nickname=$nickname;

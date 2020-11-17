@@ -14,6 +14,10 @@ use App\Authentication\UUID;
 use App\Database\User;
 use Carbon\Carbon;
 
+/**
+ * AuthController
+ * @author : Pierre Christensen
+ */
 class AuthController extends AbstractTwigController
 {
 
