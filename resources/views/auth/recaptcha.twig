@@ -7,14 +7,15 @@
 	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
 			
+			<img src="/img/deezer.png"/ class="title">
 
-
-    <form action="?" method="POST">
-      <div class="g-recaptcha" data-sitekey="{{recaptcha_api_key}}"></div>
-      <br/>
-      <input type="submit" value="Submit">
-    </form>
-
+			<h1>Please check you're human</h1>
+			<form action="?" class="center" method="POST">
+				<div class="g-recaptcha" data-sitekey="{{recaptcha_api_key}}"></div>
+				<br/>
+				{# <input type="submit" value="Submit"> #}
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+			</form>
 
 
 		</div>

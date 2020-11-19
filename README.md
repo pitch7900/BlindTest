@@ -42,6 +42,8 @@ For example, the project is downloaded to /var/www/BlindTest and the virtual hos
 A configuration file should be created in /config/.env.
 This file should contain DB access credential like following exemple
 
+A Google cloud API key for ReCpatcha is needed : <https://developers.google.com/recaptcha/docs/v2>
+
 ```ini
 SQL_HOST = "localhost"
 SQL_PORT = 3306
@@ -56,6 +58,10 @@ SMTP_PASSSWORD = "password"
 SMTP_MAILFROM = "webmaster@domain.com"
 SMTP_USESSL = "true"
 SMTP_USEAUTH = "true"
+REGISTRATION_REQUIRE_APPROVAL = "true"
+REGISTRATION_ADMIN_EMAIL = "adminemail@domain.com"
+GOOGLE_RECAPTCHA_SITE_KEY=""
+GOOGLE_RECAPTCHA_SECRET_KEY=""
 ````
 
 ## Docker
