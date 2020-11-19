@@ -46,6 +46,7 @@ class Auth
     private function unvalidate()
     {
         $this->setAuthentified(false);
+        unset($_SESSION['authentified']);
         unset($_SESSION["userid"]);
     }
     
@@ -160,6 +161,7 @@ class Auth
      */
     public function signout()
     {
+        unset($_SESSION['norobot']);
         $this->unvalidate();
     }
     
