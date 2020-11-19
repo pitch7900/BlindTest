@@ -1,5 +1,5 @@
 #!/bin/bash
-SERVICENAME="musicmigrator"
+SERVICENAME="BlindTest"
 echo "Init Script starting"
 
 files=($(ls /docker-entrypoint-init.d/ -a))

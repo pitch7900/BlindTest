@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 use App\ContainerFactory;
 use Slim\Factory\AppFactory;
-
-use Slim\Views\Twig;
-use Slim\Views\TwigMiddleware;
-
+use Dotenv\Exception\InvalidPathException;
 
 use Dotenv\Dotenv;
 
@@ -62,7 +59,14 @@ if (!function_exists('app'))
     }
 }
 
+//Add Middlewares
 (require __DIR__ . '/middleware.php')($app);
+
+// Register routes
+$routes = require $rootPath . '/app/routes.php';
+$routes($app);
+
+
 
 // Add error handling middleware.
 $displayErrorDetails = true;
@@ -71,7 +75,6 @@ $logErrorDetails = false;
 $app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
 
 
-// Register routes
-$routes = require $rootPath . '/app/routes.php';
-$routes($app);
+
+
 

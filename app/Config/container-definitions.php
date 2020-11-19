@@ -11,7 +11,10 @@ use Slim\Views\Twig;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
-use Hoa\Eventsource\Server;
+use App\Authentication\Auth;
+use App\Authentication\Recaptcha;
+
+use Slim\App;
 
 return [
     LoggerInterface::class => function (ContainerInterface $container): LoggerInterface {
@@ -51,5 +54,13 @@ return [
     StaticPlaylists::class => function (ContainerInterface $container): StaticPlaylists {
         $playlists = new StaticPlaylists();
         return $playlists;
+    },
+    Auth::class => function (ContainerInterface $container): Auth {
+        $auth = new Auth($container->get(LoggerInterface::class));
+        return $auth;
+    },
+    Recaptcha::class => function (ContainerInterface $container): Recaptcha {
+        $recaptcha = new Recaptcha($container->get(LoggerInterface::class));
+        return $recaptcha;
     }
 ];
