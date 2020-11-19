@@ -1,0 +1,35 @@
+{% extends "main.twig" %}
+
+{% block menu %}{% endblock %}
+
+{% block interactivemenus %}{% endblock %}
+{% block content %}
+	<div class="container-fluid row">
+		<div class="col-sm-8 mx-auto">
+			
+
+
+    <form action="?" method="POST">
+      <div class="g-recaptcha" data-sitekey="{{recaptcha_api_key}}"></div>
+      <br/>
+      <input type="submit" value="Submit">
+    </form>
+
+
+
+		</div>
+
+	</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<script>
+		function onSubmit(token) {
+document.getElementById("demo-form").submit();
+}
+	</script>
+
+{% endblock %}

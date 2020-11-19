@@ -12,6 +12,7 @@ use App\MusicSources\Deezer\DeezerApiInterface;
 use App\MusicSources\Deezer\DeezerApi;
 use App\Config\StaticPlaylists;
 use App\Authentication\Auth;
+use App\Authentication\Recaptcha;
 
 use Slim\App;
 
@@ -57,5 +58,9 @@ return [
     Auth::class => function (ContainerInterface $container): Auth {
         $auth = new Auth($container->get(LoggerInterface::class));
         return $auth;
+    },
+    Recaptcha::class => function (ContainerInterface $container): Recaptcha {
+        $recaptcha = new Recaptcha($container->get(LoggerInterface::class));
+        return $recaptcha;
     }
 ];

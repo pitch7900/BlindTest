@@ -9,11 +9,12 @@ use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
 use App\Controllers\AuthController;
+use App\Controllers\ReCaptchaController;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
-
+use App\Authentication\Recaptcha;
 
 return [
     DeezerController::class => function (ContainerInterface $container): DeezerController {
@@ -40,6 +41,11 @@ return [
             $container->get(LoggerInterface::class),
             $container->get(Auth::class)
         );
+    },
+    ReCaptchaController::class => function (ContainerInterface $container): ReCaptchaController {
+        return new ReCaptchaController($container->get(Twig::class), 
+            $container->get(LoggerInterface::class),
+            $container->get(Recaptcha::class)
+        );
     }
-
 ];
