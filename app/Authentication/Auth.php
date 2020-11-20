@@ -140,7 +140,11 @@ class Auth
      */
     public function getAuthentified()
     {
+        if (isset($_SESSION['authentified'])) {
         return $_SESSION['authentified'];
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -220,6 +224,60 @@ class Auth
                 die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
             }
     }
+
+    /**
+     * sendAdminsitratorEmail : Send to the admin an information email for a new account creation
+     *
+     * @param  mixed $email
+     * @return void
+     */
+    public function sendAdminsitratorEmail(string $email){
+        $mail = new PHPMailer(true);
+            try {
+                //Server settings
+                // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+                $mail->isSMTP();                                            // Send using SMTP
+
+                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+
+                if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
+                    $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
+                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
+                }
+                if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
+                    $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+                }
+                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+                //Recipients
+                $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+                $mail->addAddress($_ENV['REGISTRATION_ADMIN_EMAIL']);               // Add a recipient
+                $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
+
+                // Content
+                $mail->isHTML(true);                                  // Set email format to HTML
+                $mail->Subject = 'New account creation for Blindtest';
+                $mail->Body    = "<p>Hello,</p>" . "\r\n" .
+                    "<p>A new account has been created for $email." . "</p>\r\n";
+                   
+                $mail->AltBody = "Hello," . "\r\n" .
+                    "A new account has been created for $email." . "\r\n";
+     
+
+                $mail->send();
+                
+                $this->logger->debug("Auth::sendValidatorEmail() Mail sent to ".$_ENV['REGISTRATION_ADMIN_EMAIL']);
+            } catch (Exception $e) {
+                $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            }
+    }
+
+
 
     /**
      * sendValidationEmail : Send a validation email with link to validate email
@@ -310,6 +368,11 @@ class Auth
             if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'],"true")==0){
                 $this->sendValidatorEmail($email,$v4uuid_validator);
             }else {
+                $user = User::where([
+                    ['email', '=', $email]
+                ])->first();
+                $user->adminapproved = true;
+                $this->sendAdminsitratorEmail($email);
                 $this->sendValidationEmail($email,$v4uuid_user);
             }
         }
