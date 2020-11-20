@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 17, 2020 at 06:04 AM
+-- Generation Time: Nov 19, 2020 at 03:48 PM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -176,6 +176,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `password` varchar(1024) NOT NULL,
+  `approvaleuuid` varchar(250) DEFAULT NULL,
+  `adminapproved` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
