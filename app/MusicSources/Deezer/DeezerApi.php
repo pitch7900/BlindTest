@@ -309,6 +309,7 @@ class DeezerApi implements DeezerApiInterface
             // "TotalTracks" => null,
             "preview" => $track['preview'],
             // "Picture" => $track['album']['cover']
+            "readable" => $track['readable']
         ];
         return $array;
     }
@@ -462,7 +463,8 @@ class DeezerApi implements DeezerApiInterface
         }
         //Add each Track to database
         foreach ($tracks as $track) {
-            if (strlen($track['preview'])>0) {
+            //Only add a track with a preview and that can be readed
+            if (strlen($track['preview'])>0 && $track['readable']) {
                 $this->DBaddTrack($track);
                 PlaylistTracks::updateOrCreate([
                     'playlisttracks_track' => $track['id'],

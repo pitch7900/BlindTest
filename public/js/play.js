@@ -76,6 +76,7 @@ var playtitle = function () {
         // alert("Please allow your browser to autoplay music");
         $("#MainPage").addClass("invisible");
         $("#BrowserError").removeClass("invisible");
+        $.post("/errors/player", jsondata);
       });
   });
 };

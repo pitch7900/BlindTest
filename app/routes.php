@@ -8,6 +8,7 @@ use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
 use App\Controllers\ReCaptchaController;
+use App\Controllers\ErrorsController;
 use App\Controllers\AuthController;
 use App\Middleware\AuthMiddleware; //Used for private pages that requiere authentication
 use App\Middleware\ReCaptchaMiddleware;
@@ -41,7 +42,7 @@ return function (App $app) {
                         ->setName('auth.forgotpassword.post');
                 $group->post('/signin', AuthController::class . ':postsignin')
                         ->setName('auth.signin.post');
-        });//->add(new ReCaptchaMiddleware($app));
+        })->add(new ReCaptchaMiddleware($app));
 
 
 
@@ -92,6 +93,16 @@ return function (App $app) {
                 $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')
                         ->setName('blindtest.streammp3');
         })->add(new AuthMiddleware($app));
+
+
+        
+        $app->group('/errors', function (RouteCollectorProxy $group) {
+                $group->post('/player', ErrorsController::class . ':postplayer')
+                        ->setName('errors.player.post');
+                
+        })->add(new AuthMiddleware($app));
+
+
 
         $app->get('/', HomeController::class . ':home')
                 ->setName('home')
