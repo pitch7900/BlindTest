@@ -269,9 +269,10 @@ class AuthController extends AbstractTwigController
     {
         $password = $request->getParam('password');
         $email = $request->getParam('email');
+        $nickname = $request->getParam('nickname');
         $password = password_hash($password, PASSWORD_DEFAULT);
         sleep(2);
-        $this->auth->addUser($email, $password);
+        $this->auth->addUser($email, $password,$nickname);
         $arguments['approval'] = false;
         if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
             $arguments['approval'] = true;

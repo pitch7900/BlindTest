@@ -339,7 +339,7 @@ class Auth
      * @param  mixed $encryptedpassword
      * @return bool
      */
-    public function addUser(string $email, string $encryptedpassword): bool
+    public function addUser(string $email, string $encryptedpassword, string $nickname): bool
     {
         $email = strtolower($email);
         $user = User::where([
@@ -355,7 +355,7 @@ class Auth
             User::updateOrCreate([
                 'email' => $email,
                 'password' => $encryptedpassword,
-                'nickname' => $email,
+                'nickname' => $nickname,
                 'emailchecklink' => $v4uuid_user,
                 'emailchecklinktimeout' => $timestamp, //curent time + 15 minutes
                 'emailchecked' => false,
