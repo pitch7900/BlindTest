@@ -51,8 +51,7 @@ return [
     },
     ErrorsController::class => function (ContainerInterface $container): ErrorsController {
         return new ErrorsController($container->get(Twig::class), 
-            $container->get(LoggerInterface::class),
-
+            $container->get(LoggerInterface::class)
         );
     }
 ];
