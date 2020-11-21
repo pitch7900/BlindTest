@@ -309,6 +309,7 @@ class DeezerApi implements DeezerApiInterface
             // "TotalTracks" => null,
             "preview" => $track['preview'],
             // "Picture" => $track['album']['cover']
+            "readable" => $track['readable']
         ];
         return $array;
     }
@@ -351,13 +352,35 @@ class DeezerApi implements DeezerApiInterface
         if (is_null($artistdb)) {
             Artist::updateOrCreate([
                 'id' => $artist['id'],
-                'artist_name' => $artist['name'],
+                'artist_name' => $this->forceLatinChars($artist['name']),
                 'artist_link' => $artist['link'],
                 'artist_tracklist' => $artist['tracklist']
             ]);
         }
         return intval($artist['id']);
     }
+
+    
+    /**
+     * forceLatinChars : Replace special chars with an equivalent in latin charset
+     * Written to solve the "KoЯn" bug !
+     * 
+     * @param  mixed $str
+     * @return void
+     */
+    private function forceLatinChars(string $text,$strict = false){
+        $unwanted_array = array(
+            'Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E',
+            'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I', 'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 'Ù' => 'U',
+            'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c',
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o',
+            'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ğ' => 'G', 'İ' => 'I', 'Ş' => 'S', 'ğ' => 'g', 'ı' => 'i', 'ş' => 's', 'ü' => 'u',
+            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', 'Я' => 'R', 'œ' => 'oe', '™' => 'TM'
+        );
+        return strtr($text, $unwanted_array);
+        
+    }
+
     /**
      * DBaddAlbum : Add album to database
      *
@@ -372,7 +395,7 @@ class DeezerApi implements DeezerApiInterface
         if (is_null($albumdb)) {
             Album::updateOrCreate([
                 'id' => $album['id'],
-                'album_title' => $album['title'],
+                'album_title' => $this->forceLatinChars($album['title']),
                 'album_tracklist' => $album['tracklist'],
                 'album_cover' => $album['cover_xl']
             ]);
@@ -394,7 +417,7 @@ class DeezerApi implements DeezerApiInterface
         if (is_null($trackdb)) {
             Track::updateOrCreate([
                 'id' => $track['id'],
-                'track_title' => $track['title'],
+                'track_title' => $this->forceLatinChars($track['title']),
                 'track_link' => $track['link'],
                 'track_preview' => $track['preview'],
                 'track_artist' => $track['artist']['id'],
@@ -432,7 +455,7 @@ class DeezerApi implements DeezerApiInterface
         if (is_null($playlist)) {
             Playlist::updateOrCreate([
                 'id' => $playlist_json['id'],
-                'playlist_title' => $playlist_json['title'],
+                'playlist_title' => $this->forceLatinChars($playlist_json['title']),
                 'playlist_link' => $playlist_json['link'],
                 'playlist_picture' => $playlist_json['picture_xl']
             ]);
@@ -440,7 +463,8 @@ class DeezerApi implements DeezerApiInterface
         }
         //Add each Track to database
         foreach ($tracks as $track) {
-            if (strlen($track['preview'])>0) {
+            //Only add a track with a preview and that can be readed
+            if (strlen($track['preview'])>0 && $track['readable']) {
                 $this->DBaddTrack($track);
                 PlaylistTracks::updateOrCreate([
                     'playlisttracks_track' => $track['id'],

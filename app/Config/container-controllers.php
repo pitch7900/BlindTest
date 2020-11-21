@@ -10,6 +10,7 @@ use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
 use App\Controllers\AuthController;
 use App\Controllers\ReCaptchaController;
+use App\Controllers\ErrorsController;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -46,6 +47,12 @@ return [
         return new ReCaptchaController($container->get(Twig::class), 
             $container->get(LoggerInterface::class),
             $container->get(Recaptcha::class)
+        );
+    },
+    ErrorsController::class => function (ContainerInterface $container): ErrorsController {
+        return new ErrorsController($container->get(Twig::class), 
+            $container->get(LoggerInterface::class),
+
         );
     }
 ];

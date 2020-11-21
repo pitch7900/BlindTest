@@ -33,7 +33,7 @@ class BlindTestController extends AbstractTwigController
      */
     private $logger;
 
- 
+
 
     public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer)
     {
@@ -74,8 +74,8 @@ class BlindTestController extends AbstractTwigController
         return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(302);
     }
 
-    public function postGameWriting(Request $request, Response $response, $args){
-        
+    public function postGameWriting(Request $request, Response $response, $args)
+    {
     }
 
 
@@ -92,10 +92,10 @@ class BlindTestController extends AbstractTwigController
 
         $playlistid = Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->playlist_title;
-        
+
         $arguments['playlistid'] = $playlistid;
         $arguments['gamesid'] = $gamesid;
-        $this->logger->debug("BlindTestController::getGameHTML ".print_r($arguments,true));
+        $this->logger->debug("BlindTestController::getGameHTML " . print_r($arguments, true));
         return $this->render($response, 'play.twig', $arguments);
     }
 
@@ -138,7 +138,7 @@ class BlindTestController extends AbstractTwigController
             'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c',
             'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o',
             'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ğ' => 'G', 'İ' => 'I', 'Ş' => 'S', 'ğ' => 'g', 'ı' => 'i', 'ş' => 's', 'ü' => 'u',
-            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', '-' => '', '\/' => ''
+            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', '-' => '', '/' => '', '\\' => ''
         );
         $newstring = strtr($string, $unwanted_array);
 
@@ -159,26 +159,27 @@ class BlindTestController extends AbstractTwigController
      */
     private function compareAnswers(string $tofindinit, string $guessinit)
     {
+        $this->logger->debug("BlindTestController::compareAnswers() Should compare $tofindinit and $guessinit");
         $tofindarray = explode(" ", $this->removeAccents($tofindinit));
         $guessarray = explode(" ", $this->removeAccents($guessinit));
 
         foreach ($guessarray as $guess) {
-            //Don't look for string below 2 chars
-            if (strlen($guess) <= 1) {
-                break;
-            }
-            //if between 2 chars and 4 we need an exact match
+            //Don't look for string below 2 chars, or do this if the string to find is =1
+            if (strlen($guess) > 1 || strlen($tofindinit) == 1) {
+                //if between 2 chars and 4 we need an exact match
+                $this->logger->debug("BlindTestController::compareAnswers() Less than 4 chars, we need an exact match");
+                if (in_array($guess, $tofindarray)) {
 
-            if (in_array($guess, $tofindarray)) {
-
-                return true;
+                    return true;
+                }
             }
             if (strlen($guess) > 4) {
-
+                $this->logger->debug("BlindTestController::compareAnswers() More than 5 chars, we allow a levenshtein distance of 2");
 
                 foreach ($tofindarray as $tofind) {
+                    $this->logger->debug("BlindTestController::compareAnswers()   Comparing $guess and $tofind");
                     if (levenshtein($guess, $tofind) <= 2) {
-
+                        $this->logger->debug("BlindTestController::compareAnswers()   Comparing $guess and $tofind [Match]");
                         return true;
                     }
                 }
@@ -198,7 +199,7 @@ class BlindTestController extends AbstractTwigController
      */
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
-        $guess=$request->getParam('guess');
+        $guess = $request->getParam('guess');
         $this->logger->debug("BlindtestController::postGameCheckCurrent Guess is  : " . $guess);
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
@@ -210,27 +211,26 @@ class BlindTestController extends AbstractTwigController
             ->first();
 
         $trackid = $currentgame->game_track;
- 
+
         $this->logger->debug("BlindtestController::postGameCheckCurrent Trackid : " . $trackid);
 
-            $checkartist=false;
-            $checktitle=false;
-            $track = Track::find($trackid);
+        $checkartist = false;
+        $checktitle = false;
+        $track = Track::find($trackid);
         $artist = Artist::find($track->track_artist);
         $album = Album::find($track->track_album);
         $games->games_currenttrackindex = $currentTrackIndex + 1;
         $games->save();
 
-        if ($guess!=null){
+        if ($guess != null) {
             $guess = $this->removeAccents(utf8_encode($guess));
-            $this->logger->debug("BlindtestController::postGameCheckCurrent guess is : " . $guess);
-            $checkartist=$this->compareAnswers($artist->artist_name,$guess);
-            $checktitle=$this->compareAnswers($track->track_title,$guess);
-
+            $this->logger->debug("BlindtestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
+            $checkartist = $this->compareAnswers($artist->artist_name, $guess);
+            $checktitle = $this->compareAnswers($track->track_title, $guess);
         } else {
             $this->logger->debug("BlindtestController::postGameCheckCurrent Guess entered was NULL");
         }
-        
+
 
         return $this->withJson($response, [
             'guess' => $guess,
@@ -256,13 +256,24 @@ class BlindTestController extends AbstractTwigController
         $gamesid = intval($args['gamesid']);
         $games = Games::find($gamesid);
         $currentTrackIndex = $games->games_currenttrackindex;
-        $currentgame = Game::where([
-            ['game_gamesid', '=', $gamesid],
-            ['game_order', '=', $currentTrackIndex]
-        ])
-            ->first();
-        $trackid = $currentgame->game_track;
-        return $this->withJSON($response, ['trackid' => $trackid]);
+        $numberoftracks = count(Game::where([
+            ['game_gamesid', '=', $gamesid]
+        ])->get());
+        $this->logger->debug("BlindTestController::getCurrentTrackJson() Number of track is : $numberoftracks");
+        $this->logger->debug("BlindTestController::getCurrentTrackJson() Current Track index is : $currentTrackIndex");
+        //We've reached the end of the track list for this game
+        if ($currentTrackIndex > $numberoftracks) {
+            //return -1 as code for end of play;
+            return $this->withJSON($response, ['trackid' => -1]);
+        } else {
+            $currentgame = Game::where([
+                ['game_gamesid', '=', $gamesid],
+                ['game_order', '=', $currentTrackIndex]
+            ])
+                ->first();
+            $trackid = $currentgame->game_track;
+            return $this->withJSON($response, ['trackid' => $trackid]);
+        }
     }
 
     /**
