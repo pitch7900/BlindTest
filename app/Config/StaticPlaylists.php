@@ -7,6 +7,19 @@ namespace App\Config;
 class StaticPlaylists
 {
     private $playlists = [
+        // [
+        //     'id' => 8386051942,
+        //     'title' => 'blind test Test Pierre',
+        //     'duration' => 168,
+        //     'public' => true,
+        //     'is_loved_track' => false,
+        //     'collaborative' => false,
+        //     'nb_tracks' => 1,
+        //     'link' => 'https://www.deezer.com/playlist/8386051942',
+        //     'picture' => 'https://api.deezer.com/playlist/8386051942/image',
+        //     'picture_xl' => 'https://e-cdns-images.dzcdn.net/images/cover/a11c977e1ec9898758dfe058df868901/1000x1000-000000-80-0-0.jpg',
+        //     'tracklist' => 'https://api.deezer.com/playlist/8386051942/tracks',
+        // ],
         [
             'id' => 1913917022,
             'title' => 'Blind Test Série & Dessins Animés Années 80',

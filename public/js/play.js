@@ -61,23 +61,28 @@ var playtitle = function () {
       console.log("Creating new Audio Stream");
       audio = new Audio();
     }
-    audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
-
-    audio
-      .play()
-      .then(() => {
-        //Hide the answer field
-        $("#answer").addClass("invisible");
-        //Allow interraction with sending the answer
-        $("#Play").removeClass("invisible");
-        StartCountDown();
-      })
-      .catch((error) => {
-        // alert("Please allow your browser to autoplay music");
-        $("#MainPage").addClass("invisible");
-        $("#BrowserError").removeClass("invisible");
-        $.post("/errors/player", jsondata);
-      });
+    //We haven't reached the last song of the game. Play
+    if (jsondata.trackid != -1) {
+      audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
+      audio
+        .play()
+        .then(() => {
+          //Hide the answer field
+          $("#answer").addClass("invisible");
+          //Allow interraction with sending the answer
+          $("#Play").removeClass("invisible");
+          StartCountDown();
+        })
+        .catch((error) => {
+          // alert("Please allow your browser to autoplay music");
+          $("#MainPage").addClass("invisible");
+          $("#BrowserError").removeClass("invisible");
+          $.post("/errors/player", jsondata);
+        });
+    } else{
+      //Last song of the game reached. Do an action
+      alert("Last song reached");
+    }
   });
 };
 
