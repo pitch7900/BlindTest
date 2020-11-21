@@ -41,7 +41,7 @@ return function (App $app) {
                         ->setName('auth.forgotpassword.post');
                 $group->post('/signin', AuthController::class . ':postsignin')
                         ->setName('auth.signin.post');
-        })->add(new ReCaptchaMiddleware($app));
+        });//->add(new ReCaptchaMiddleware($app));
 
 
 
