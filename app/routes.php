@@ -14,13 +14,8 @@ use App\Middleware\AuthMiddleware; //Used for private pages that requiere authen
 
 
 return function (App $app) {
-        // $app->group('/recaptacha', function (RouteCollectorProxy $group) {
-        //         $group->get('/check', ReCaptchaController::class . ':checkpage')
-        //                 ->setName('recaptacha.check');
-        //         $group->post('/check', ReCaptchaController::class . ':postcheckpage')
-        //                 ->setName('recaptacha.check.post');
-        // });
-
+     
+        //Public pages for authentication
         $app->group('/auth', function (RouteCollectorProxy $group) {
                 $group->get('/signin', AuthController::class . ':signin')
                         ->setName('auth.signin');
@@ -44,7 +39,9 @@ return function (App $app) {
                         ->setName('auth.signin.post');
         });
 
-
+        /**
+         * Starting here only private pages that requieres authentication et Capatcha
+         */
 
         $app->group('/user', function (RouteCollectorProxy $group) {
                 $group->get('/signout', AuthController::class . ':signout')
