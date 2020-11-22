@@ -11,15 +11,15 @@ use App\Controllers\ReCaptchaController;
 use App\Controllers\ErrorsController;
 use App\Controllers\AuthController;
 use App\Middleware\AuthMiddleware; //Used for private pages that requiere authentication
-use App\Middleware\ReCaptchaMiddleware;
+
 
 return function (App $app) {
-        $app->group('/recaptacha', function (RouteCollectorProxy $group) {
-                $group->get('/check', ReCaptchaController::class . ':checkpage')
-                        ->setName('recaptacha.check');
-                $group->post('/check', ReCaptchaController::class . ':postcheckpage')
-                        ->setName('recaptacha.check.post');
-        });
+        // $app->group('/recaptacha', function (RouteCollectorProxy $group) {
+        //         $group->get('/check', ReCaptchaController::class . ':checkpage')
+        //                 ->setName('recaptacha.check');
+        //         $group->post('/check', ReCaptchaController::class . ':postcheckpage')
+        //                 ->setName('recaptacha.check.post');
+        // });
 
         $app->group('/auth', function (RouteCollectorProxy $group) {
                 $group->get('/signin', AuthController::class . ':signin')
@@ -42,7 +42,7 @@ return function (App $app) {
                         ->setName('auth.forgotpassword.post');
                 $group->post('/signin', AuthController::class . ':postsignin')
                         ->setName('auth.signin.post');
-        })->add(new ReCaptchaMiddleware($app));
+        });
 
 
 

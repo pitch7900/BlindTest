@@ -13,6 +13,7 @@ use App\Authentication\Auth;
 use App\Authentication\UUID;
 use App\Database\User;
 use Carbon\Carbon;
+use App\Authentication\Recaptcha;
 
 /**
  * AuthController
@@ -36,16 +37,25 @@ class AuthController extends AbstractTwigController
     private $auth;
 
     /**
+     * recaptcha
+     *
+     * @var Recaptcha
+     */
+    private $recaptcha;
+
+
+    /**
      * __construct
      *
      * @param  mixed $twig
      * @param  mixed $logger
      * @return void
      */
-    public function __construct(Twig $twig, LoggerInterface $logger, Auth $auth)
+    public function __construct(Twig $twig, LoggerInterface $logger, Auth $auth, Recaptcha $recaptcha)
     {
         parent::__construct($twig);
         $this->logger = $logger;
+        $this->recaptcha = $recaptcha;
         $this->logger->debug("AuthController::_construct Constructor called");
         $this->auth = $auth;
     }
@@ -61,7 +71,8 @@ class AuthController extends AbstractTwigController
      */
     public function signin(Request $request, Response $response, array $args = []): Response
     {
-        return $this->render($response, 'auth/signin.twig');
+        $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
+        return $this->render($response, 'auth/signin.twig', $arguments);
     }
 
     /**
@@ -75,13 +86,14 @@ class AuthController extends AbstractTwigController
     public function checkmail(Request $request, Response $response, array $args = []): Response
     {
         $uuid = $args['uuid'];
+        $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
         $validation = $this->auth->validateEmail($uuid);
         if ($validation) {
             $response = $response
                 ->withHeader('Location', '/')
                 ->withStatus(303);
         } else {
-            $response = $this->render($response, 'auth/signin.twig');
+            $response = $this->render($response, 'auth/signin.twig', $arguments);
         }
         return $response;
     }
@@ -142,7 +154,7 @@ class AuthController extends AbstractTwigController
      * @return Response
      */
     public function changepassword(Request $request, Response $response, array $args = []): Response
-    {     
+    {
         return $this->render($response, 'user/changepassword.twig');
     }
 
@@ -172,7 +184,8 @@ class AuthController extends AbstractTwigController
      */
     public function resetpassword(Request $request, Response $response, array $args = []): Response
     {
-        return $this->render($response, 'auth/resetpassword.twig');
+        $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
+        return $this->render($response, 'auth/resetpassword.twig', $arguments);
     }
 
     /**
@@ -210,7 +223,8 @@ class AuthController extends AbstractTwigController
      */
     public function login(Request $request, Response $response, array $args = []): Response
     {
-        return $this->render($response, 'auth/login.twig');
+        $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
+        return $this->render($response, 'auth/login.twig', $arguments);
     }
 
     public function postlogin(Request $request, Response $response, array $args = []): Response
@@ -218,7 +232,19 @@ class AuthController extends AbstractTwigController
         $password = $request->getParam('password');
         $email = $request->getParam('email');
 
-        $this->auth->checkPassword($email, $password);
+        $answer = $request->getParam('g-recaptcha-response');
+
+        if (!is_null($answer)) {
+            $this->recaptcha->verifyResponseToken($answer);
+        }
+        if ($this->recaptcha->getNoRobot()) {
+            $this->logger->debug("AuthController::postlogin Recaptcha is success. Authentifying using password and login.");
+            $this->auth->checkPassword($email, $password);
+        } else {
+            $this->logger->debug("AuthController::postlogin Recaptcha is not success.");
+        }
+
+        
 
         return $response
             ->withHeader('Location', '/')
@@ -235,7 +261,8 @@ class AuthController extends AbstractTwigController
      */
     public function forgotpassword(Request $request, Response $response, array $args = []): Response
     {
-        return $this->render($response, 'auth/forgotpassword.twig');
+        $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
+        return $this->render($response, 'auth/forgotpassword.twig', $arguments);
     }
 
     /**
@@ -250,8 +277,17 @@ class AuthController extends AbstractTwigController
     public function postforgotpassword(Request $request, Response $response, array $args = []): Response
     {
         $email = $request->getParam('email');
-        sleep(2);
-        $this->auth->sendResetPasswordLink($email);
+        $answer = $request->getParam('g-recaptcha-response');
+
+        if (!is_null($answer)) {
+            $this->recaptcha->verifyResponseToken($answer);
+        }
+        if ($this->recaptcha->getNoRobot()) {
+            $this->logger->debug("AuthController::postforgotpassword Recaptcha is success. Sending reset link");
+            $this->auth->sendResetPasswordLink($email);
+        } else {
+            $this->logger->debug("AuthController::postforgotpassword Recaptcha is not success");
+        }
         return $this->render($response, 'auth/validateemail.twig');
     }
 
@@ -267,19 +303,33 @@ class AuthController extends AbstractTwigController
      */
     public function postsignin(Request $request, Response $response, array $args = []): Response
     {
-        $password = $request->getParam('password');
-        $email = $request->getParam('email');
-        $nickname = $request->getParam('nickname');
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        sleep(2);
-        $this->auth->addUser($email, $password,$nickname);
+        
         $arguments['approval'] = false;
         if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
             $arguments['approval'] = true;
         }
+        $answer = $request->getParam('g-recaptcha-response');
+        if (!is_null($answer)) {
+            $this->recaptcha->verifyResponseToken($answer);
+        }
+        if ($this->recaptcha->getNoRobot()) {
+            $this->logger->debug("AuthController::postsignin Recaptcha is susccess. Continue with account creation");
+            $password = $request->getParam('password');
+            $email = $request->getParam('email');
+            $nickname = $request->getParam('nickname');
+            $password = password_hash($password, PASSWORD_DEFAULT);
+            sleep(2);
+            $this->auth->addUser($email, $password, $nickname);
+            
+           
+           
+        } else {
+            $this->logger->debug("AuthController::postsignin Recaptcha is not success");
+
+        }
         return $this->render($response, 'auth/validateemail.twig', $arguments);
     }
-    
+
     /**
      * validateemail : Aknowledge the email sent to user
      *

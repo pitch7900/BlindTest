@@ -13,7 +13,6 @@ use Slim\App;
 use Psr\Log\LoggerInterface;
 use App\Authentication\Auth;
 
-
 class AuthMiddleware
 {
 
