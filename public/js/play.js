@@ -3,6 +3,7 @@ var audio;
 var points;
 var gamesid;
 var countdown;
+var currentplaylistid;
 
 function StartCountDown() {
   var seconds = 30;
@@ -63,7 +64,12 @@ var playtitle = function () {
     }
     //We haven't reached the last song of the game. Play
     if (jsondata.trackid != -1) {
+      points = jsondata.score;
+      $("#currentscore").html(points);
+      currenttrackid = jsondata.trackid;
+      currentplaylistid = jsondata.playlistid;
       audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
+
       audio
         .play()
         .then(() => {
@@ -79,9 +85,9 @@ var playtitle = function () {
           $("#BrowserError").removeClass("invisible");
           $.post("/errors/player", jsondata);
         });
-    } else{
+    } else {
       //Last song of the game reached. Do an action
-      alert("Last song reached");
+      alert("Last song reached. Final score is : ".jsondata.score);
     }
   });
 };
@@ -126,6 +132,7 @@ var postcheckanswer = function (guessentered) {
   guessentered = removeAccentsAndSpecialChars(guessentered);
   $.post("/blindtest/game/" + gamesid + "/check.json", {
     guess: guessentered,
+    trackid: currenttrackid,
   })
     .done(function (jsondata) {
       //Hide the answer field
@@ -140,15 +147,16 @@ var postcheckanswer = function (guessentered) {
       $("#title").removeClass();
       checkartist = jsondata.checkartist;
       checktitle = jsondata.checktitle;
+      points = jsondata.score;
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
-        points++;
+
       } else {
         $("#artist").addClass("alert alert-danger");
       }
       if (checktitle) {
         $("#title").addClass("alert alert-success");
-        points++;
+
       } else {
         $("#title").addClass("alert alert-danger");
       }

@@ -15,6 +15,9 @@ use App\Database\Album;
 use App\Database\Artist;
 use App\Database\Track;
 use App\Database\Playlist;
+use App\Database\User;
+use App\Authentication\Auth;
+use Carbon\Carbon;
 
 /**
  * Description of BlindTestController
@@ -33,13 +36,14 @@ class BlindTestController extends AbstractTwigController
      */
     private $logger;
 
+    private $auth;
 
-
-    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer)
+    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer, Auth $auth)
     {
         parent::__construct($twig);
         $this->logger = $logger;
         $this->deezer = $deezer;
+        $this->auth = $auth;
     }
 
 
@@ -134,28 +138,28 @@ class BlindTestController extends AbstractTwigController
     {
         $unwanted_array = array(
             'Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z',
-            'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A','Ă' => 'A',
+            'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A', 'Ă' => 'A',
             'Ç' => 'C',
-            'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 
-            'Ğ' => 'G', 
-            'İ' => 'I', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I', 
+            'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'Ğ' => 'G',
+            'İ' => 'I', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
             'Ñ' => 'N',
-            'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 
+            'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O',
             'Ş' => 'S', 'Ș' => 'S',
             'Ù' => 'U',
-            'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 
-            'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 
+            'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss',
             'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ă' => 'a',
             'ç' => 'c',
-            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 
-            'ğ' => 'g', 
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'ğ' => 'g',
             'ı' => 'i', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
-            'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o', 
+            'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o',
             'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü' => 'u',
-            'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 
+            'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y',
             'ş' => 's', 'ș' => 's',
             'ț' => 't', 'Ț' => 'T', 'ć' => 'c',
-            '-' => ' ', '/' => '', '\\' => '', '.' => '', '!' => '' , '?' => ''
+            '-' => ' ', '/' => '', '\\' => '', '.' => '', '!' => '', '?' => ''
         );
         $newstring = strtr($string, $unwanted_array);
 
@@ -206,6 +210,63 @@ class BlindTestController extends AbstractTwigController
         return false;
     }
 
+    /**
+     * getPlaylistHighScore - return the HighScore for this playlist
+     *
+     * @param  mixed $playlistid
+     * @return array
+     */
+    private function getPlaylistHighScore(int $playlistid): array
+    {
+        $this->logger->debug("BlindTestController::getPlaylistHighScore() Should search for highscore for playlist $playlistid");
+        //$games = Games::where([['games_playlist', '=', $playlistid]]);
+
+        $highscores = [
+            'userid' => null,
+            'score' => 0,
+            'nickname' => null
+        ];
+        foreach (Games::getGamesIdFromPlaylist($playlistid) as $game) {
+            $gameid = $game['id'];
+            $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . $gameid);
+            // $scores=Game::select("SELECT userid,sum(points) as score FROM blindtest.game
+            //         WHERE userid is not null 
+            //         AND id = $gameid
+            //         GROUP BY userid;"
+            //         );
+            $scores = Game::getHighScore($gameid);
+            $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . var_export($scores, true));
+
+            if ($highscores['score'] <= $scores['score'] && !is_null($scores['userid'])) {
+                $highscores['nickname'] = User::getNickName($scores['userid']);
+                $highscores['score'] = $scores['score'];
+                $highscores['userid'] = $scores['userid'];
+            }
+        }
+        return $highscores;
+    }
+
+    /**
+     * getPlaylistInformations : get JSON on current playlist
+     *
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return Response
+     */
+    public function getPlaylistInformations(Request $request, Response $response, $args): Response
+    {
+        $playlistid = $args['playlistid'];
+        $informations = [
+            'id' => $playlistid,
+            'highscore' => $this->getPlaylistHighScore($playlistid),
+            'name' => Playlist::find($playlistid)->playlist_title,
+            'link' => Playlist::find($playlistid)->playlist_link,
+            'picture' => Playlist::find($playlistid)->playlist_picture
+        ];
+
+        return $this->withJSON($response, $informations);
+    }
 
     /**
      * Check current user answer and increment the current playlist item for current game
@@ -217,38 +278,65 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
         $guess = $request->getParam('guess');
-        $this->logger->debug("BlindtestController::postGameCheckCurrent Guess is  : " . $guess);
+        $this->logger->debug("BlindTestController::postGameCheckCurrent Guess passed is  : " . $guess);
+        $trackid = $request->getParam('trackid');
+        $this->logger->debug("BlindTestController::postGameCheckCurrent TrackID passed is  : " . $trackid);
         $gamesid = intval($args['gamesid']);
-        $games = Games::find($gamesid);
-        $currentTrackIndex = $games->games_currenttrackindex;
+        // $games = Games::find($gamesid);
+        //$trackid = Game::getCurrentTrack($gamesid);//$games->games_currenttrackindex;
+
         $currentgame = Game::where([
             ['game_gamesid', '=', $gamesid],
-            ['game_order', '=', $currentTrackIndex]
+            ['game_track', '=', $trackid]
         ])
             ->first();
+        $playlistid = Games::find($gamesid)->games_playlist;
+        $this->logger->debug("BlindTestController::postGameCheckCurrent PlaylistID : " . $playlistid);
+        //$trackid = $currentgame->game_track;
 
-        $trackid = $currentgame->game_track;
-
-        $this->logger->debug("BlindtestController::postGameCheckCurrent Trackid : " . $trackid);
+        //$this->logger->debug("BlindTestController::postGameCheckCurrent Trackid : " . $trackid);
 
         $checkartist = false;
         $checktitle = false;
         $track = Track::find($trackid);
         $artist = Artist::find($track->track_artist);
         $album = Album::find($track->track_album);
-        $games->games_currenttrackindex = $currentTrackIndex + 1;
-        $games->save();
+        //$games->games_currenttrackindex = $currentTrackIndex + 1;
+        // $games->save();
 
         if ($guess != null) {
             $guess = $this->removeAccents(utf8_encode($guess));
-            $this->logger->debug("BlindtestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
+            $this->logger->debug("BlindTestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
             $checkartist = $this->compareAnswers($artist->artist_name, $guess);
             $checktitle = $this->compareAnswers($track->track_title, $guess);
         } else {
-            $this->logger->debug("BlindtestController::postGameCheckCurrent Guess entered was NULL");
+            $this->logger->debug("BlindTestController::postGameCheckCurrent Guess entered was NULL");
         }
 
+        $pointswon = 0;
+        if ($checkartist) {
+            $pointswon++;
+        }
+        if ($checktitle) {
+            $pointswon++;
+        }
+        $score = $this->getCurrentUserScore($gamesid);
+        //Another user has already answered
+        if ($currentgame->points != null) {
+            //But less points than the current user, update the poitns attribution to the current user.
+            if ($currentgame->points < $pointswon) {
+                $currentgame->userid = $this->auth->getUserId();
+                $currentgame->points = $pointswon;
+                $currentgame->save();
+            }
+        } else {
+            //First to answer, write your score to the DB
+            $currentgame->userid = $this->auth->getUserId();
+            $currentgame->points = $pointswon;
+            $currentgame->save();
+        }
 
+        $highscore = $this->getPlaylistHighScore($playlistid);
         return $this->withJson($response, [
             'guess' => $guess,
             'title' => $track->track_title,
@@ -256,11 +344,20 @@ class BlindTestController extends AbstractTwigController
             'artist' => $artist->artist_name,
             'track_link' => $track->track_link,
             'checkartist' => $checkartist,
-            'checktitle' => $checktitle
+            'checktitle' => $checktitle,
+            'points' => intval($pointswon),
+            'score' => intval($score),
+            'highscore' => $highscore
         ]);
     }
 
-
+    private function getCurrentUserScore($gamesid)
+    {
+        return Game::where([
+            ['game_gamesid', '=', $gamesid],
+            ['userid', '=', $this->auth->getUserId()]
+        ])->sum('points');
+    }
     /**
      * Return the current TrackID for a GameID
      * @param ServerRequestInterface $request
@@ -271,17 +368,23 @@ class BlindTestController extends AbstractTwigController
     public function getCurrentTrackJson(Request $request, Response $response, $args)
     {
         $gamesid = intval($args['gamesid']);
-        $games = Games::find($gamesid);
-        $currentTrackIndex = $games->games_currenttrackindex;
+        $playlistid = Games::find($gamesid)->games_playlist;
+        $currentTrackIndex = Game::getCurrentTrackIndex($gamesid);
         $numberoftracks = count(Game::where([
             ['game_gamesid', '=', $gamesid]
         ])->get());
         $this->logger->debug("BlindTestController::getCurrentTrackJson() Number of track is : $numberoftracks");
         $this->logger->debug("BlindTestController::getCurrentTrackJson() Current Track index is : $currentTrackIndex");
+
+        //$games->games_playlist;
+
         //We've reached the end of the track list for this game
         if ($currentTrackIndex > $numberoftracks) {
             //return -1 as code for end of play;
-            return $this->withJSON($response, ['trackid' => -1]);
+            return $this->withJSON($response, [
+                'trackid' => -1,
+                'score' => $this->getCurrentUserScore($gamesid)
+            ]);
         } else {
             $currentgame = Game::where([
                 ['game_gamesid', '=', $gamesid],
@@ -289,7 +392,15 @@ class BlindTestController extends AbstractTwigController
             ])
                 ->first();
             $trackid = $currentgame->game_track;
-            return $this->withJSON($response, ['trackid' => $trackid]);
+            $currentgame->track_playtime = Carbon::createFromTimestamp(time());
+            $currentgame->save();
+
+            return $this->withJSON($response, [
+                'trackid' => $trackid,
+                'playlistid' => $playlistid,
+                'score' => $this->getCurrentUserScore($gamesid),
+                'highscore' => $this->getPlaylistHighScore($playlistid)
+            ]);
         }
     }
 
