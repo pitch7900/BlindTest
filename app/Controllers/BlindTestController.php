@@ -99,6 +99,9 @@ class BlindTestController extends AbstractTwigController
 
         $arguments['playlistid'] = $playlistid;
         $arguments['gamesid'] = $gamesid;
+        $arguments['highscores'] = $this->getPlaylistHighScore($playlistid);
+        $arguments['playlist_picture'] = Playlist::find($playlistid)->playlist_picture;
+        $arguments['playlist_link'] = Playlist::find($playlistid)->playlist_link;
         $this->logger->debug("BlindTestController::getGameHTML " . print_r($arguments, true));
         return $this->render($response, 'play.twig', $arguments);
     }
@@ -256,7 +259,7 @@ class BlindTestController extends AbstractTwigController
      */
     public function getPlaylistInformations(Request $request, Response $response, $args): Response
     {
-        $playlistid = $args['playlistid'];
+        $playlistid = intval($args['playlistid']);
         $informations = [
             'id' => $playlistid,
             'highscore' => $this->getPlaylistHighScore($playlistid),
