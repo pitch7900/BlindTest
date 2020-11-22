@@ -73,6 +73,6 @@ class ReCaptchaController extends AbstractTwigController
             $this->recaptcha->verifyResponseToken($answer);
         }
         return $response->withHeader('Location', '/')
-        ->withStatus(301);
+        ->withStatus(302);
     }
 }

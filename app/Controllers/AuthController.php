@@ -79,7 +79,7 @@ class AuthController extends AbstractTwigController
         if ($validation) {
             $response = $response
                 ->withHeader('Location', '/')
-                ->withStatus(301);
+                ->withStatus(302);
         } else {
             $response = $this->render($response, 'auth/signin.twig');
         }
@@ -196,7 +196,7 @@ class AuthController extends AbstractTwigController
         }
         $response = $response
             ->withHeader('Location', '/')
-            ->withStatus(301);
+            ->withStatus(302);
         return $response;
     }
 
@@ -222,7 +222,7 @@ class AuthController extends AbstractTwigController
 
         return $response
             ->withHeader('Location', '/')
-            ->withStatus(301);
+            ->withStatus(302);
     }
 
     /**

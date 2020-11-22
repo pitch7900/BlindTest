@@ -65,11 +65,11 @@ class Recaptcha
         $this->initiateThrotller();
 
         if (isset($_SESSION['norobot'])) {
-            $this->logger->debug('Recaptcha::__contruct SuperGlobal Variable Session authentified is already set to' . $_SESSION['norobot']);
+            $this->logger->debug('Recaptcha::__contruct SuperGlobal Variable Session [norobot] is already set to ' . $_SESSION['norobot']);
         } else {
             $this->setNoRobot(false);
         }
-        $this->logger->debug('Recaptcha::__contruct SuperGlobal Variable Session authentified is now set to ' . $_SESSION['norobot']);
+        $this->logger->debug('Recaptcha::__contruct SuperGlobal Variable Session [norobot] is now set to ' . $_SESSION['norobot']);
     }
 
 
