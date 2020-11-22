@@ -77,6 +77,8 @@ return function (App $app) {
 
 
         $app->group('/blindtest', function (RouteCollectorProxy $group) {
+                $group->get('/info/playlist/{playlistid}.json', BlindTestController::class . ':getPlaylistInformations')
+                ->setName('blindtest.info.playlist');
                 $group->get('/game/{gamesid}/game.html', BlindTestController::class . ':getGameHTML')
                         ->setName('blindtest.play');
                 $group->post('/game/{gamesid}/writing', BlindTestController::class . ':postGameWriting')
@@ -85,7 +87,6 @@ return function (App $app) {
                         ->setName('blindtest.playjsondata');
                 $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')
                         ->setName('blindtest.playjsondata');
-
                 $group->get('/game/{gamesid}/currenttrack.json', BlindTestController::class . ':getCurrentTrackJson')
                         ->setName('blindtest.getcurrenttrackjson');
                 $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')
@@ -95,7 +96,7 @@ return function (App $app) {
         })->add(new AuthMiddleware($app));
 
 
-        
+
         $app->group('/errors', function (RouteCollectorProxy $group) {
                 $group->post('/player', ErrorsController::class . ':postplayer')
                         ->setName('errors.player.post');

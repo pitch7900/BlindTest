@@ -12,9 +12,8 @@
 	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
-	<h4>{{playlistname}}
-		<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-	</h4>
+	
+
 	<div id="BrowserError" class="row invisible">
 
 		<div class="alert alert-danger" role="alert">
@@ -30,7 +29,7 @@
 	</div>
 	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
-		<div class="ccol-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+		<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
 
 			<div id="answer" class="invisible">
 				<h3>The answer was</h3>
@@ -40,7 +39,7 @@
 							class="col-md-4">
 							<!-- Card image -->
 							<a id="track_link" href="" target="_blank">
-							<img id="trackimage" class="card-img" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg">
+								<img id="trackimage" class="card-img" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg">
 							</a>
 						</div>
 						<div class="col-md-8">
@@ -78,8 +77,6 @@
 			</div>
 
 			<div class="col-sm-12">
-
-
 				<div id="Play" class="row invisible container-fluid">
 					<div class="col-sm-12">
 						<div class="progress">
@@ -110,7 +107,24 @@
 			</div>
 		</div>
 
+	<div id="Playlistinfo" class="card mb-3" >
+		<div class="row no-gutters">
+			<div class="col-sm-2 ">
+				<a href="{{playlist_link}}" target="_blank" ><img src="{{playlist_picture}}" class="card-img" ></a>
+			</div>
+			<div class="col-sm-10">
+				<div class="card-body">
+					<h5 class="card-title">{{playlistname}}</h5>
 
+					<p class="card-text">Highscore is :
+						{{highscores.nickname}}
+						with
+						{{highscores.score}}
+						points</p>
+				</div>
+			</div>
+		</div>
+	</div>
 	</div>
 {% endblock %}
 

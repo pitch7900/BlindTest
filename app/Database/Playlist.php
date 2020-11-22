@@ -14,8 +14,6 @@ class Playlist extends Model {
     protected $fillable = ['id','playlist_title','playlist_link','playlist_picture'];
     
     
-  
-
     /**
      * Return XML formatted data for an entry
      * @return type

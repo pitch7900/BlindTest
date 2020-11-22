@@ -27,7 +27,8 @@ return [
     BlindtestController::class => function (ContainerInterface $container): BlindtestController {
         return new BlindtestController($container->get(Twig::class),
             $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class)
+            $container->get(DeezerApiInterface::class),
+            $container->get(Auth::class)
         );
     },
     HomeController::class => function (ContainerInterface $container): HomeController {

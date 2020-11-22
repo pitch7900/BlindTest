@@ -26,7 +26,8 @@
         "slim/flash": "^0.4.0",
         "cartalyst/sentinel": "3",
         "nesbot/carbon": "^2.41",
-        "phpmailer/phpmailer": "^6.1"
+        "phpmailer/phpmailer": "^6.1",
+        "laravel/tinker": "^2.5"
     },
     "config": {
         "preferred-install": "dist"

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 19, 2020 at 03:48 PM
+-- Generation Time: Nov 22, 2020 at 11:53 AM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -72,6 +72,9 @@ CREATE TABLE IF NOT EXISTS `game` (
   `game_track` bigint(20) NOT NULL,
   `game_gamesid` bigint(20) NOT NULL,
   `game_order` bigint(20) NOT NULL,
+  `track_playtime` timestamp NULL DEFAULT NULL,
+  `userid` int(11) DEFAULT NULL,
+  `points` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -89,8 +92,6 @@ DROP TABLE IF EXISTS `games`;
 CREATE TABLE IF NOT EXISTS `games` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `games_playlist` bigint(20) NOT NULL,
-  `games_currenttrackindex` bigint(20) DEFAULT '0',
-  `games_currenttrack_starttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
