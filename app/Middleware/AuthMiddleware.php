@@ -86,7 +86,7 @@ class AuthMiddleware
             $this->logger->debug("AuthMiddleware::__invoke() " . print_r($_SESSION,true));
             $response = $handler->handle($request)
             ->withHeader('Location',  $signinroute)
-            ->withStatus(302);
+            ->withStatus(303);
             return $response;
         } else {
             $this->logger->debug("AuthMiddleware::__invoke() User ".$this->auth->getUserId()." Authentified. Continue");
