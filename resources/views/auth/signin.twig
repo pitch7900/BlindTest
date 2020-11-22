@@ -1,20 +1,15 @@
 {% extends "main.twig" %}
 
-{% block menu %}
+{% block menu %}{% endblock %}
 
-{% endblock %}
-
-{% block interactivemenus %}
-
-{% endblock %}
+{% block interactivemenus %}{% endblock %}
 {% block content %}
 
-<div class="container-fluid row">
+	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
-			<img src="/img/deezer.png"/ class="title">
+			<img src="/img/deezer.png" class="title">
 			<h1 class="h3 mb-3 font-weight-normal center">Create an account</h1>
 			<form class="form-login" method="post">
-
 
 
 				<label for="email" class="sr-only">Email address</label>
@@ -25,7 +20,13 @@
 				<input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="Password" required>
 				<label for="confirmpassword" class="sr-only">Password</label>
 				<input type="password" id="confirmpassword" name="confirmpassword" class="form-control" placeholder="Confirm password" autocomplete="Password" required>
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
+				<button class="btn btn-lg btn-primary btn-block g-recaptcha" 
+					type="submit"
+					data-sitekey="{{recaptcha_api_key}}" 
+					data-callback='onSubmitSecure' 
+					data-action='submit'>
+						Create account
+					</button>
 
 
 			</form>
@@ -47,5 +48,7 @@
 {% endblock %}
 
 {% block javascripts %}
-	<script src="/js/auth.js" type="text/javascript"></script>
+	<script src="https://www.google.com/recaptcha/api.js?render={{recaptcha_api_key}}"></script>
+	<script src="/js/auth.js"></script>
+	<script src="/js/recaptcha.js"></script>
 {% endblock %}

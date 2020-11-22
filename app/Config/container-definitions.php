@@ -14,7 +14,6 @@ use App\Config\StaticPlaylists;
 use App\Authentication\Auth;
 use App\Authentication\Recaptcha;
 
-use Slim\App;
 
 return [
     LoggerInterface::class => function (ContainerInterface $container): LoggerInterface {
