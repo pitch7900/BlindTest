@@ -77,7 +77,7 @@ class ReCaptchaMiddleware
             $this->logger->debug("ReCaptchaMiddleware::__invoke() " . print_r($_SESSION,true));
             $response = $handler->handle($request)
             ->withHeader('Location',  $signinroute)
-            ->withStatus(301);
+            ->withStatus(303);
             return $response;
         } else {
             //Captcha Status succes - Not a robot according to google

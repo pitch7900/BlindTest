@@ -75,7 +75,7 @@ class BlindTestController extends AbstractTwigController
             $order++;
         }
 
-        return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(302);
+        return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(303);
     }
 
     public function postGameWriting(Request $request, Response $response, $args)
