@@ -82,6 +82,9 @@ class BlindTestController extends AbstractTwigController
     {
     }
 
+    public function getGameMessages(Request $request, Response $response, $args)
+    {
+    }
 
     /**
      * Return the page for playing with a given playlits ID
@@ -102,7 +105,10 @@ class BlindTestController extends AbstractTwigController
         $arguments['highscores'] = $this->getPlaylistHighScore($playlistid);
         $arguments['playlist_picture'] = Playlist::find($playlistid)->playlist_picture;
         $arguments['playlist_link'] = Playlist::find($playlistid)->playlist_link;
-        $this->logger->debug("BlindTestController::getGameHTML " . print_r($arguments, true));
+        // $this->logger->debug("BlindTestController::getGameHTML " . print_r($arguments, true));
+        $currentuserid = $this->auth->getUserId();
+
+        $this->logger->debug("BlindTestController::getGameHTML User $currentuserid joined game $gamesid");
         return $this->render($response, 'play.twig', $arguments);
     }
 
@@ -231,14 +237,14 @@ class BlindTestController extends AbstractTwigController
         ];
         foreach (Games::getGamesIdFromPlaylist($playlistid) as $game) {
             $gameid = $game['id'];
-            $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . $gameid);
+            // $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . $gameid);
             // $scores=Game::select("SELECT userid,sum(points) as score FROM blindtest.game
             //         WHERE userid is not null 
             //         AND id = $gameid
             //         GROUP BY userid;"
             //         );
             $scores = Game::getHighScore($gameid);
-            $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . var_export($scores, true));
+            // $this->logger->debug("BlindTestController::getPlaylistHighScore() Games with this playlist are : " . var_export($scores, true));
 
             if ($highscores['score'] <= $scores['score'] && !is_null($scores['userid'])) {
                 $highscores['nickname'] = User::getNickName($scores['userid']);
@@ -246,6 +252,7 @@ class BlindTestController extends AbstractTwigController
                 $highscores['userid'] = $scores['userid'];
             }
         }
+        
         return $highscores;
     }
 

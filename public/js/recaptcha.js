@@ -1,12 +1,13 @@
 
 	function onSubmitSecure(e){
-        console.log("Send informations");
         var formdata = $("form").serialize();
-        console.log(formdata);
-        $.post(window.location,formdata, function(data) {
-            console.log(data);
-            $('body').html(data);
-          });
+
+         $.post(window.location,formdata)
+            .done(function (jsondata) {
+                //get the Redirection from response and do the redirect
+                location.href =jsondata.redirectTo;
+            });
+
     }
 
 

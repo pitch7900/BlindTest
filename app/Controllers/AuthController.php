@@ -14,7 +14,7 @@ use App\Authentication\UUID;
 use App\Database\User;
 use Carbon\Carbon;
 use App\Authentication\Recaptcha;
-
+use Slim\Interfaces\RouteParserInterface;
 /**
  * AuthController
  * @author : Pierre Christensen
@@ -43,7 +43,6 @@ class AuthController extends AbstractTwigController
      */
     private $recaptcha;
 
-
     /**
      * __construct
      *
@@ -56,7 +55,7 @@ class AuthController extends AbstractTwigController
         parent::__construct($twig);
         $this->logger = $logger;
         $this->recaptcha = $recaptcha;
-        $this->logger->debug("AuthController::_construct Constructor called");
+        $this->logger->debug("AuthController::__construct() Constructor called");
         $this->auth = $auth;
     }
 
@@ -127,6 +126,7 @@ class AuthController extends AbstractTwigController
         $arguments['userid'] = $this->auth->getUserId();
         $arguments['email'] = $this->auth->getUserEmail();
         $arguments['nickname'] = $this->auth->getUserNickName();
+        $this->logger->debug("AuthController::preferences() Page called");
         return $this->render($response, 'user/preferences.twig', $arguments);
     }
 
@@ -208,8 +208,8 @@ class AuthController extends AbstractTwigController
             $this->auth->resetPassword($uuid, $password);
         }
         $response = $response
-            ->withHeader('Location', '/')
-            ->withStatus(303);
+                ->withHeader('Location', '/')
+                ->withStatus(303);
         return $response;
     }
 
@@ -223,6 +223,12 @@ class AuthController extends AbstractTwigController
      */
     public function login(Request $request, Response $response, array $args = []): Response
     {
+        if ($this->auth->getAuthentified()){
+            $response = $response
+                ->withHeader('Location', '/')
+                ->withStatus(303);
+                return $response;
+        }
         $arguments['recaptcha_api_key'] = $_ENV['GOOGLE_RECAPTCHA_SITE_KEY'];
         return $this->render($response, 'auth/login.twig', $arguments);
     }
@@ -233,7 +239,7 @@ class AuthController extends AbstractTwigController
         $email = $request->getParam('email');
 
         $answer = $request->getParam('g-recaptcha-response');
-
+        
         if (!is_null($answer)) {
             $this->recaptcha->verifyResponseToken($answer);
         }
@@ -244,11 +250,13 @@ class AuthController extends AbstractTwigController
             $this->logger->debug("AuthController::postlogin Recaptcha is not success.");
         }
 
-        
+        $redirectTo='/';
 
-        return $response
-            ->withHeader('Location', '/')
-            ->withStatus(303);
+        if (!is_null($this->auth->getOriginalRequestedPage())) {
+            $redirectTo=$this->auth->getOriginalRequestedPage();
+        } 
+        $this->logger->debug("AuthController::postlogin Should now redirect user to : $redirectTo");
+        return $this->withJSON($response, ['redirectTo'=>$redirectTo]);
     }
 
     /**
@@ -288,9 +296,18 @@ class AuthController extends AbstractTwigController
         } else {
             $this->logger->debug("AuthController::postforgotpassword Recaptcha is not success");
         }
-        return $this->render($response, 'auth/validateemail.twig');
+        return $this->withJSON($response, ['redirectTo'=>"/auth/signinconfirmation.html"]);
+       
     }
 
+    public function signinconfirmation(Request $request, Response $response, array $args = []): Response
+    {
+        $arguments['approval'] = false;
+        if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
+            $arguments['approval'] = true;
+        }
+        return $this->render($response, 'auth/validateemail.twig');
+    }
     /**
      * postsignin : Handle the signin page (Create a user) and send an email
      * This action has a volontary 2s delay to avoir flood
@@ -304,10 +321,7 @@ class AuthController extends AbstractTwigController
     public function postsignin(Request $request, Response $response, array $args = []): Response
     {
         
-        $arguments['approval'] = false;
-        if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
-            $arguments['approval'] = true;
-        }
+       
         $answer = $request->getParam('g-recaptcha-response');
         if (!is_null($answer)) {
             $this->recaptcha->verifyResponseToken($answer);
@@ -327,7 +341,7 @@ class AuthController extends AbstractTwigController
             $this->logger->debug("AuthController::postsignin Recaptcha is not success");
 
         }
-        return $this->render($response, 'auth/validateemail.twig', $arguments);
+        return $this->withJSON($response, ['redirectTo'=>"/auth/signinconfirmation.html"]);
     }
 
     /**

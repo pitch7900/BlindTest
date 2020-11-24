@@ -7,11 +7,11 @@ namespace App\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
 use Psr\Log\LoggerInterface;
 use App\Authentication\Auth;
+use Slim\Psr7\Factory\ResponseFactory;
 
 class AuthMiddleware
 {
@@ -28,31 +28,6 @@ class AuthMiddleware
 
     private $auth;
 
-
-    /**
-     * @param App    $app
-     *
-     * @return AuthMiddleware
-     */
-    public static function createFromContainer(App $app): self
-    {
-        return new self(
-            $app
-        );
-    }
-
-    /**
-     * @param App    $app
-     *
-     * @return AuthMiddleware
-     */
-    public static function create(App $app): self
-    {
-        return new self(
-            $app
-        );
-    }
-
     /**
      * @param App    $app
      */
@@ -63,9 +38,38 @@ class AuthMiddleware
         $this->auth = $this->container->get(Auth::class);
         $this->logger = $this->container->get(LoggerInterface::class);
         $this->logger->debug("AuthMiddleware::__construct() Called");
-        
     }
-    
+
+    /**
+     * checkAuthentified : return true if user is well authentified
+     *
+     * @return bool
+     */
+    private function checkAuthentified(): bool
+    {
+        if (!$this->auth->getAuthentified()) {
+
+            $this->logger->debug("AuthMiddleware::checkAuthentified() Not authentified. Should redirect to login page ");
+            $this->logger->debug("AuthMiddleware::checkAuthentified() " . print_r($_SESSION, true));
+            return false;
+        } else {
+            $this->logger->debug("AuthMiddleware::checkAuthentified() User " . $this->auth->getUserId() . " Authentified. Continue");
+            return true;
+        }
+    }
+
+    /**
+     * getLoginPath : Return the login path
+     *
+     * @return string
+     */
+    private function getLoginPath(): string
+    {
+        $routeParser = $this->app->getRouteCollector()->getRouteParser();
+        $signinroute = $routeParser->urlFor('auth.login');
+        return $signinroute;
+    }
+
     /**
      * __invoke
      *
@@ -75,31 +79,20 @@ class AuthMiddleware
      */
     public function __invoke(ServerRequestInterface  $request, RequestHandlerInterface  $handler): ResponseInterface
     {
-        $response = $handler->handle($request);
         $this->logger->debug("AuthMiddleware::__invoke() Called");
-        $this->logger->debug("AuthMiddleware::__invoke() SessionID is : ".session_id() . " / " . $this->auth->getSessionId());
-        if (!$this->auth->getAuthentified()) {
-            $routeParser = $this->app->getRouteCollector()->getRouteParser();
-            $signinroute = $routeParser->urlFor('auth.login');
-            $this->logger->debug("AuthMiddleware::__invoke() Not authentified. Should redirect to login page " . $signinroute);
-            $this->logger->debug("AuthMiddleware::__invoke() " . print_r($_SESSION,true));
-            $response = $handler->handle($request)
-            ->withHeader('Location',  $signinroute)
-            ->withStatus(303);
-            return $response;
-        } else {
-            $this->logger->debug("AuthMiddleware::__invoke() User ".$this->auth->getUserId()." Authentified. Continue");
-        }
-
-        return $response;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+        $this->logger->debug("AuthMiddleware::__invoke() SessionID is : " . session_id() . " / " . $this->auth->getSessionId());
         
-        return $handler->handle($request);
+        if (!$this->checkAuthentified()) {
+            $this->auth->setOriginalRequestedPage($_SERVER['REQUEST_URI']);
+            $this->logger->debug("AuthMiddleware::__invoke() Original Requested page is : ". $this->auth->getOriginalRequestedPage());
+            //Create a new response to break the current flow
+            $responseFactory = new ResponseFactory();
+            $response = $responseFactory->createResponse();
+            return $response->withHeader('Location',  $this->getLoginPath())
+                ->withStatus(303);
+        } else {
+            $response = $handler->handle($request);
+            return $response;
+        }
     }
 }
