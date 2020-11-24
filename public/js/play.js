@@ -5,7 +5,11 @@ var gamesid;
 var countdown;
 var currentplaylistid;
 
-function StartCountDown() {
+
+/**
+ * Countdown for this game
+ */
+var StartCountDown = function () {
   var seconds = 30;
   var i = seconds;
   $("#countdown").attr("aria-valuenow", 30);
@@ -13,14 +17,34 @@ function StartCountDown() {
 
   countdown = setInterval(function () {
     i--;
-    // console.log(i);
+
     $("#countdown").attr("aria-valuenow", i);
     $("#countdown").attr("style", "width: " + Math.floor(i / seconds * 100) + "%");
     if (i <= 0) {
       // clearInterval(countdown);
       guessentered = $("input#YourGuess").first().val().toLowerCase();
-      console.log("Guess is " + guessentered);
+      // console.log("Guess is " + guessentered);
       postcheckanswer(guessentered);
+    }
+  }, 1000);
+}
+
+
+/**
+ * CountDown before next song
+ * @param {integer} seconds 
+ */
+var waitfor = function (seconds) {
+  $("#waitbeforenext").html(seconds);
+  var i = seconds;
+  $("#btnsubmitanswer").prop("disabled", true);
+  var countdownwaitfor = setInterval(function () {
+    i--;
+    $("#waitbeforenext").html(i);
+    if (i <= 0) {
+      clearInterval(countdownwaitfor);
+      $("#btnsubmitanswer").prop("disabled", false);
+      playtitle();
     }
   }, 1000);
 }
@@ -45,6 +69,9 @@ var removeAccentsAndSpecialChars = function (input) {
   return r;
 }
 
+/**
+ * Play the title that is returned by currenttrack.json
+ */
 var playtitle = function () {
   $("#Start").addClass("invisible");
   //Try to set the JS audio player
@@ -57,9 +84,9 @@ var playtitle = function () {
   $("input#YourGuess").first().val("");
   $("#YourGuess").focus();
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
-    console.log(audio);
+    // console.log(audio);
     if (typeof audio === 'undefined') {
-      console.log("Creating new Audio Stream");
+      // console.log("Creating new Audio Stream");
       audio = new Audio();
     }
     //We haven't reached the last song of the game. Play
@@ -107,25 +134,12 @@ var playpause = function () {
   }
 };
 
-/**
- * CountDown before next song
- * @param {integer} seconds 
- */
-var waitfor = function (seconds) {
-  $("#waitbeforenext").html(seconds);
-  var i = seconds;
-  $("#btnsubmitanswer").prop("disabled", true);
-  var countdownwaitfor = setInterval(function () {
-    i--;
-    $("#waitbeforenext").html(i);
-    if (i <= 0) {
-      clearInterval(countdownwaitfor);
-      $("#btnsubmitanswer").prop("disabled", false);
-      playtitle();
-    }
-  }, 1000);
-}
 
+
+/**
+ * Post the answer passed and get the response from server
+ * @param {string} guessentered
+ */
 var postcheckanswer = function (guessentered) {
   //Stop CountDown.
   clearInterval(countdown);
@@ -137,8 +151,8 @@ var postcheckanswer = function (guessentered) {
     .done(function (jsondata) {
       //Hide the answer field
       $("#Play").addClass("invisible");
-      console.log(jsondata);
-      console.log("Should check the answer");
+      // console.log(jsondata);
+      // console.log("Should check the answer");
       $("#trackimage").attr("src", jsondata.picture);
       $("#artistname").html(jsondata.artist);
       $("#titlename").html(jsondata.title);
@@ -170,6 +184,9 @@ var postcheckanswer = function (guessentered) {
 };
 
 var Catalog = (function () {
+  /**
+   * Initialise the audio stream as document is ready
+   */
   var load_playlist = function () {
     points = 0;
 
@@ -177,16 +194,19 @@ var Catalog = (function () {
     // console.log(gamesid);
 
     if (typeof audio === 'undefined') {
-      console.log("Creating new Audio Stream");
+      // console.log("Creating new Audio Stream");
       audio = new Audio();
     }
     $("#startbutton").prop("disabled", false);
   };
 
+  /**
+   * Handler on the form if an answer has been entered
+   */
   var handler_CheckAnswer = function () {
     $("form#FormGuess").submit(function (event) {
       guessentered = $("input#YourGuess").first().val().toLowerCase();
-      console.log("Guess is " + guessentered);
+      // console.log("Guess is " + guessentered);
       postcheckanswer(guessentered);
 
       event.preventDefault();
@@ -201,6 +221,10 @@ var Catalog = (function () {
   };
 })();
 
+
+/**
+ * Load the Functions Catalog when the page is ready
+ */
 $(document).ready(function () {
   Catalog.init();
 });

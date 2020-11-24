@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
  * Manage authentication
  */
 class Auth
-{    
+{
     /**
      * logger
      *
@@ -49,7 +49,7 @@ class Auth
         unset($_SESSION['authentified']);
         unset($_SESSION["userid"]);
     }
-    
+
     /**
      * getSessionId : Get PHP Session ID
      *
@@ -59,7 +59,7 @@ class Auth
     {
         return session_id();
     }
-    
+
     /**
      * setUserID : Set database user id for current session
      *
@@ -70,7 +70,7 @@ class Auth
     {
         $_SESSION["userid"] = $userid;
     }
-    
+
     /**
      * getUserId : Return database user id
      *
@@ -80,7 +80,7 @@ class Auth
     {
         return $_SESSION["userid"];
     }
-    
+
     /**
      * getUserEmail : Return user email addresse
      *
@@ -91,7 +91,7 @@ class Auth
         $user = User::find($this->getUserId());
         return  $user->email;
     }
-    
+
     /**
      * getUserNickName : return user nickname
      *
@@ -101,7 +101,7 @@ class Auth
     {
         return  User::find($this->getUserId())->nickname;
     }
-    
+
     /**
      * checkPassword : Check password for a given email address
      *
@@ -112,27 +112,27 @@ class Auth
     public function checkPassword(string $email, string $password): bool
     {
         $email = strtolower($email);
-        $this->logger->debug("Auth::checkPasswod() should check password for " . $email);
+        $this->logger->debug("Auth::checkPassword() should check password for " . $email);
         $user = User::where([
             ['email', '=', $email]
         ])->first();
 
         if (!$user) {
-            $this->logger->debug("Auth::checkPasswod() User not found : ");
+            $this->logger->debug("Auth::checkPassword() User not found : ");
             $this->unvalidate();
             return false;
         }
-        $this->logger->debug("Auth::checkPasswod() User found : " . $user->id);
+        $this->logger->debug("Auth::checkPassword() User found : " . $user->id);
         if (password_verify($password, $user->password)) {
             $this->setUserID($user->id);
             $this->setAuthentified(true);
-            $this->logger->debug("Auth::checkPasswod() User " . $user->email . " authentification OK");
+            $this->logger->debug("Auth::checkPassword() User " . $user->email . " authentification OK");
             return true;
         }
         $this->setAuthentified(false);
         return false;
     }
-    
+
     /**
      * getAuthentified : return if user is authentified or not 
      *
@@ -141,12 +141,31 @@ class Auth
     public function getAuthentified()
     {
         if (isset($_SESSION['authentified'])) {
-        return $_SESSION['authentified'];
+            return $_SESSION['authentified'];
         } else {
             return false;
         }
     }
-    
+
+    public function setOriginalRequestedPage(string $page)
+    {
+        if (strcmp('/user/signout',$page)==0) {
+            $_SESSION['OriginalRequestedPage'] = '/';
+        } else {
+            $_SESSION['OriginalRequestedPage'] = $page;
+        }
+        
+    }
+
+    public function getOriginalRequestedPage(): string
+    {
+        if (isset($_SESSION['OriginalRequestedPage'])) {
+            return $_SESSION['OriginalRequestedPage'];
+        } else {
+            return null;
+        }
+    }
+
     /**
      * setAuthentified : Change the authentification satus
      *
@@ -157,7 +176,7 @@ class Auth
     {
         $_SESSION['authentified'] = $authentified;
     }
-    
+
     /**
      * signout user and remove all $_SESSION entries
      *
@@ -165,11 +184,12 @@ class Auth
      */
     public function signout()
     {
+        $this->logger->debug("Auth::signout() Called");
         unset($_SESSION['norobot']);
         $this->unvalidate();
     }
-    
-    
+
+
     /**
      * sendValidationEmail : Send a validation email with link to validate email
      *
@@ -177,52 +197,53 @@ class Auth
      * @param  mixed $v4uuid
      * @return void
      */
-    public function sendValidationEmail(string $email,string $v4uuid){
+    public function sendValidationEmail(string $email, string $v4uuid)
+    {
         $mail = new PHPMailer(true);
-            try {
-                //Server settings
-                // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-                $mail->isSMTP();                                            // Send using SMTP
+        try {
+            //Server settings
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+            $mail->isSMTP();                                            // Send using SMTP
 
-                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+            $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
-                if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidationEmail() Use SMTP Auth for email");
-                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
-                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
-                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
-                }
-                if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidationEmail() Use SSL for email");
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-                }
-                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-
-                //Recipients
-                $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-                $mail->addAddress($email);               // Add a recipient
-                $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-
-
-                // Content
-                $mail->isHTML(true);                                  // Set email format to HTML
-                $mail->Subject = 'Mail validation for Blindtest';
-                $mail->Body    = "<p>Hello,</p>" . "\r\n" .
-                    "<p>Please find below an URL to validate your email." . "</p>\r\n" .
-                    "<p>This link is valid for 15 minutes." . "</p>\r\n" .
-                    '<p><a href="' . $_ENV['PUBLIC_HOST'] . '/auth/checkmail/' . $v4uuid . '" >Validate my email address</a></p>';
-                $mail->AltBody = "Hello," . "\r\n" .
-                    "Please find below an URL to validate your email." . "\r\n" .
-                    "This link is valid for 15 minutes." . "\r\n" .
-                    $_ENV['PUBLIC_HOST'] . "/auth/checkmail/" . $v4uuid;
-
-                $mail->send();
-                
-                $this->logger->debug("Auth::sendValidationEmail() Mail sent to $email");
-            } catch (Exception $e) {
-                $this->logger->error("Auth::sendValidationEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
-                die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidationEmail() Use SMTP Auth for email");
+                $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
+            if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidationEmail() Use SSL for email");
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            }
+            $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+            //Recipients
+            $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+            $mail->addAddress($email);               // Add a recipient
+            $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
+
+            // Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = 'Mail validation for Blindtest';
+            $mail->Body    = "<p>Hello,</p>" . "\r\n" .
+                "<p>Please find below an URL to validate your email." . "</p>\r\n" .
+                "<p>This link is valid for 15 minutes." . "</p>\r\n" .
+                '<p><a href="' . $_ENV['PUBLIC_HOST'] . '/auth/checkmail/' . $v4uuid . '" >Validate my email address</a></p>';
+            $mail->AltBody = "Hello," . "\r\n" .
+                "Please find below an URL to validate your email." . "\r\n" .
+                "This link is valid for 15 minutes." . "\r\n" .
+                $_ENV['PUBLIC_HOST'] . "/auth/checkmail/" . $v4uuid;
+
+            $mail->send();
+
+            $this->logger->debug("Auth::sendValidationEmail() Mail sent to $email");
+        } catch (Exception $e) {
+            $this->logger->error("Auth::sendValidationEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        }
     }
 
     /**
@@ -231,50 +252,51 @@ class Auth
      * @param  mixed $email
      * @return void
      */
-    public function sendAdminsitratorEmail(string $email){
+    public function sendAdminsitratorEmail(string $email)
+    {
         $mail = new PHPMailer(true);
-            try {
-                //Server settings
-                // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-                $mail->isSMTP();                                            // Send using SMTP
+        try {
+            //Server settings
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+            $mail->isSMTP();                                            // Send using SMTP
 
-                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+            $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
-                if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
-                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
-                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
-                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
-                }
-                if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-                }
-                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-
-                //Recipients
-                $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-                $mail->addAddress($_ENV['REGISTRATION_ADMIN_EMAIL']);               // Add a recipient
-                $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-
-
-                // Content
-                $mail->isHTML(true);                                  // Set email format to HTML
-                $mail->Subject = 'New account creation for Blindtest';
-                $mail->Body    = "<p>Hello,</p>" . "\r\n" .
-                    "<p>A new account has been created for $email." . "</p>\r\n";
-                   
-                $mail->AltBody = "Hello," . "\r\n" .
-                    "A new account has been created for $email." . "\r\n";
-     
-
-                $mail->send();
-                
-                $this->logger->debug("Auth::sendValidatorEmail() Mail sent to ".$_ENV['REGISTRATION_ADMIN_EMAIL']);
-            } catch (Exception $e) {
-                $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
-                die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
+                $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
+            if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            }
+            $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+            //Recipients
+            $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+            $mail->addAddress($_ENV['REGISTRATION_ADMIN_EMAIL']);               // Add a recipient
+            $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
+
+            // Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = 'New account creation for Blindtest';
+            $mail->Body    = "<p>Hello,</p>" . "\r\n" .
+                "<p>A new account has been created for $email." . "</p>\r\n";
+
+            $mail->AltBody = "Hello," . "\r\n" .
+                "A new account has been created for $email." . "\r\n";
+
+
+            $mail->send();
+
+            $this->logger->debug("Auth::sendValidatorEmail() Mail sent to " . $_ENV['REGISTRATION_ADMIN_EMAIL']);
+        } catch (Exception $e) {
+            $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        }
     }
 
 
@@ -286,50 +308,51 @@ class Auth
      * @param  mixed $v4uuid
      * @return void
      */
-    public function sendValidatorEmail(string $email,string $v4uuid){
+    public function sendValidatorEmail(string $email, string $v4uuid)
+    {
         $mail = new PHPMailer(true);
-            try {
-                //Server settings
-                // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-                $mail->isSMTP();                                            // Send using SMTP
+        try {
+            //Server settings
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+            $mail->isSMTP();                                            // Send using SMTP
 
-                $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
+            $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
-                if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
-                    $mail->SMTPAuth = true;                                   // Enable SMTP authentication
-                    $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
-                    $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
-                }
-                if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                    $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-                }
-                $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-
-                //Recipients
-                $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-                $mail->addAddress($_ENV['REGISTRATION_ADMIN_EMAIL']);               // Add a recipient
-                $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
-
-
-                // Content
-                $mail->isHTML(true);                                  // Set email format to HTML
-                $mail->Subject = 'Mail validation for Blindtest';
-                $mail->Body    = "<p>Hello,</p>" . "\r\n" .
-                    "<p>Please find below an URL to validate the email for user $email." . "</p>\r\n" .
-                    '<p><a href="' . $_ENV['PUBLIC_HOST'] . '/auth/validate/' . $v4uuid . '" >Validate this user email address</a></p>';
-                $mail->AltBody = "Hello," . "\r\n" .
-                    "Please find below an URL to validate the email for user $email." . "\r\n" .
-                    $_ENV['PUBLIC_HOST'] . "/auth/validate/" . $v4uuid;
-
-                $mail->send();
-                
-                $this->logger->debug("Auth::sendValidatorEmail() Mail sent to ".$_ENV['REGISTRATION_ADMIN_EMAIL']);
-            } catch (Exception $e) {
-                $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
-                die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
+                $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+                $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
+                $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
+            if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
+                $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            }
+            $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+            //Recipients
+            $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+            $mail->addAddress($_ENV['REGISTRATION_ADMIN_EMAIL']);               // Add a recipient
+            $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
+
+            // Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = 'Mail validation for Blindtest';
+            $mail->Body    = "<p>Hello,</p>" . "\r\n" .
+                "<p>Please find below an URL to validate the email for user $email." . "</p>\r\n" .
+                '<p><a href="' . $_ENV['PUBLIC_HOST'] . '/auth/validate/' . $v4uuid . '" >Validate this user email address</a></p>';
+            $mail->AltBody = "Hello," . "\r\n" .
+                "Please find below an URL to validate the email for user $email." . "\r\n" .
+                $_ENV['PUBLIC_HOST'] . "/auth/validate/" . $v4uuid;
+
+            $mail->send();
+
+            $this->logger->debug("Auth::sendValidatorEmail() Mail sent to " . $_ENV['REGISTRATION_ADMIN_EMAIL']);
+        } catch (Exception $e) {
+            $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        }
     }
 
     /**
@@ -365,20 +388,20 @@ class Auth
                 'adminapproved' => false
 
             ]);
-            if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'],"true")==0){
-                $this->sendValidatorEmail($email,$v4uuid_validator);
-            }else {
+            if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
+                $this->sendValidatorEmail($email, $v4uuid_validator);
+            } else {
                 $user = User::where([
                     ['email', '=', $email]
                 ])->first();
                 $user->adminapproved = true;
                 $this->sendAdminsitratorEmail($email);
-                $this->sendValidationEmail($email,$v4uuid_user);
+                $this->sendValidationEmail($email, $v4uuid_user);
             }
         }
         return true;
     }
-    
+
     /**
      * validateEmail : check the email is valid (Answer of the addUser email)
      *
@@ -416,16 +439,17 @@ class Auth
         }
         return false;
     }
-        
+
     /**
      * setNickname : change nickname for current user's session
      *
      * @param  mixed $nickname
      * @return void
      */
-    public function setNickname(string $nickname){
+    public function setNickname(string $nickname)
+    {
         $user = User::find($this->getUserId());
-        $user->nickname=$nickname;
+        $user->nickname = $nickname;
         $user->save();
     }
 
@@ -436,9 +460,9 @@ class Auth
      * @param  mixed $encryptedpassword
      * @return void
      */
-    public function resetPassword(string $uuid, string $encryptedpassword):void
+    public function resetPassword(string $uuid, string $encryptedpassword): void
     {
-        if ($this->checkUUIDpasswordreset($uuid)){
+        if ($this->checkUUIDpasswordreset($uuid)) {
             $user = User::where([
                 ['resetpasswordlink', 'like', $uuid]
             ])->first();
@@ -449,15 +473,16 @@ class Auth
             $user->save();
         }
     }
-    
+
     /**
      * changePassword
      *
      * @param  mixed $newencryptedpasssword
      * @return void
      */
-    public function changePassword(string $newencryptedpasssword){
-        User::find($this->getUserId())->password=$newencryptedpasssword;
+    public function changePassword(string $newencryptedpasssword)
+    {
+        User::find($this->getUserId())->password = $newencryptedpasssword;
     }
 
     /**
@@ -481,7 +506,7 @@ class Auth
         }
         return false;
     }
-    
+
     /**
      * sendResetPasswordLink : Create a UUID for password reset with 15 min validity and send the email with reset link
      *
@@ -546,7 +571,7 @@ class Auth
                     "Note : If you're not at the origin of this password reset, simply ignore this email" . "\r\n";;
 
                 $mail->send();
-                
+
                 $this->logger->debug("Auth::resetPassword() Mail sent to $email");
             } catch (Exception $e) {
                 $this->logger->error("Auth::resetPassword() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");

@@ -7,18 +7,18 @@ use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\DeezerController;
 use App\Controllers\HomeController;
 use App\Controllers\BlindTestController;
-use App\Controllers\ReCaptchaController;
 use App\Controllers\ErrorsController;
 use App\Controllers\AuthController;
 use App\Middleware\AuthMiddleware; //Used for private pages that requiere authentication
 
-
 return function (App $app) {
-     
+
         //Public pages for authentication
         $app->group('/auth', function (RouteCollectorProxy $group) {
                 $group->get('/signin', AuthController::class . ':signin')
                         ->setName('auth.signin');
+                $group->get('/signinconfirmation.html', AuthController::class . ':signinconfirmation')
+                ->setName('auth.signinconfirmation');
                 $group->get('/login', AuthController::class . ':login')
                         ->setName('auth.login');
                 $group->get('/forgotpassword', AuthController::class . ':forgotpassword')
@@ -75,11 +75,13 @@ return function (App $app) {
 
         $app->group('/blindtest', function (RouteCollectorProxy $group) {
                 $group->get('/info/playlist/{playlistid}.json', BlindTestController::class . ':getPlaylistInformations')
-                ->setName('blindtest.info.playlist');
+                        ->setName('blindtest.info.playlist');
                 $group->get('/game/{gamesid}/game.html', BlindTestController::class . ':getGameHTML')
                         ->setName('blindtest.play');
                 $group->post('/game/{gamesid}/writing', BlindTestController::class . ':postGameWriting')
                         ->setName('blindtest.writing');
+                $group->get('/game/{gamesid}/messages.json', BlindTestController::class . ':getGameMessages')
+                        ->setName('blindtest.messages');
                 $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
                         ->setName('blindtest.playjsondata');
                 $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')
@@ -97,7 +99,6 @@ return function (App $app) {
         $app->group('/errors', function (RouteCollectorProxy $group) {
                 $group->post('/player', ErrorsController::class . ':postplayer')
                         ->setName('errors.player.post');
-                
         })->add(new AuthMiddleware($app));
 
 
