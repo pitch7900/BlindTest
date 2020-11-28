@@ -74,5 +74,6 @@ interface DeezerApiInterface {
      */
     public function getPlaylistItems(int $playlistID): array;
 
+    public function DBremoveTrack(int $trackid);
 
 }
