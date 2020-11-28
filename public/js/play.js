@@ -94,6 +94,7 @@ var removeAccentsAndSpecialChars = function (input) {
  * Play the title that is returned by currenttrack.json
  */
 var playtitle = function () {
+
   $("#Start").addClass("invisible");
   $("#waitbeforenextcircle").addClass("hidden");
   $("#artistpoints").addClass("hidden");
@@ -194,7 +195,8 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
-
+  $("#MainPage").removeClass("invisible");
+  $("#BrowserError").addClass("invisible");
   //Stop CountDown.
   clearInterval(countdown);
   guessentered = removeAccentsAndSpecialChars(guessentered);
@@ -221,7 +223,7 @@ var postcheckanswer = function (guessentered) {
       $("#track_link").attr("href", jsondata.track_link);
       $("#artist").removeClass();
       $("#title").removeClass();
-    
+
       checkartist = jsondata.checkartist;
       checktitle = jsondata.checktitle;
       points = jsondata.score;
