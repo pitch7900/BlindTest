@@ -2,6 +2,9 @@
     display:none!important;
 }
 
+.hidden{
+    visibility: hidden;
+}
 img.title{
     width:25%;
 }

@@ -1,7 +1,9 @@
 {% extends "main.twig" %}
 
 
-{% block headers %}{% endblock %}
+{% block headers %}
+	<link rel="stylesheet" href="/css/circle.css" type="text/css">
+{% endblock %}
 
 
 {% block menu %}
@@ -9,11 +11,10 @@
 {% endblock %}
 
 {% block interactivemenus %}
-	{{include('interactivemenus/loadfile.twig')}}
 {% endblock %}
 {% block content %}
-	
 
+	<!-- Browser error pane on playing a title -->
 	<div id="BrowserError" class="row invisible">
 
 		<div class="alert alert-danger" role="alert">
@@ -29,8 +30,9 @@
 	</div>
 	<div id="MainPage" class="container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
-		<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-
+		<div
+			class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+			<!-- Display answer pane -->
 			<div id="answer" class="invisible">
 				<h3>The answer was</h3>
 				<div class="card mb-3">
@@ -39,7 +41,7 @@
 							class="col-md-4">
 							<!-- Card image -->
 							<a id="track_link" href="" target="_blank">
-								<img id="trackimage" class="card-img" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg">
+								<img id="trackimage" class="card-img hidden" src="" alt="albumimage">
 							</a>
 						</div>
 						<div class="col-md-8">
@@ -48,21 +50,25 @@
 
 
 								<!-- Card content -->
-								<div
-									class="card-body">
+								<div class="card-body">
 
-									<!-- Title -->
-									<h4 class="card-title">
-										<div id="artist" role="alert">
-											<span id="artistname"></span>
+
+									<div id="artist" role="alert">
+										<span id="artistname"></span> <img class="hidden" id="artistpoints" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+									</div>
+									
+									
+									<div id="title" role="alert">
+										<span id="titlename"></span> <img class="hidden" id="titlepoints" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+									</div>
+									
+									<div id="waitbeforenextcircle" class="c100 p0 hidden">
+										<span id="waitbeforenext">5</span>
+										<div class="slice">
+											<div class="bar"></div>
+											<div class="fill"></div>
 										</div>
-									</h4>
-									<p id="title" role="alert" class="card-text">
-
-										<span id="titlename"></span>
-
-									</p>
-
+									</div>
 								</div>
 
 
@@ -71,11 +77,10 @@
 					</div>
 					<!-- Card -->
 				</div>
-				<h4>
-					<span id="waitbeforenext"></span>s before next song
-				</h4>
-			</div>
 
+
+			</div>
+			<!-- Actual play pane -->
 			<div class="col-sm-12">
 				<div id="Play" class="row invisible container-fluid">
 					<div class="col-sm-12">
@@ -101,30 +106,31 @@
 						<!-- Default form -->
 					</div>
 				</div>
+				<!-- Before the game start pane -->
 				<div id="Start" class="row">
 					<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
 				</div>
 			</div>
 		</div>
 
-	<div id="Playlistinfo" class="card mb-3" >
-		<div class="row no-gutters">
-			<div class="col-sm-2 ">
-				<a href="{{playlist_link}}" target="_blank" ><img src="{{playlist_picture}}" class="card-img" ></a>
-			</div>
-			<div class="col-sm-10">
-				<div class="card-body">
-					<h5 class="card-title">{{playlistname}}</h5>
+		<div id="Playlistinfo" class="card mb-3">
+			<div class="row no-gutters">
+				<div class="col-sm-2 ">
+					<a href="{{playlist_link}}" target="_blank"><img src="{{playlist_picture}}" class="card-img"></a>
+				</div>
+				<div class="col-sm-10">
+					<div class="card-body">
+						<h5 class="card-title">{{playlistname}}</h5>
 
-					<p class="card-text">Highscore is :
-						<span id="highscorenickname">{{highscores.nickname}}</span>
-						with
-						<span id="highscore">{{highscores.score}}</span>
-						points</p>
+						<p class="card-text">Highscore is :
+							<span id="highscorenickname">{{highscores.nickname}}</span>
+							with
+							<span id="highscore">{{highscores.score}}</span>
+							points</p>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 {% endblock %}
 
