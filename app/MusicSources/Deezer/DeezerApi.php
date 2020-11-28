@@ -348,8 +348,9 @@ class DeezerApi implements DeezerApiInterface
     private function DBaddArtist(array $artist): int
     {
         $artistdb = Artist::find($artist['id']);
-        $this->logger->debug("DeezerApi::DBaddArtist Adding album : ".print_r($artist,true));
+        
         if (is_null($artistdb)) {
+            $this->logger->debug("DeezerApi::DBaddArtist Adding Artist : ".$this->forceLatinChars($artist['name']));
             Artist::updateOrCreate([
                 'id' => $artist['id'],
                 'artist_name' => $this->forceLatinChars($artist['name']),
@@ -389,10 +390,11 @@ class DeezerApi implements DeezerApiInterface
      */
     private function DBaddAlbum(array $album): int
     {
-        $this->logger->debug("DeezerApi::DBaddAlbum Adding album : ".print_r($album,true));
+        
         $albumdb = Album::find($album['id']);
         
         if (is_null($albumdb)) {
+            $this->logger->debug("DeezerApi::DBaddAlbum Adding album : ".$this->forceLatinChars($album['title']));
             Album::updateOrCreate([
                 'id' => $album['id'],
                 'album_title' => $this->forceLatinChars($album['title']),
@@ -410,11 +412,12 @@ class DeezerApi implements DeezerApiInterface
      */
     private function DBaddTrack(array $track): int
     {
-        $this->logger->debug("DeezerApi::DBaddTrack Add track : \n" . print_r($track, true));
+        
         $this->DBaddAlbum($track['album']);
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
         if (is_null($trackdb)) {
+            $this->logger->debug("DeezerApi::DBaddTrack Add track : ". $this->forceLatinChars($track['title']));
             Track::updateOrCreate([
                 'id' => $track['id'],
                 'track_title' => $this->forceLatinChars($track['title']),
@@ -443,7 +446,7 @@ class DeezerApi implements DeezerApiInterface
             $this->logger->debug("DeezerApi::DBaddPlaylist Playlist has " . $playlist_json['nb_tracks'] . " tracks. Do normal search");
 
             foreach ($playlist_json['tracks']['data'] as $track) {
-                $this->logger->debug("DeezerApi::DBaddPlaylist \n" . json_encode($track, JSON_PRETTY_PRINT));
+               // $this->logger->debug("DeezerApi::DBaddPlaylist \n" . json_encode($track, JSON_PRETTY_PRINT));
 
                 array_push($tracks, $this->getTrackArray($track));
             }
