@@ -277,7 +277,21 @@ class BlindTestController extends AbstractTwigController
 
         return $this->withJSON($response, $informations);
     }
+    
+    public function postSkipSong(Request $request, Response $response, $args)
+    {
+        $trackid = $request->getParam('trackid');
+        $gamesid = intval($args['gamesid']);
+        $currentgame = Game::where([
+            ['game_gamesid', '=', $gamesid],
+            ['game_track', '=', $trackid]
+        ])->first();
+        $playlistid = Games::find($gamesid)->games_playlist;
+        $currentgame->userid = $this->auth->getUserId();
+                $currentgame->points = 0;
+                $currentgame->save();
 
+    }
     /**
      * Check current user answer and increment the current playlist item for current game
      * @param ServerRequestInterface $request
@@ -298,8 +312,8 @@ class BlindTestController extends AbstractTwigController
         $currentgame = Game::where([
             ['game_gamesid', '=', $gamesid],
             ['game_track', '=', $trackid]
-        ])
-            ->first();
+        ])->first();
+            
         $playlistid = Games::find($gamesid)->games_playlist;
         $this->logger->debug("BlindTestController::postGameCheckCurrent PlaylistID : " . $playlistid);
         //$trackid = $currentgame->game_track;
@@ -427,6 +441,7 @@ class BlindTestController extends AbstractTwigController
     public function getStreamMP3(Request $request, Response $response, $args)
     {
         $trackid = $args['trackid'];
+
         $trackdata = $this->deezer->getTrackInformations($trackid);
         $this->logger->debug("BlindtestController::getStreamMP3 MP3 TrackID : " . $trackid . " should be : " . $trackdata['track_preview']);
         $resp = $this->withMP3($response, $trackdata['track_preview'], 'rb');

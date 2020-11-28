@@ -2,13 +2,14 @@
 
 namespace App\MusicSources\Deezer;
 
+
 use App\Database\Playlist;
 use App\Database\Track;
 use App\Database\Artist;
 use App\Database\Album;
 use App\Database\PlaylistTracks;
 use Psr\Log\LoggerInterface;;
-
+use App\Database\Game;
 use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
 
 /**
@@ -429,6 +430,23 @@ class DeezerApi implements DeezerApiInterface
             ]);
         }
         return intval($track['id']);
+    }
+
+    public function DBremoveTrack(int $trackid) {
+        $trackdb = Track::find($trackid);
+        $this->logger->debug("DeezerApi::DBremoveTrack Should remove track : ". $trackid);
+        if (!is_null($trackdb)) {
+            $this->logger->debug("DeezerApi::DBremoveTrack remove track ". $trackid ." from games");
+            $game = Game::where("game_track","=",$trackid);
+            $game->forceDelete();
+            $this->logger->debug("DeezerApi::DBremoveTrack remove track ". $trackid ." from all playlist");
+            $playlisttracks=  PlaylistTracks::where("playlisttracks_track","=",$trackid);
+            $playlisttracks->forceDelete();
+            $this->logger->debug("DeezerApi::DBremoveTrack remove track : ". $trackid);
+            $trackdb->forceDelete();
+
+
+        }
     }
 
     /**

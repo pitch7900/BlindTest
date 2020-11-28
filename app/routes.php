@@ -86,6 +86,8 @@ return function (App $app) {
                         ->setName('blindtest.playjsondata');
                 $group->post('/game/{gamesid}/check.json', BlindTestController::class . ':postGameCheckCurrent')
                         ->setName('blindtest.playjsondata');
+                $group->post('/game/{gamesid}/skipsong.json', BlindTestController::class . ':postSkipSong')
+                        ->setName('blindtest.playjsondata');
                 $group->get('/game/{gamesid}/currenttrack.json', BlindTestController::class . ':getCurrentTrackJson')
                         ->setName('blindtest.getcurrenttrackjson');
                 $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')

@@ -9,15 +9,18 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
-use App\Config\StaticPlaylists;
-
+use App\MusicSources\Deezer\DeezerApi;
+use App\MusicSources\Deezer\DeezerApiInterface;
 class ErrorsController extends AbstractTwigController
 {
 
+     private $logger;
+
+    /**
+     * @var DeezerApiInterface $deezer
+     */
     private $deezer;
-    private $logger;
-    private $staticplaylists;
-    
+
     /**
      * __construct
      *
@@ -25,10 +28,10 @@ class ErrorsController extends AbstractTwigController
      * @param  mixed $logger
      * @return void
      */
-    public function __construct(Twig $twig,LoggerInterface $logger) {
+    public function __construct(Twig $twig,LoggerInterface $logger,DeezerApiInterface $deezer) {
         parent::__construct($twig);
         $this->logger = $logger;
-
+        $this->deezer = $deezer;
         $this->logger->debug("ErrorsController::_construct Constructor of HomeController called");
     }
 
@@ -44,6 +47,7 @@ class ErrorsController extends AbstractTwigController
     public function postplayer(Request $request, Response $response, array $args = []): Response {
         $params = $request->getParams();
         $this->logger->debug("ErrorsController::postplayer Error logged : " . var_export($params, true));
+        $this->deezer->DBremoveTrack(intval($params['trackid']));
         return $response;
     }
 
