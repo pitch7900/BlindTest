@@ -322,6 +322,10 @@ class BlindTestController extends AbstractTwigController
         } else {
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess entered was NULL");
         }
+        ///FOR debug only
+        // $checkartist=true;
+        // $checktitle=true;
+        //Above should be removed for game to realy work
 
         $pointswon = 0;
         if ($checkartist) {

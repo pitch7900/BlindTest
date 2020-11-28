@@ -4,12 +4,14 @@ var points;
 var gamesid;
 var countdown;
 var currentplaylistid;
+var ArtistCoinOriginalOffset;
+var TitleCoinOriginalOffset;
 
 /**
  * Update hiscore during the game
  * @param {json} highscore 
  */
-var updateHiscoreDisplay =function (highscore) {
+var updateHiscoreDisplay = function (highscore) {
   $("#highscorenickname").html(highscore.nickname);
   $("#highscore").html(highscore.score);
 }
@@ -42,17 +44,29 @@ var StartCountDown = function () {
  * @param {integer} seconds 
  */
 var waitfor = function (seconds) {
-  $("#waitbeforenext").html(seconds);
+  //initialize the countdown
+  $("#waitbeforenext").html(seconds + "s");
+  $("#waitbeforenextcircle").removeClass(function (index, className) {
+    return (className.match(/(^|\s)p\S+/g) || []).join(' ');
+  });
+  $("#waitbeforenextcircle").addClass("p100");
+  //Let's start countdown
   var i = seconds;
   $("#btnsubmitanswer").prop("disabled", true);
   var countdownwaitfor = setInterval(function () {
-    i--;
-    $("#waitbeforenext").html(i);
+
+    $("#waitbeforenext").html(i + "s");
+    $("#waitbeforenextcircle").removeClass(function (index, className) {
+      return (className.match(/(^|\s)p\S+/g) || []).join(' ');
+    });
+    // console.log("p"+(Math.round((i/seconds)*100)));
+    $("#waitbeforenextcircle").addClass("p" + (Math.round((i / seconds) * 100)));
     if (i <= 0) {
       clearInterval(countdownwaitfor);
       $("#btnsubmitanswer").prop("disabled", false);
       playtitle();
     }
+    i--;
   }, 1000);
 }
 
@@ -81,6 +95,12 @@ var removeAccentsAndSpecialChars = function (input) {
  */
 var playtitle = function () {
   $("#Start").addClass("invisible");
+  $("#waitbeforenextcircle").addClass("hidden");
+  $("#artistpoints").addClass("hidden");
+  $("#titlepoints").addClass("hidden");
+  $("#trackimage").addClass("hidden");
+  $("#artistname").addClass("hidden");
+  $("#titlename").addClass("hidden");
   //Try to set the JS audio player
   try {
     audio.pause();
@@ -142,49 +162,93 @@ var playpause = function () {
   }
 };
 
+var moveObject = function (sourceObject, targetObject, speedInSeconds) {
+  sourceObject.removeClass("hidden");
+  sourceObject.css("transition", "left 1s ease-out, top " + speedInSeconds + "s ease-out");
+  console.log(sourceObject);
+  //var target = $("#coinscore");
+  var xTarget = targetObject.offset().left;
+  var yTarget = targetObject.offset().top;
+  console.log(xTarget + " " + yTarget);
 
+
+  var xSource = sourceObject.offset().left;
+  var ySource = sourceObject.offset().top;
+  console.log("Source coordinates : " + xSource + " " + ySource);
+  // set the elements position to their position for a smooth animation
+
+  sourceObject.offset({ top: ySource, left: xSource });
+  // set their position to the target position
+  // the animation is a simple css transition
+  sourceObject.offset({ top: yTarget, left: xTarget });
+  setTimeout(function () {
+    //Reset the object ot their original location
+    sourceObject.offset({ top: ySource, left: xSource });
+    //and hide them
+    sourceObject.addClass("hidden");
+  }, speedInSeconds * 1000);
+}
 
 /**
  * Post the answer passed and get the response from server
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
+
   //Stop CountDown.
   clearInterval(countdown);
   guessentered = removeAccentsAndSpecialChars(guessentered);
+  //Hide the Play field
+  $("#Play").addClass("invisible");
+  //show the answer field
+  $("#answer").removeClass("invisible");
+
   $.post("/blindtest/game/" + gamesid + "/check.json", {
     guess: guessentered,
     trackid: currenttrackid,
   })
     .done(function (jsondata) {
       updateHiscoreDisplay(jsondata.highscore);
-      //Hide the answer field
-      $("#Play").addClass("invisible");
-      // console.log(jsondata);
-      // console.log("Should check the answer");
+      $("#waitbeforenextcircle").removeClass("hidden");
+      $("#trackimage").removeClass("hidden");
+      $("#artistname").removeClass("hidden");
+      $("#titlename").removeClass("hidden");
+
       $("#trackimage").attr("src", jsondata.picture);
+
       $("#artistname").html(jsondata.artist);
       $("#titlename").html(jsondata.title);
       $("#track_link").attr("href", jsondata.track_link);
       $("#artist").removeClass();
       $("#title").removeClass();
+    
       checkartist = jsondata.checkartist;
       checktitle = jsondata.checktitle;
       points = jsondata.score;
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
 
+        $("#artistpoints").removeClass('hidden');
+        moveObject($("#artistpoints"), $("#coinscore"), 1);
+
+        points++;
       } else {
         $("#artist").addClass("alert alert-danger");
+        $("#artistpoints").addClass("hidden");
       }
       if (checktitle) {
         $("#title").addClass("alert alert-success");
+        $("#titlepoints").removeClass('hidden');
+        moveObject($("#titlepoints"), $("#coinscore"), 1);
+
+        points++;
 
       } else {
         $("#title").addClass("alert alert-danger");
+        $("#titlepoints").addClass("hidden");
       }
       $("#currentscore").html(points);
-      $("#answer").removeClass("invisible");
+
       waitfor(4);
     }, "json")
     .fail(function () {
