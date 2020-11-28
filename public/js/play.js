@@ -139,6 +139,9 @@ var playtitle = function () {
           // alert("Please allow your browser to autoplay music");
           $("#MainPage").addClass("invisible");
           $("#BrowserError").removeClass("invisible");
+          console.log(jsondata);
+          $("#ErrorMusicInfo").html("TrackID is : "+ jsondata.trackid );
+          $("#ErrorMusicInfo").attr("trackid",jsondata.trackid);
           $.post("/errors/player", jsondata);
         });
     } else {
@@ -190,11 +193,24 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   }, speedInSeconds * 1000);
 }
 
+var skipCurrentSong = function(trackid){
+  trackid = $("#ErrorMusicInfo").attr("trackid");
+  $.post("/blindtest/game/" + gamesid + "/skipsong.json", {
+    trackid: trackid
+  }).done(function (jsondata) {
+    console.log("Track "+trackid+" skipped, play the next");
+    $("#MainPage").removeClass("invisible");
+    $("#BrowserError").addClass("invisible");
+    playtitle();
+  });
+}
+
 /**
  * Post the answer passed and get the response from server
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
+  console.log("Post check answer : "+guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
   //Stop CountDown.
