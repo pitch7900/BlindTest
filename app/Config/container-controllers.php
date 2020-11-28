@@ -35,7 +35,8 @@ return [
         return new HomeController($container->get(Twig::class), 
             $container->get(LoggerInterface::class),
             $container->get(DeezerApiInterface::class),
-            $container->get(StaticPlaylists::class)
+            $container->get(StaticPlaylists::class),
+            $container->get(Auth::class)
         );
     },
     AuthController::class => function (ContainerInterface $container): AuthController {

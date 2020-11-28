@@ -243,13 +243,15 @@ var postcheckanswer = function (guessentered) {
       checkartist = jsondata.checkartist;
       checktitle = jsondata.checktitle;
       points = jsondata.score;
+      totalscore = jsondata.totalscore;
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
 
         $("#artistpoints").removeClass('hidden');
-        moveObject($("#artistpoints"), $("#coinscore"), 1);
-
+        moveObject($("#artistpoints1"), $("#coinscore"), 1);
+        moveObject($("#artistpoints2"), $("#cointotalscore"), 1);
         points++;
+        totalscore++
       } else {
         $("#artist").addClass("alert alert-danger");
         $("#artistpoints").addClass("hidden");
@@ -257,16 +259,17 @@ var postcheckanswer = function (guessentered) {
       if (checktitle) {
         $("#title").addClass("alert alert-success");
         $("#titlepoints").removeClass('hidden');
-        moveObject($("#titlepoints"), $("#coinscore"), 1);
+        moveObject($("#titlepoints1"), $("#coinscore"), 1);
+        moveObject($("#titlepoints2"), $("#cointotalscore"), 1);
 
         points++;
-
+        totalscore++
       } else {
         $("#title").addClass("alert alert-danger");
         $("#titlepoints").addClass("hidden");
       }
       $("#currentscore").html(points);
-
+      $("#totalscore").html(totalscore);
       waitfor(4);
     }, "json")
     .fail(function () {

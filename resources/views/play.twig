@@ -55,12 +55,14 @@
 
 
 									<div id="artist" role="alert">
-										<span id="artistname"></span> <img class="hidden" id="artistpoints" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+										<span id="artistname"></span> <img class="hidden" id="artistpoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+										<img class="hidden" id="artistpoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
 									</div>
 									
 									
 									<div id="title" role="alert">
-										<span id="titlename"></span> <img class="hidden" id="titlepoints" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+										<span id="titlename"></span> <img class="hidden" id="titlepoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+										<img class="hidden2" id="titlepoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
 									</div>
 									
 									<div id="waitbeforenextcircle" class="c100 p0 hidden">
@@ -123,11 +125,13 @@
 					<div class="card-body">
 						<h5 class="card-title">{{playlistname}}</h5>
 
-						<p class="card-text">Highscore is :
+						<p class="card-text">Highscore is :  <img id="coinscore" src="/img/crown.png" width="30" height="30" alt="">
 							<span id="highscorenickname">{{highscores.nickname}}</span>
 							with
 							<span id="highscore">{{highscores.score}}</span>
 							points</p>
+						<p class="card-text">Your score is : <img id="coinscore" src="/img/goldcoin.png" width="30" height="30" alt=""> <span id="currentscore">0</span>
+							Points</p>
 					</div>
 				</div>
 			</div>
