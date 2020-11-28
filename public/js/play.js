@@ -5,7 +5,14 @@ var gamesid;
 var countdown;
 var currentplaylistid;
 
-
+/**
+ * Update hiscore during the game
+ * @param {json} highscore 
+ */
+var updateHiscoreDisplay =function (highscore) {
+  $("#highscorenickname").html(highscore.nickname);
+  $("#highscore").html(highscore.score);
+}
 /**
  * Countdown for this game
  */
@@ -93,6 +100,7 @@ var playtitle = function () {
     if (jsondata.trackid != -1) {
       points = jsondata.score;
       $("#currentscore").html(points);
+      updateHiscoreDisplay(jsondata.highscore);
       currenttrackid = jsondata.trackid;
       currentplaylistid = jsondata.playlistid;
       audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
@@ -125,12 +133,12 @@ var playtitle = function () {
 var playpause = function () {
   if (!audio.paused) {
     audio.pause();
-    $("#audiocontroller>i.far.fa-pause-circle").addClass("invisible");
-    $("#audiocontroller>i.far.fa-play-circle").removeClass("invisible");
+    $("#audiocontroller_mute").addClass("invisible");
+    $("#audiocontroller_unmute").removeClass("invisible");
   } else {
     audio.play();
-    $("#audiocontroller>i.far.fa-pause-circle").removeClass("invisible");
-    $("#audiocontroller>i.far.fa-play-circle").addClass("invisible");
+    $("#audiocontroller_mute").removeClass("invisible");
+    $("#audiocontroller_unmute").addClass("invisible");
   }
 };
 
@@ -149,6 +157,7 @@ var postcheckanswer = function (guessentered) {
     trackid: currenttrackid,
   })
     .done(function (jsondata) {
+      updateHiscoreDisplay(jsondata.highscore);
       //Hide the answer field
       $("#Play").addClass("invisible");
       // console.log(jsondata);
