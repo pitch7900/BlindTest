@@ -168,7 +168,7 @@ class BlindTestController extends AbstractTwigController
             'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y',
             'ş' => 's', 'ș' => 's',
             'ț' => 't', 'Ț' => 'T', 'ć' => 'c',
-            '-' => ' ', '/' => '', '\\' => '', '.' => '', '!' => '', '?' => ''
+            '-' => ' ', '/' => '', '\\' => '', '.' => '', '!' => '', '?' => '', ','=>""
         );
         $newstring = strtr($string, $unwanted_array);
 
