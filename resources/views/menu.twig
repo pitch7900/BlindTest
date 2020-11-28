@@ -10,8 +10,10 @@
 
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item active">
-			<img id="coinscore" src="/img/goldcoin.png" width="30" height="30" alt=""> <span id="currentscore">0</span>
+		{% if userpoints %}
+			<img id="cointotalscore" src="/img/goldcoin.png" width="30" height="30" alt=""> <span id="totalscore">{{userpoints}}</span>
 			Points
+		{% endif %}
 		</li>
 
 

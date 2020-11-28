@@ -11,6 +11,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
 use App\Config\StaticPlaylists;
+use App\Database\User;
+use App\Authentication\Auth;
 
 class HomeController extends AbstractTwigController
 {
@@ -18,7 +20,8 @@ class HomeController extends AbstractTwigController
     private $deezer;
     private $logger;
     private $staticplaylists;
-    
+    private $auth;
+
     /**
      * __construct
      *
@@ -28,11 +31,12 @@ class HomeController extends AbstractTwigController
      * @param  mixed $staticplaylists
      * @return void
      */
-    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer, StaticPlaylists $staticplaylists) {
+    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer, StaticPlaylists $staticplaylists, Auth $auth) {
         parent::__construct($twig);
         $this->logger = $logger;
         $this->deezer = $deezer;
         $this->staticplaylists = $staticplaylists;
+        $this->auth=$auth;
         $this->logger->debug("HomeController::_construct Constructor of HomeController called");
     }
 
@@ -48,7 +52,7 @@ class HomeController extends AbstractTwigController
     public function home(Request $request, Response $response, array $args = []): Response {
         $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
         $arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
-
+        $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
         // $this->logger->debug("HomeController::home arguments after mergin deezer " . var_export($arguments, true));
 
         // $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));

@@ -96,7 +96,7 @@ class BlindTestController extends AbstractTwigController
     public function getGameHTML(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-
+        $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->playlist_title;
 
@@ -337,8 +337,8 @@ class BlindTestController extends AbstractTwigController
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess entered was NULL");
         }
         ///FOR debug only
-        // $checkartist=true;
-        // $checktitle=true;
+        //  $checkartist=true;
+        //  $checktitle=true;
         //Above should be removed for game to realy work
 
         $pointswon = 0;
@@ -363,7 +363,7 @@ class BlindTestController extends AbstractTwigController
             $currentgame->points = $pointswon;
             $currentgame->save();
         }
-
+        
         $highscore = $this->getPlaylistHighScore($playlistid);
         return $this->withJson($response, [
             'guess' => $guess,
@@ -375,10 +375,17 @@ class BlindTestController extends AbstractTwigController
             'checktitle' => $checktitle,
             'points' => intval($pointswon),
             'score' => intval($score),
-            'highscore' => $highscore
+            'highscore' => $highscore,
+            'totalscore' => User::getCurrentUserTotalPoints($this->auth->getUserId())
         ]);
     }
-
+    
+    /**
+     * getCurrentUserScore - Return current score for current game
+     *
+     * @param  mixed $gamesid
+     * @return void
+     */
     private function getCurrentUserScore($gamesid)
     {
         return Game::where([
@@ -386,6 +393,11 @@ class BlindTestController extends AbstractTwigController
             ['userid', '=', $this->auth->getUserId()]
         ])->sum('points');
     }
+
+    
+       
+    
+
     /**
      * Return the current TrackID for a GameID
      * @param ServerRequestInterface $request
