@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 namespace App;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 /**
  * This class contains the preferences for the application.

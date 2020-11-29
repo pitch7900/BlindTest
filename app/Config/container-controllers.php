@@ -15,7 +15,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use App\Authentication\Recaptcha;
-use Slim\Interfaces\RouteParserInterface;
 
 return [
     DeezerController::class => function (ContainerInterface $container): DeezerController {
