@@ -102,6 +102,8 @@ var playtitle = function () {
   $("#trackimage").addClass("hidden");
   $("#artistname").addClass("hidden");
   $("#titlename").addClass("hidden");
+  $("#artist").addClass("hidden");
+  $("#title").addClass("hidden");
   //Try to set the JS audio player
   try {
     audio.pause();
@@ -140,8 +142,8 @@ var playtitle = function () {
           $("#MainPage").addClass("invisible");
           $("#BrowserError").removeClass("invisible");
           console.log(jsondata);
-          $("#ErrorMusicInfo").html("TrackID is : "+ jsondata.trackid );
-          $("#ErrorMusicInfo").attr("trackid",jsondata.trackid);
+          $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
+          $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
           $.post("/errors/player", jsondata);
         });
     } else {
@@ -169,6 +171,7 @@ var playpause = function () {
 var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   sourceObject.removeClass("hidden");
   sourceObject.css("transition", "left 1s ease-out, top " + speedInSeconds + "s ease-out");
+  sourceObject.css("z-index", "999999");
   console.log(sourceObject);
   //var target = $("#coinscore");
   var xTarget = targetObject.offset().left;
@@ -193,12 +196,12 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   }, speedInSeconds * 1000);
 }
 
-var skipCurrentSong = function(trackid){
+var skipCurrentSong = function (trackid) {
   trackid = $("#ErrorMusicInfo").attr("trackid");
   $.post("/blindtest/game/" + gamesid + "/skipsong.json", {
     trackid: trackid
   }).done(function (jsondata) {
-    console.log("Track "+trackid+" skipped, play the next");
+    console.log("Track " + trackid + " skipped, play the next");
     $("#MainPage").removeClass("invisible");
     $("#BrowserError").addClass("invisible");
     playtitle();
@@ -210,7 +213,7 @@ var skipCurrentSong = function(trackid){
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
-  console.log("Post check answer : "+guessentered);
+  console.log("Post check answer : " + guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
   //Stop CountDown.
