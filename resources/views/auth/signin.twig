@@ -7,42 +7,53 @@
 
 	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
-			<img src="/img/deezer.png" class="title">
-			<h1 class="h3 mb-3 font-weight-normal center">Create an account</h1>
-			<form class="form-login" method="post">
+			<div class="row">
+				<div class="col-3">
+					<img src="/img/deezer.png" class="title">
+				</div>
+				<div class="col-9">
+					<h1 class="h3 mb-3 font-weight-normal center">Create an account</h1>
+				</div>
+			</div>
+			<div class="row">
+				<form class="form-login col-12" method="post">
+					<div class="row">
+						<div class="col-3">
+							<img src="/img/monster-icons/SVG/kidaha-01.svg">
+							<button class="btn btn-lg btn-light btn-block g-recaptcha" >
+								Change icon
+							</button>
+						</div>
+						<div class="col-9">
+							<label for="email" class="sr-only">Email address</label>
+							<input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>
+							<label for="nickname" class="sr-only">Email address</label>
+							<input type="text" name="nickname" id="nickname" class="form-control" placeholder="Nickname" required autofocus>
+							<label for="password" class="sr-only">Password</label>
+							<input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="Password" required>
+							<label for="confirmpassword" class="sr-only">Password</label>
+							<input type="password" id="confirmpassword" name="confirmpassword" class="form-control" placeholder="Confirm password" autocomplete="Password" required>
+							<button class="btn btn-lg btn-primary btn-block g-recaptcha" type="submit" data-sitekey="{{recaptcha_api_key}}" data-callback='onSubmitSecure' data-action='submit'>
+								Create account
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
 
 
-				<label for="email" class="sr-only">Email address</label>
-				<input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>
-				<label for="nickname" class="sr-only">Email address</label>
-				<input type="text" name="nickname" id="nickname" class="form-control" placeholder="Nickname" required autofocus>
-				<label for="password" class="sr-only">Password</label>
-				<input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="Password" required>
-				<label for="confirmpassword" class="sr-only">Password</label>
-				<input type="password" id="confirmpassword" name="confirmpassword" class="form-control" placeholder="Confirm password" autocomplete="Password" required>
-				<button class="btn btn-lg btn-primary btn-block g-recaptcha" 
-					type="submit"
-					data-sitekey="{{recaptcha_api_key}}" 
-					data-callback='onSubmitSecure' 
-					data-action='submit'>
-						Create account
-					</button>
-
-
-			</form>
-
-
+			<div class="row">
+				<div class="col-12 mx-auto center">
+					<a href="{{ url_for('auth.forgotpassword')}}">
+						Forgot password ?
+					</a>
+					<span>-</span>
+					<a href="{{ url_for('auth.login')}}">
+						Login
+					</a>
+				</div>
+			</div>
 		</div>
-		<div class="col-sm-8 mx-auto">
-			<a href="{{ url_for('auth.forgotpassword')}}">
-				Forgot password ?
-			</a>
-			<span>.</span>
-			<a href="{{ url_for('auth.login')}}">
-				Login
-			</a>
-		</div>
-
 	</div>
 
 {% endblock %}

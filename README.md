@@ -1,10 +1,22 @@
 # Blind Test
 
-Make some fun doing music blind test on audio shortcut of 15s
+Make some fun doing music blind test on music extracts of 30 seconds
+All music are streamed from the Deezer previews system (open).
+All links for Deezer's playlist or songs are reachable during the game.
+
+## Prerequisites
+
+- A mail server
+- Google Recaptcha API key registration for your domain
+- Mysql/MariaDB Database server
+- Creating the database using the /databases/blindtest.sql scripts
+- Apache2
+- php >=7.2
+- php lib curl-php
 
 ## Installation
 
-Download the project from github,remove the vendor folder and reinstall composer packages
+Download the project from github, remove the vendor folder (if needed) and reinstall composer packages
 
 ```bash
 git clone https://github.com/pitch7900/BlindTest.git
@@ -39,18 +51,21 @@ For example, the project is downloaded to /var/www/BlindTest and the virtual hos
 
 ## Configuration
 
-A configuration file should be created in /config/.env.
+A configuration file should be created in /config/.env
+The file should be readable by the service account running apache (usualy www-data on linux/ubuntu Systems)
 This file should contain DB access credential like following exemple
 
-A Google cloud API key for ReCpatcha is needed : <https://developers.google.com/recaptcha/docs/v2>
+A Google cloud API key for ReCaptcha is needed : <https://developers.google.com/recaptcha/docs/v3>
+
+When the REGISTRATION_REQUIRE_APPROVAL is set to "true", all registrations are submitted to the address set in REGISTRATION_ADMIN_EMAIL for approval.
 
 ```ini
 SQL_HOST = "localhost"
 SQL_PORT = 3306
-SQL_DATABASE = "blindtest"
-SQL_USERNAME = "blindtest"
-SQL_PASSWORD = "blindtestpassword"
-PUBLIC_HOST = "http://localhost:8081"
+SQL_DATABASE = "SQL_DB_NAME"
+SQL_USERNAME = "SQL_USERNAME"
+SQL_PASSWORD = "SQL_PASSWORD"
+PUBLIC_HOST = "https://whatever.domain.com"
 SMTP_SERVER = "mail.domain.com"
 SMTP_PORT = "457"
 SMTP_USERNAME = "webmaster@domain.com"
@@ -59,12 +74,14 @@ SMTP_MAILFROM = "webmaster@domain.com"
 SMTP_USESSL = "true"
 SMTP_USEAUTH = "true"
 REGISTRATION_REQUIRE_APPROVAL = "true"
-REGISTRATION_ADMIN_EMAIL = "adminemail@domain.com"
-GOOGLE_RECAPTCHA_SITE_KEY=""
-GOOGLE_RECAPTCHA_SECRET_KEY=""
+REGISTRATION_ADMIN_EMAIL = "admin.email@domain.com"
+GOOGLE_RECAPTCHA_SITE_KEY="TOBEFILLED_WITH_VALID_KEY"
+GOOGLE_RECAPTCHA_SECRET_KEY="TOBEFILLED_WITH_VALID_SECRET"
 ````
 
 ## Docker
+
+Section to be finished and tested...
 
 For a build under docker see folder /Docker and run the startup.sh.
 
@@ -97,3 +114,4 @@ npm install safer-buffer
 
 - Throttler : <https://github.com/hamburgscleanest/guzzle-advanced-throttle>
 - Deezer Wrapper : <https://github.com/mbuonomo/Deezer-API-PHP-class/>
+- Google Recaptcha : <https://developers.google.com/recaptcha/docs/v3>
