@@ -7,3 +7,4 @@
 - [ 29-11-2020 : Started ] Possibility to add custom Deezer playlist for all players
 - Set the log level verbosity in .env for production / dev environments
 - [ 29-11-2020 : Done ]Possibility to update playlist if they've changed after initial cached
+- Add a ranking page with top 5 user's scores

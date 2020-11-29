@@ -527,14 +527,22 @@ class DeezerApi implements DeezerApiInterface
         $playlist = Playlist::find($playlistID);
         $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID);
         
-        $oneweekbefore =  Carbon::createFromTimestamp(time()-10080);
-        $latestupdate = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT,$playlisttracks->orderBy('updated_at','DESC')->first()->updated_at);
-        $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID Lastest update is ".$playlisttracks->orderBy('updated_at','DESC')->first()->updated_at);
+       
         //playlist is not in the DB yet, or there is no track, or hte lateset update is one week all. Add or update it.
-        if (empty($playlist) || $playlisttracks->count()==0 || $latestupdate->lte($oneweekbefore)) {
+        if (empty($playlist) || $playlisttracks->count()==0) {
             $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID not in DB cache adding it");
             $this->DBaddPlaylistTracks($playlistID);
         } else {
+
+            $oneweekbefore =  Carbon::createFromTimestamp(time()-10080);
+            $latestupdate = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT,$playlisttracks->orderBy('updated_at','DESC')->first()->updated_at);
+            
+            if ($latestupdate->lte($oneweekbefore)){
+                $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID Lastest update is ".$playlisttracks->orderBy('updated_at','DESC')->first()->updated_at);
+                $this->logger->debug("DeeezerApi::getPlaylistItems Forcing udpate");
+                $this->DBaddPlaylistTracks($playlistID);
+            }
+
             $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
         }
         $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
