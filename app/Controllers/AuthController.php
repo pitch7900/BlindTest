@@ -14,7 +14,7 @@ use App\Authentication\UUID;
 use App\Database\User;
 use Carbon\Carbon;
 use App\Authentication\Recaptcha;
-use Slim\Interfaces\RouteParserInterface;
+
 /**
  * AuthController
  * @author : Pierre Christensen

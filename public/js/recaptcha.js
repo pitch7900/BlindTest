@@ -11,16 +11,14 @@ function onSubmitSecure(e) {
         .done(function (jsondata) {
             //get the Redirection from response and do the redirect
             //Workaround for ios safari devices
-            //console.log(jsondata.redirectTo);
+            
             location.assign(jsondata.redirectTo);
+            //If mobile device, then force a page reload as it seems the location.asign is not wokring properly on iOS Safari
             if (mobileAndTabletCheck)
             {
                 document.location.reload();
             }
-            //location.href = jsondata.redirectTo;
             
-            //https://stackoverflow.com/questions/31223216/why-isnt-window-location-href-not-forwarding-to-page-using-safari
-            //setTimeout(function(){document.location.href =jsondata.redirectTo;},250);
         });
 
 }

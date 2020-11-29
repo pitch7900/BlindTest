@@ -4,8 +4,7 @@ var points;
 var gamesid;
 var countdown;
 var currentplaylistid;
-var ArtistCoinOriginalOffset;
-var TitleCoinOriginalOffset;
+
 
 /**
  * Update hiscore during the game
@@ -15,6 +14,7 @@ var updateHiscoreDisplay = function (highscore) {
   $("#highscorenickname").html(highscore.nickname);
   $("#highscore").html(highscore.score);
 }
+
 /**
  * Countdown for this game
  */
@@ -102,6 +102,8 @@ var playtitle = function () {
   $("#trackimage").addClass("hidden");
   $("#artistname").addClass("hidden");
   $("#titlename").addClass("hidden");
+  $("#artist").addClass("hidden");
+  $("#title").addClass("hidden");
   //Try to set the JS audio player
   try {
     audio.pause();
@@ -139,9 +141,9 @@ var playtitle = function () {
           // alert("Please allow your browser to autoplay music");
           $("#MainPage").addClass("invisible");
           $("#BrowserError").removeClass("invisible");
-          console.log(jsondata);
-          $("#ErrorMusicInfo").html("TrackID is : "+ jsondata.trackid );
-          $("#ErrorMusicInfo").attr("trackid",jsondata.trackid);
+          // console.log(jsondata);
+          $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
+          $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
           $.post("/errors/player", jsondata);
         });
     } else {
@@ -166,19 +168,26 @@ var playpause = function () {
   }
 };
 
+/**
+ * Move an object on another one on the page
+ * @param {Object} sourceObject 
+ * @param {Object} targetObject 
+ * @param {integer} speedInSeconds 
+ */
 var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   sourceObject.removeClass("hidden");
   sourceObject.css("transition", "left 1s ease-out, top " + speedInSeconds + "s ease-out");
-  console.log(sourceObject);
+  sourceObject.css("z-index", "999999");
+  // console.log(sourceObject);
   //var target = $("#coinscore");
   var xTarget = targetObject.offset().left;
   var yTarget = targetObject.offset().top;
-  console.log(xTarget + " " + yTarget);
+  // console.log(xTarget + " " + yTarget);
 
 
   var xSource = sourceObject.offset().left;
   var ySource = sourceObject.offset().top;
-  console.log("Source coordinates : " + xSource + " " + ySource);
+  // console.log("Source coordinates : " + xSource + " " + ySource);
   // set the elements position to their position for a smooth animation
 
   sourceObject.offset({ top: ySource, left: xSource });
@@ -193,12 +202,16 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   }, speedInSeconds * 1000);
 }
 
-var skipCurrentSong = function(trackid){
+/**
+ * Skip the current song in case of error
+ * @param {int} trackid 
+ */
+var skipCurrentSong = function (trackid) {
   trackid = $("#ErrorMusicInfo").attr("trackid");
   $.post("/blindtest/game/" + gamesid + "/skipsong.json", {
     trackid: trackid
   }).done(function (jsondata) {
-    console.log("Track "+trackid+" skipped, play the next");
+    // console.log("Track " + trackid + " skipped, play the next");
     $("#MainPage").removeClass("invisible");
     $("#BrowserError").addClass("invisible");
     playtitle();
@@ -210,7 +223,7 @@ var skipCurrentSong = function(trackid){
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
-  console.log("Post check answer : "+guessentered);
+  // console.log("Post check answer : " + guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
   //Stop CountDown.
@@ -231,9 +244,7 @@ var postcheckanswer = function (guessentered) {
       $("#trackimage").removeClass("hidden");
       $("#artistname").removeClass("hidden");
       $("#titlename").removeClass("hidden");
-
       $("#trackimage").attr("src", jsondata.picture);
-
       $("#artistname").html(jsondata.artist);
       $("#titlename").html(jsondata.title);
       $("#track_link").attr("href", jsondata.track_link);
@@ -244,10 +255,11 @@ var postcheckanswer = function (guessentered) {
       checktitle = jsondata.checktitle;
       points = jsondata.score;
       totalscore = jsondata.totalscore;
+      //Answer for artist is correct
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
-
         $("#artistpoints").removeClass('hidden');
+        //reward animation
         moveObject($("#artistpoints1"), $("#coinscore"), 1);
         moveObject($("#artistpoints2"), $("#cointotalscore"), 1);
         points++;
@@ -256,12 +268,13 @@ var postcheckanswer = function (guessentered) {
         $("#artist").addClass("alert alert-danger");
         $("#artistpoints").addClass("hidden");
       }
+      //Answer for title is correct
       if (checktitle) {
         $("#title").addClass("alert alert-success");
         $("#titlepoints").removeClass('hidden');
+        //reward animation
         moveObject($("#titlepoints1"), $("#coinscore"), 1);
         moveObject($("#titlepoints2"), $("#cointotalscore"), 1);
-
         points++;
         totalscore++
       } else {
