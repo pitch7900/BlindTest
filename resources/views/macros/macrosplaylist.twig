@@ -1,8 +1,7 @@
-{% macro playlistcard(id,playlistname,picture,nb_tracks,link) %}
+{% macro playlistcard(id,playlistname,picture,link) %}
 
 
-	<div
-		class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
+	<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
 		<!-- Card -->
 		<div
 			class="card">
@@ -12,28 +11,19 @@
 			<img class="card-img-top" src="{{picture}}" alt="{{playlistname}}">
 			</a>
 			<!-- Card content -->
-			<div
-				class="card-body">
-
+			<div class="card-body">
 				<!-- Title -->
 				<h4 class="card-title">
 					{{playlistname}}
 				</h4>
-
-				<!-- Text -->
-				<p class="card-text">{{nb_tracks}}
-					tracks</p>
 				<!-- Button -->
-
 				<a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
 					<i class="fas fa-play"></i>
 					Play</a>
 				<a href="{{ link }}" target="_blank" class="btn btn-light col-sm-12">
 					<i class="fab fa-deezer"></i>
 					Link to deezer</a>
-
 			</div>
-
 		</div>
 		<!-- Card -->
 

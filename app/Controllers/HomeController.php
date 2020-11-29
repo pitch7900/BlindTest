@@ -12,6 +12,7 @@ use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
 use App\Config\StaticPlaylists;
 use App\Database\User;
+use App\Database\Playlist;
 use App\Authentication\Auth;
 
 class HomeController extends AbstractTwigController
@@ -50,10 +51,19 @@ class HomeController extends AbstractTwigController
      * @return Response
      */
     public function home(Request $request, Response $response, array $args = []): Response {
-        $arguments['dynamicplaylists'] = $this->deezer->searchPlaylist('blind test');
-        $arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
+        //$arguments['dynamicplaylists'] = ;
+        //$arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
+        //$search=$this->deezer->searchPlaylist('blind test')['data'];
+        foreach ($this->deezer->searchPlaylist('blind test')['data'] as $playlist ) {
+            $this->deezer->DBAddPlaylist($playlist['id']);
+        }
+        foreach ($this->staticplaylists->getPlaylists() as $playlist ) {
+            $this->deezer->DBAddPlaylist($playlist['id']);
+        }
+        $arguments['playlists']=Playlist::orderBy('playlist_title','ASC')->get()->toArray();
+        //$this->deezer->DBAddPlaylist($this->staticplaylists->getPlaylists());
         $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
-        // $this->logger->debug("HomeController::home arguments after mergin deezer " . var_export($arguments, true));
+        //$this->logger->debug("HomeController::home arguments  " . json_encode($arguments, JSON_PRETTY_PRINT));
 
         // $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));
         return $this->render($response, 'home.twig', $arguments);

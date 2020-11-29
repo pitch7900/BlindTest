@@ -5,23 +5,21 @@
 	{{ include('menu.twig') }}
 {% endblock %}
 
-{% block interactivemenus %}
-{% endblock %}
+{% block interactivemenus %}{% endblock %}
 {% block content %}
 
 	<div id="main_page" class="container-fluid row">
 
-		
+
 		<div class="col-sm-12">
 			<div id="playlists" class="row">
-				{% for playlist in dynamicplaylists.data %}
-					{{ macroplaylist.playlistcard(playlist.id,playlist.title,playlist.picture_xl,playlist.nb_tracks,playlist.link) }}
+				
+
+				{% for playlist in playlists %}
+					{{ macroplaylist.playlistcard(playlist.id,playlist.playlist_title,playlist.playlist_picture,playlist.playlist_link) }}
 				{% endfor %}
 
-				{% for playlist in staticplaylists %}
-					{{ macroplaylist.playlistcard(playlist.id,playlist.title,playlist.picture_xl,playlist.nb_tracks,playlist.link) }}
-				{% endfor %}
-				
+
 			</div>
 
 
