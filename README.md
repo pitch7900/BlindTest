@@ -106,10 +106,10 @@ echo "Start now the container with : docker-compose up --build"
 
 ```bash
 npm install gulp --save-dev
-npm install -g gulp-cli
-npm install gulp-connect-php
-npm install browser-sync
-npm install safer-buffer
+npm install -g gulp-cli --save
+npm install gulp-connect-php --save
+npm install browser-sync --save
+npm install safer-buffer --save
 ```
 
 ## Credits

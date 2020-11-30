@@ -1,0 +1,35 @@
+{
+  "name": "blindtest",
+  "version": "1.0.0",
+  "description": "BlindTest NPM packages",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "browser-sync": "^2.26.13",
+    "browser-sync-client": "^2.26.13",
+    "browser-sync-ui": "^2.26.13",
+    "eazy-logger": "^3.1.0",
+    "gulp": "^4.0.2",
+    "gulp-connect-php": "^1.0.3",
+    "nan": "^2.14.2",
+    "safer-buffer": "^2.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pitch7900/BlindTest.git"
+  },
+  "keywords": [
+    "Music",
+    "Blindtest",
+    "Deezer"
+  ],
+  "author": "pierre.christensen@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pitch7900/BlindTest/issues"
+  },
+  "homepage": "https://github.com/pitch7900/BlindTest#readme"
+}
