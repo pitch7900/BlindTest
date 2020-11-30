@@ -1,4 +1,18 @@
 
+
+var AddCustomPlaylist = function () {
+    url = $("#CustomPlaylistLink").val();
+    console.log(url);
+    $.post("/deezer/playlist/add", {
+        url: url
+    }).done(function (jsondata) {
+        // console.log(jsondata);
+        document.location.reload();
+    });
+
+};
+
+
 var Catalog = (function () {
     /**
      * Initialise the audio stream as document is ready
@@ -6,8 +20,8 @@ var Catalog = (function () {
     var HandlerUpdatePlaylist = function () {
         $('body').on('click', '.updatetracksaction', function () {
             playlistid = $(this).attr('playlist');
-           
-            var currentobject=$(this);
+
+            var currentobject = $(this);
             currentobject.parents("#carddata").addClass("invisible");
             currentobject.parents("#carddata").siblings("#loading").removeClass("invisible");
 

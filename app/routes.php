@@ -67,6 +67,8 @@ return function (App $app) {
                         ->setName('deezer.searchlist');
                 $group->post('/playlist/{playlistid}/updatetracks', DeezerController::class . ':postPlaylistUpdateTracks')
                         ->setName('deezer.playlist.updatetracks');
+                $group->post('/playlist/add', DeezerController::class . ':postPlaylistAdd')
+                        ->setName('deezer.playlist.add');
                 $group->get('/playlist/{playlistid}/cover.html', DeezerController::class . ':getPlaylistCover')
                         ->setName('deezer.getplaylist');
                 $group->get('/playlist/{playlistid}/info.json', DeezerController::class . ':getPlaylistInfo')
