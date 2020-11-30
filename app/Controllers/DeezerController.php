@@ -44,7 +44,31 @@ class DeezerController extends AbstractTwigController
         return $this->withJSON($response,$payload);
     }
 
-
+    public function postPlaylistAdd(Request $request, Response $response, $args) {
+        $url = $request->getParam('url');
+        $this->logger->debug("DeezerController::postPlaylistAdd Should add playlist from URL :  ".$url);
+        $path = explode('/',parse_url($url,PHP_URL_PATH));
+        $host = parse_url($url,PHP_URL_HOST);
+        $this->logger->debug("DeezerController::postPlaylistAdd ".var_export($path,true));
+        $this->logger->debug("DeezerController::postPlaylistAdd ".parse_url($url,PHP_URL_PATH));
+        if (strcmp($host,"www.deezer.com")==0 && strcmp($path[2],"playlist")==0){
+            $this->logger->debug("DeezerController::postPlaylistAdd Should add playlist ID :  ".intval($path[3]));
+            $this->deezer->DBaddPlaylist(intval($path[3]));
+            
+            return $this->withJSON($response,['playlist'=>$this->deezer->getPlaylistItems(intval($path[3]))]);
+        } else {
+            return $this->withJSON($response,['playlist'=>false]);
+        }
+        
+    }
+    /**
+     * postPlaylistUpdateTracks
+     *
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return void
+     */
     public function postPlaylistUpdateTracks(Request $request, Response $response, $args) {
         $playlistid = intval($args['playlistid']);
         $tracks=$this->deezer->getPlaylistItems($playlistid,true);
