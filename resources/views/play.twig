@@ -3,6 +3,7 @@
 
 {% block headers %}
 	<link rel="stylesheet" href="/css/circle.css" type="text/css">
+	<link rel="stylesheet" href="/css/fireworks.css" type="text/css">
 {% endblock %}
 
 
@@ -30,8 +31,7 @@
 	</div>
 	<div id="MainPage" class="d-flex justify-content-center container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
-		<div
-			class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+		<div id="interactionpane" class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
 			<!-- Display answer pane -->
 			<div id="answer" class="card mb-3 invisible">
 				<div class="row no-gutters">
@@ -69,55 +69,6 @@
 					</div>
 				</div>
 			</div>
-			{# <div id="answer" class="invisible">
-										<h3>The answer was</h3>
-										<div class="card mb-3">
-											<div class="row no-gutters">
-												<div
-													class="col-md-4">
-													<!-- Card image -->
-													<a id="track_link" href="" target="_blank">
-														<img id="trackimage" class="card-img hidden" src="" alt="albumimage">
-													</a>
-												</div>
-												<div class="col-md-8">
-													<div
-														class="card-body">
-						
-						
-														<!-- Card content -->
-														<div class="card-body">
-						
-						
-															<div id="artist" role="alert" class="hidden">
-																<span id="artistname"></span> <img class="hidden" id="artistpoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-																<img class="hidden" id="artistpoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-															</div>
-															
-															
-															<div id="title" role="alert" class="hidden">
-																<span id="titlename"></span> <img class="hidden" id="titlepoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-																<img class="hidden" id="titlepoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-															</div>
-															
-															<div id="waitbeforenextcircle" class="c100 p0 hidden">
-																<span id="waitbeforenext">5</span>
-																<div class="slice">
-																	<div class="bar"></div>
-																	<div class="fill"></div>
-																</div>
-															</div>
-														</div>
-						
-						
-													</div>
-												</div>
-											</div>
-											<!-- Card -->
-										</div>
-						
-						
-									</div> #}
 			<!-- Actual play pane -->
 	
 				<div id="Play" class="invisible container-fluid">
@@ -183,11 +134,17 @@
 				</div>
 			</div>
 		</div>
+		<div id="Finished" class="invisible">
+		<h1>Congratulations you finished this game</h1>
+		<center><div id="fireworksplace" style="width: 300px;height: 300px;"></div></center>
+		</div>
 	</div>
 {% endblock %}
 
 {% block javascripts %}
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.3.3/pixi.min.js" type="text/javascript"></script>
+	<script src="/js/k-nuton_fireworks.js" type="text/javascript"></script>
+	<script src="/js/fireworks.js" type="text/javascript"></script>
 	<script src="/js/play.js" type="text/javascript"></script>
-
+	
 {% endblock %}

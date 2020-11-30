@@ -413,13 +413,13 @@ class BlindTestController extends AbstractTwigController
         $numberoftracks = count(Game::where([
             ['game_gamesid', '=', $gamesid]
         ])->get());
-        $this->logger->debug("BlindTestController::getCurrentTrackJson() Number of track is : $numberoftracks");
-        $this->logger->debug("BlindTestController::getCurrentTrackJson() Current Track index is : $currentTrackIndex");
+        $this->logger->debug("BlindTestController::getCurrentTrackJson() Game : ".$gamesid." Number of track is : $numberoftracks");
+        $this->logger->debug("BlindTestController::getCurrentTrackJson() Game : ".$gamesid." Current Track index is : $currentTrackIndex");
 
         //$games->games_playlist;
 
         //We've reached the end of the track list for this game
-        if ($currentTrackIndex > $numberoftracks) {
+        if ($currentTrackIndex >= $numberoftracks) {
             //return -1 as code for end of play;
             return $this->withJSON($response, [
                 'trackid' => -1,

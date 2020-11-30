@@ -148,7 +148,9 @@ var playtitle = function () {
         });
     } else {
       //Last song of the game reached. Do an action
-      alert("Last song reached. Final score is : ".jsondata.score);
+      $("#Finished").removeClass("invisible");
+      $("#interactionpane").addClass("invisible");
+      fireworks($("#fireworksplace")[0],false);
     }
   });
 };
