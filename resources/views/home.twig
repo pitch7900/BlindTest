@@ -16,7 +16,7 @@
 				
 
 				{% for playlist in playlists %}
-					{{ macroplaylist.playlistcard(playlist.id,playlist.playlist_title,playlist.playlist_picture,playlist.playlist_link) }}
+					{{ macroplaylist.playlistcard(playlist.id,playlist.playlist_title,playlist.playlist_picture,playlist.playlist_link,playlist.tracks,playlist.played) }}
 				{% endfor %}
 
 

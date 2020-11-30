@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 22, 2020 at 11:53 AM
+-- Generation Time: Nov 30, 2020 at 01:51 PM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -32,9 +32,9 @@ USE `blindtest`;
 DROP TABLE IF EXISTS `album`;
 CREATE TABLE IF NOT EXISTS `album` (
   `id` bigint(20) NOT NULL,
-  `album_title` varchar(1024) DEFAULT NULL,
-  `album_tracklist` varchar(1024) DEFAULT NULL,
-  `album_cover` varchar(1024) DEFAULT NULL,
+  `album_title` varchar(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `album_tracklist` varchar(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `album_cover` varchar(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `approvaleuuid` varchar(250) DEFAULT NULL,
   `adminapproved` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Constraints for dumped tables

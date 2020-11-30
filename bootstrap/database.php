@@ -8,9 +8,9 @@ $capsule->addConnection([
     'database' => $_ENV['SQL_DATABASE'],
     'username' => $_ENV['SQL_USERNAME'],
     'password' => $_ENV['SQL_PASSWORD'],
-    'charset' => 'utf8',
+    'charset' => $_ENV['SQL_CHARSET'],
     'port' => $_ENV['SQL_PORT'],
-    'collation' => 'utf8_unicode_ci',
+    'collation' => $_ENV['SQL_COLLATION'],
     'prefix' => ''
 ]);
 

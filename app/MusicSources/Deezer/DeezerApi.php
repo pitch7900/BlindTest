@@ -349,7 +349,7 @@ class DeezerApi implements DeezerApiInterface
         $artistdb = Artist::find($artist['id']);
         
         if (is_null($artistdb)) {
-            $this->logger->debug("DeezerApi::DBaddArtist Adding Artist : ".$this->forceLatinChars($artist['name']));
+            $this->logger->debug("DeezerApi::DBaddArtist Adding Artist : ".$this->forceLatinChars($artist['name']). "(".$artist['id'].")");
             Artist::updateOrCreate([
                 'id' => $artist['id'],
                 'artist_name' => $this->forceLatinChars($artist['name']),
@@ -375,9 +375,10 @@ class DeezerApi implements DeezerApiInterface
             'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c',
             'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o',
             'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ğ' => 'G', 'İ' => 'I', 'Ş' => 'S', 'ğ' => 'g', 'ı' => 'i', 'ş' => 's', 'ü' => 'u',
-            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', 'Я' => 'R', 'œ' => 'oe', '™' => 'TM'
+            'ă' => 'a', 'Ă' => 'A', 'ș' => 's', 'Ș' => 'S', 'ț' => 't', 'Ț' => 'T', 'ć' => 'c', 'Я' => 'R', 'œ' => 'oe', '™' => 'TM', 'Ⅱ' => 'II'
         );
-        return strtr($text, $unwanted_array);
+
+        return  preg_replace('/[[^:ascii:]]/', '',strtr($text, $unwanted_array)); 
         
     }
 
@@ -389,11 +390,9 @@ class DeezerApi implements DeezerApiInterface
      */
     private function DBaddAlbum(array $album): int
     {
-        
         $albumdb = Album::find($album['id']);
-        
         if (is_null($albumdb)) {
-            $this->logger->debug("DeezerApi::DBaddAlbum Adding album : ".$this->forceLatinChars($album['title']));
+            $this->logger->debug("DeezerApi::DBaddAlbum Adding album : ".$this->forceLatinChars($album['title']). " (".$album['id'].")");
             Album::updateOrCreate([
                 'id' => $album['id'],
                 'album_title' => $this->forceLatinChars($album['title']),
@@ -416,7 +415,7 @@ class DeezerApi implements DeezerApiInterface
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
         if (is_null($trackdb)) {
-            $this->logger->debug("DeezerApi::DBaddTrack Add track : ". $this->forceLatinChars($track['title']));
+            $this->logger->debug("DeezerApi::DBaddTrack Add track : ". $this->forceLatinChars($track['title']). " (".$track['id'].")");
             Track::updateOrCreate([
                 'id' => $track['id'],
                 'track_title' => $this->forceLatinChars($track['title']),
@@ -494,7 +493,7 @@ class DeezerApi implements DeezerApiInterface
             $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do normal search");
 
             foreach ($playlist_array['tracks']['data'] as $track) {
-               // $this->logger->debug("DeezerApi::DBaddPlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
+                // $this->logger->debug("DeezerApi::DBaddPlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
 
                 array_push($tracks, $this->getTrackArray($track));
             }
@@ -517,19 +516,22 @@ class DeezerApi implements DeezerApiInterface
         return intval($playlistID);
     }
 
+
     /**
      * Return all tracks for a given PlaylistID
-     * @param int $playlistID
+     *
+     * @param  mixed $playlistID
+     * @param  mixed $forceudpate
      * @return array
      */
-    public function getPlaylistItems(int $playlistID): array
+    public function getPlaylistItems(int $playlistID,bool $forceudpate=false): array
     {
         $playlist = Playlist::find($playlistID);
         $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID);
         
        
         //playlist is not in the DB yet, or there is no track, or hte lateset update is one week all. Add or update it.
-        if (empty($playlist) || $playlisttracks->count()==0) {
+        if (empty($playlist) || $playlisttracks->count()==0 ||$forceudpate) {
             $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID not in DB cache adding it");
             $this->DBaddPlaylistTracks($playlistID);
         } else {
@@ -545,6 +547,7 @@ class DeezerApi implements DeezerApiInterface
 
             $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
         }
+       
         $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
             ->join('playlist', 'playlisttracks.playlisttracks_playlist', '=', 'playlist.id')
             ->join('track', 'playlisttracks.playlisttracks_track', '=', 'track.id')

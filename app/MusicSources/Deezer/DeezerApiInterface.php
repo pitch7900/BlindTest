@@ -104,10 +104,12 @@ interface DeezerApiInterface
 
     /**
      * Return all tracks for a given PlaylistID
-     * @param type $playlistID
+     *
+     * @param  mixed $playlistID
+     * @param  mixed $forceudpate
      * @return array
      */
-    public function getPlaylistItems(int $playlistID): array;
+    public function getPlaylistItems(int $playlistID,bool $forceudpate=false): array;
 
     /**
      * DBremoveTrack Remove a track from database (usualy preview of music is not working)

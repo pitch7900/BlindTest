@@ -44,6 +44,12 @@ class DeezerController extends AbstractTwigController
         return $this->withJSON($response,$payload);
     }
 
+
+    public function postPlaylistUpdateTracks(Request $request, Response $response, $args) {
+        $playlistid = intval($args['playlistid']);
+        $tracks=$this->deezer->getPlaylistItems($playlistid,true);
+        return $this->withJSON($response,['tracks'=>count($tracks)]);
+    }
     /**
      * Return the html for a playlist cover
      */
