@@ -21,7 +21,8 @@ class Playlist extends Model {
      * @return array
      */
     public static function getPlaylists():array{
-        $playlists = Playlist::orderBy('playlist_title','ASC')->get()->toArray();
+        $playlists = Playlist::orderBy('playlist_title','ASC')
+                    ->get()->toArray();
         $results = array();
         foreach ($playlists as $playlist){
             $tracks=PlaylistTracks::where('playlisttracks_playlist','=',$playlist['id']);
@@ -30,9 +31,8 @@ class Playlist extends Model {
             } else {
                 $playlist['tracks'] = $tracks->count();
             }
-            array_push($results,$playlist);
             $playlist['played'] = Games::where('games_playlist','=',$playlist['id'])->count();
-
+            array_push($results,$playlist);       
         }
         return $results;
     }

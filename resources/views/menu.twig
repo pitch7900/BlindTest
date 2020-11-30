@@ -10,11 +10,15 @@
 
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item navbar-text active  navbar-expand">
-			{% if userpoints %}
+			
 				<img id="cointotalscore" src="/img/goldcoin.png" width="30" height="30" alt="">
+				{% if userpoints %}
 				<span id="totalscore">{{userpoints}}</span>
+				{% else %}
+				<span id="totalscore">0</span>
+				{% endif %}
 				Points
-			{% endif %}
+			
 		</li>
 	</ul>
 	<div class="collapse  navbar-collapse" id="MainNavBar">
