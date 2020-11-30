@@ -60,7 +60,8 @@ class HomeController extends AbstractTwigController
         foreach ($this->staticplaylists->getPlaylists() as $playlist ) {
             $this->deezer->DBAddPlaylist($playlist['id']);
         }
-        $arguments['playlists']=Playlist::orderBy('playlist_title','ASC')->get()->toArray();
+        //$arguments['playlists']=Playlist::orderBy('playlist_title','ASC')->get()->toArray();
+        $arguments['playlists']=Playlist::getPlaylists();
         //$this->deezer->DBAddPlaylist($this->staticplaylists->getPlaylists());
         $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
         //$this->logger->debug("HomeController::home arguments  " . json_encode($arguments, JSON_PRETTY_PRINT));

@@ -4,6 +4,7 @@ namespace App\Database;
 
 use Illuminate\Database\Eloquent\Model;
 use SimpleXMLElement;
+use App\Database\PlaylistTracks;
 /**
  * Class Track for Illuminate (DB) queries
  */
@@ -14,6 +15,28 @@ class Playlist extends Model {
     protected $fillable = ['id','playlist_title','playlist_link','playlist_picture'];
     
     
+    /**
+     * getPlaylists - Return an array with all playlists and track count
+     *
+     * @return array
+     */
+    public static function getPlaylists():array{
+        $playlists = Playlist::orderBy('playlist_title','ASC')
+                    ->get()->toArray();
+        $results = array();
+        foreach ($playlists as $playlist){
+            $tracks=PlaylistTracks::where('playlisttracks_playlist','=',$playlist['id']);
+            if (is_null($tracks)){
+                $playlist['tracks']=0;
+            } else {
+                $playlist['tracks'] = $tracks->count();
+            }
+            $playlist['played'] = Games::where('games_playlist','=',$playlist['id'])->count();
+            array_push($results,$playlist);       
+        }
+        return $results;
+    }
+
     /**
      * Return XML formatted data for an entry
      * @return type
