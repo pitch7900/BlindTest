@@ -37,7 +37,12 @@ class Game  extends Model
          ->whereNull('userid')
          ->orderBy('game_order', 'asc')
          ->first();
-      return intval($track->game_order);
+         if (is_null($track)){
+            return Game::where('game_gamesid', '=', $gameid)->count();
+         } else {
+            return intval($track->game_order);
+         }
+      
    }
 
    /**
