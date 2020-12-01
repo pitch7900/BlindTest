@@ -1,92 +1,108 @@
-.invisible{
-    display:none!important;
+.invisible {
+  display: none !important;
 }
 
-.hidden{
-    visibility: hidden;
+.hidden {
+  visibility: hidden;
 }
-img.title{
-    width:25%;
-}
-
-.song,ul.list-inline{
-    cursor: default;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-bottom: 0px;
+img.title {
+  width: 25%;
 }
 
+.song,
+ul.list-inline {
+  cursor: default;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
 
-li.navitem, a#ShowPlaylist.nav-link{
-    cursor: pointer;
+li.navitem,
+a#ShowPlaylist.nav-link {
+  cursor: pointer;
 }
 
 .profilepict {
-    border-radius:50%;
-
+  border-radius: 50%;
 }
 
-
-.searcherror{
-    background-color:lightcoral !important; 
+.searcherror {
+  background-color: lightcoral !important;
 }
 
-
-.searchwarning{
-    background-color: lightyellow !important; 
+.image-container {
+  position: relative;
 }
 
+.image-helper {
+  border: 0px;
+  background: transparent;
+  /* min-width: 10%; */
+  padding-left: 0px;
+  padding-right: 0px;
 
-a.dropdown-item,.nav-item,.tableheaderssortable,.nav-link{
-    cursor:pointer;
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  left: 0px;
+  filter:invert(99%) sepia(0%) saturate(4510%) hue-rotate(247deg) brightness(111%) contrast(75%);
+  opacity: 0.5;
 }
 
-.trackimage{
-    width:50px;
-    height:50px;
-    background-color: gray;
-    color:white;
-    display: table;
-
+.searchwarning {
+  background-color: lightyellow !important;
 }
 
-.unknowimage{
-    display: table-cell;
-    vertical-align: middle;
+a.dropdown-item,
+.nav-item,
+.tableheaderssortable,
+.nav-link {
+  cursor: pointer;
 }
-.hugebutton{
-    /*    width:60%;
+
+.trackimage {
+  width: 50px;
+  height: 50px;
+  background-color: gray;
+  color: white;
+  display: table;
+}
+
+.unknowimage {
+  display: table-cell;
+  vertical-align: middle;
+}
+.hugebutton {
+  /*    width:60%;
         height:60%;*/
-    margin: auto;
+  margin: auto;
 }
 
-
-.signal{
-    background-repeat:no-repeat;
-    background-size:32px;
-    background-position: center;
-    color: transparent;
+.signal {
+  background-repeat: no-repeat;
+  background-size: 32px;
+  background-position: center;
+  color: transparent;
 }
 
-.selected{
-    font-weight: bold;
+.selected {
+  font-weight: bold;
 }
 
-.notselected{
-    font-weight:normal;
+.notselected {
+  font-weight: normal;
 }
 
-.badge-right{
-    float:right;
+.badge-right {
+  float: right;
 }
 
 .center {
-    margin: auto;
-    text-align: center;
+  margin: auto;
+  text-align: center;
 }
 
-
 .center-horizontal {
-    margin-left: auto;
-    margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 }

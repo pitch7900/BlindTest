@@ -10,27 +10,36 @@
 
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item navbar-text active  navbar-expand">
-			
-				<img id="cointotalscore" src="/img/goldcoin.png" width="30" height="30" alt="">
-				{% if userpoints %}
+
+			<img id="cointotalscore" src="/img/goldcoin.png" width="30" height="30" alt="">
+			{% if userpoints %}
 				<span id="totalscore">{{userpoints}}</span>
-				{% else %}
+			{% else %}
 				<span id="totalscore">0</span>
-				{% endif %}
-				Points
-			
+			{% endif %}
+			Points
+
 		</li>
 	</ul>
 	<div class="collapse  navbar-collapse" id="MainNavBar">
-
+	{# Only displayed in the home screen #}
+		{% if homescreen %}
 		<ul class="navbar-nav mr-auto">
 
 			<li class="nav-item active ">
-			
+
 				<a class="nav-link" data-toggle="modal" data-target="#AddPlaylistModal">Add playlist</a>
 			</li>
+			
+			<li class="nav-item active ">
+				<form class="form-inline my-2 my-lg-0">
+					<input id="FilterSongs" class="form-control mr-sm-2" type="search" placeholder="Filter" aria-label="Search">
 
+				</form>
+			</li>
+			
 		</ul>
+		{% endif %}
 		<ul class="navbar-nav">
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

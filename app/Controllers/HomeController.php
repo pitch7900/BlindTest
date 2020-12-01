@@ -65,7 +65,7 @@ class HomeController extends AbstractTwigController
         //$this->deezer->DBAddPlaylist($this->staticplaylists->getPlaylists());
         $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
         //$this->logger->debug("HomeController::home arguments  " . json_encode($arguments, JSON_PRETTY_PRINT));
-
+        $arguments['homescreen']=true;
         // $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));
         return $this->render($response, 'home.twig', $arguments);
     }

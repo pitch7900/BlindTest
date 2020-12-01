@@ -1,10 +1,9 @@
 {% macro playlistcard(id,playlistname,picture,link,tracks,played) %}
 
-
-	<div
-		class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
-		<!-- Card -->
-		<div class="card">
+	<!-- Card -->
+	<div class="card col-sm-6 col-md-4 col-lg-3 col-xl-2">
+		
+	
 			<div id="loading" class="invisible">
 				<center>
 					<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
@@ -12,32 +11,32 @@
 					</div>
 				</center>
 			</div>
-			<div
-				id="carddata">
-				<!-- Card image -->
-				<a href="/blindtest/play/{{id}}.html">
-					<img class="card-img-top" src="{{picture}}" alt="{{playlistname}}">
-				</a>
-
+			<div id="carddata">
+				<div class="image-container">
+					<!-- Card image -->
+					<a href="/blindtest/play/{{id}}.html">
+						<img class="card-img-top" src="{{picture}}" alt="{{playlistname}}">
+						<img class="image-helper" src="/img/icons/play-circle-regular.svg">
+						
+					</a>
+				</div>
 				<!-- Card content -->
-				<div
-					class="card-body">
+				<div class="card-body">
 					<!-- Title -->
-					<h7 class="card-title">
+					<h7 class="card-title playlistname">
 						{{playlistname}}
 					</h7>
 					<p>
-						<span class="tracksnumber">{{tracks}}</span>
-						tracks
+						<span class="tracksnumber">{{tracks}}</span> tracks
 						<button type="button" class="btn btn-light updatetracksaction" playlist="{{id}}">
 							<i class="fas fa-sync"></i>
 						</button>
 					</p>
 					<p>Played {{played}} times</p>
 					<!-- Button -->
-					<a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
+					{# <a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
 						<i class="fas fa-play"></i>
-						Play</a>
+						Play</a> #}
 					<a href="{{ link }}" target="_blank" class="btn btn-light col-sm-12">
 						<i class="fab fa-deezer"></i>
 						Link to deezer</a>
@@ -46,5 +45,5 @@
 		</div>
 		<!-- Card -->
 
-	</div>
+
 {% endmacro %}
