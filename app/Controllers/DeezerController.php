@@ -43,7 +43,15 @@ class DeezerController extends AbstractTwigController
         $this->logger->debug("DeezerController::getPlaylistInfo should return : ".print_r($payload,true));
         return $this->withJSON($response,$payload);
     }
-
+    
+    /**
+     * postPlaylistAdd
+     *
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return void
+     */
     public function postPlaylistAdd(Request $request, Response $response, $args) {
         $url = $request->getParam('url');
         $this->logger->debug("DeezerController::postPlaylistAdd Should add playlist from URL :  ".$url);
@@ -71,6 +79,7 @@ class DeezerController extends AbstractTwigController
      */
     public function postPlaylistUpdateTracks(Request $request, Response $response, $args) {
         $playlistid = intval($args['playlistid']);
+        $this->deezer->EmptyPlaylist($playlistid);
         $tracks=$this->deezer->getPlaylistItems($playlistid,true);
         return $this->withJSON($response,['tracks'=>count($tracks)]);
     }

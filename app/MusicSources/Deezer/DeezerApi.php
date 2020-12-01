@@ -516,6 +516,17 @@ class DeezerApi implements DeezerApiInterface
         return intval($playlistID);
     }
 
+    
+    /**
+     * EmptyPlaylist - Delete all Tracks for a given playlist
+     *
+     * @param  mixed $playlistID
+     * @return void
+     */
+    public function EmptyPlaylist(int $playlistID):void{
+        $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID);
+        $playlisttracks->forceDelete();
+    }
 
     /**
      * Return all tracks for a given PlaylistID
