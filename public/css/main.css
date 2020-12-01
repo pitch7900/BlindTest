@@ -34,13 +34,11 @@ a#ShowPlaylist.nav-link {
   position: relative;
 }
 
-.image-helper {
+.image-helper-center {
   border: 0px;
   background: transparent;
-  /* min-width: 10%; */
   padding-left: 0px;
   padding-right: 0px;
-
   position: absolute;
   top: 0px;
   width: 100%;
@@ -48,6 +46,16 @@ a#ShowPlaylist.nav-link {
   filter:invert(99%) sepia(0%) saturate(4510%) hue-rotate(247deg) brightness(111%) contrast(75%);
   opacity: 0.5;
 }
+
+.image-helper-bottomright {
+    border: 0px;
+    padding-left: 10px;
+    padding-right: 0px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    background: lightgray;
+  }
 
 .searchwarning {
   background-color: lightyellow !important;

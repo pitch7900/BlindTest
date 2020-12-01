@@ -111,6 +111,15 @@ interface DeezerApiInterface
      */
     public function getPlaylistItems(int $playlistID,bool $forceudpate=false): array;
 
+
+     /**
+     * EmptyPlaylist - Delete all Tracks for a given playlist
+     *
+     * @param  mixed $playlistID
+     * @return void
+     */
+    public function EmptyPlaylist(int $playlistID):void;
+
     /**
      * DBremoveTrack Remove a track from database (usualy preview of music is not working)
      *
