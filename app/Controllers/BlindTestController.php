@@ -185,22 +185,25 @@ class BlindTestController extends AbstractTwigController
      * @param string $tofindinit
      * @param string $guessinit
      * 
-     * @return boolean
+     * @return array
      */
-    private function compareAnswers(string $tofindinit, string $guessinit)
+    private function compareAnswers(string $tofindinit, string $guessinit):array
     {
         $this->logger->debug("BlindTestController::compareAnswers() Should compare $tofindinit and $guessinit");
+        $found=false;
         $tofindarray = explode(" ", $this->removeAccents($tofindinit));
         $guessarray = explode(" ", $this->removeAccents($guessinit));
-
+        $guessarray_cpy=$guessarray;
         foreach ($guessarray as $guess) {
             //Don't look for string below 2 chars, or do this if the string to find is =1
             if (strlen($guess) > 1 || strlen($tofindinit) == 1) {
                 //if between 2 chars and 4 we need an exact match
                 $this->logger->debug("BlindTestController::compareAnswers() Less than 4 chars, we need an exact match");
                 if (in_array($guess, $tofindarray)) {
-
-                    return true;
+                    if (($key = array_search($guess, $guessarray_cpy)) !== false) {
+                        unset($guessarray_cpy[$key]);
+                    }
+                    $found = true;
                 }
             }
             if (strlen($guess) > 4) {
@@ -210,13 +213,17 @@ class BlindTestController extends AbstractTwigController
                     $this->logger->debug("BlindTestController::compareAnswers()   Comparing $guess and $tofind");
                     if (levenshtein($guess, $tofind) <= 2) {
                         $this->logger->debug("BlindTestController::compareAnswers()   Comparing $guess and $tofind [Match]");
-                        return true;
+                        if (($key = array_search($guess, $guessarray_cpy)) !== false) {
+                            unset($guessarray_cpy[$key]);
+                        }
+                        $found = true;
                     }
                 }
             }
         }
-
-        return false;
+ 
+        return array('result' => $found,
+        'remaining' => $guessarray_cpy);
     }
 
     /**
@@ -331,8 +338,12 @@ class BlindTestController extends AbstractTwigController
         if ($guess != null) {
             $guess = $this->removeAccents(utf8_encode($guess));
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
+            //Check the string to find with user's guess
             $checkartist = $this->compareAnswers($artist->artist_name, $guess);
-            $checktitle = $this->compareAnswers($track->track_title, $guess);
+            //May be a bug on version 7.4
+            //See https://www.php.net/manual/fr/function.implode.php
+            //remove the string that have been used to detect the artist and searche for the title in the remaings
+            $checktitle = $this->compareAnswers($track->track_title, implode(" ",$checkartist['remaining']));
         } else {
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess entered was NULL");
         }
@@ -342,10 +353,10 @@ class BlindTestController extends AbstractTwigController
         //Above should be removed for game to realy work
 
         $pointswon = 0;
-        if ($checkartist) {
+        if ($checkartist['result']) {
             $pointswon++;
         }
-        if ($checktitle) {
+        if ($checktitle['result']) {
             $pointswon++;
         }
         $score = $this->getCurrentUserScore($gamesid);
@@ -371,8 +382,8 @@ class BlindTestController extends AbstractTwigController
             'picture' => $album->album_cover,
             'artist' => $artist->artist_name,
             'track_link' => $track->track_link,
-            'checkartist' => $checkartist,
-            'checktitle' => $checktitle,
+            'checkartist' => $checkartist['result'],
+            'checktitle' => $checktitle['result'],
             'points' => intval($pointswon),
             'score' => intval($score),
             'highscore' => $highscore,
