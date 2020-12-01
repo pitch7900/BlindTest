@@ -224,7 +224,6 @@ class Auth
             $mail->addAddress($email);               // Add a recipient
             $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
 
-
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Mail validation for Blindtest';
