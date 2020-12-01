@@ -15,7 +15,7 @@ var AddCustomPlaylist = function () {
 
 var Catalog = (function () {
     /**
-     * Initialise the audio stream as document is ready
+     * Listen to the update playlist action button
      */
     var HandlerUpdatePlaylist = function () {
         $('body').on('click', '.updatetracksaction', function () {
@@ -33,10 +33,36 @@ var Catalog = (function () {
 
         });
     };
+    /**
+     * 
+     */
+    var HandlerFilterPlaylists = function () {
+        $('body').on('keyup', '#FilterSongs', function () {
+            var searched = $(this).val().toLowerCase();
+            if (searched.length >= 3) {
+                console.log("Searching for " + searched);
+                $(".playlistname").each(function () {
+                    title=($(this).html()).toLowerCase().trim();
+                    console.log(" - "+title);
+                    if (title.includes(searched)) {
+                        console.log(title);
+                        $(this).parents(".card").removeClass("invisible");
+                    } else {
+                        $(this).parents(".card").addClass("invisible");
+                    }
+                });
+            } else {
+                $(".playlistname").each(function () {
+                    $(this).parents(".card").removeClass("invisible");
+                });
+            }
+        });
+    };
 
     return {
         init: function () {
             HandlerUpdatePlaylist();
+            HandlerFilterPlaylists();
         }
     };
 })();
