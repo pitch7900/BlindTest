@@ -81,6 +81,10 @@ class BlindTestController extends AbstractTwigController
 
     public function postGameWriting(Request $request, Response $response, $args)
     {
+        $user = GamePlayers::where("userid","=",$this->auth->getUserId())->first();
+        $user->writing=true;
+        $user->save();
+        return $response;
     }
 
     public function getGameMessages(Request $request, Response $response, $args)
@@ -107,7 +111,7 @@ class BlindTestController extends AbstractTwigController
             'userid' => $this->auth->getUserId(),
             'writing' => false,
             'isready' => true,
-            'answered' => false
+            'answered' => false           
         ]);
         $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;

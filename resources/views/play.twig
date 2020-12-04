@@ -141,7 +141,7 @@
 		</div>
 		<div id="userspane" class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-6">
 
-			<ul class="userpane">
+			<ul id="userslist">
 				{% for player in players %}
 					<li userid="{{player.id}}">{{player.nickname}}</li>
 				{% endfor %}

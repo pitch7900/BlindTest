@@ -12,6 +12,8 @@ use Slim\App;
 use Psr\Log\LoggerInterface;
 use App\Authentication\Auth;
 use Slim\Psr7\Factory\ResponseFactory;
+use App\Database\User;
+use Carbon\Carbon;
 
 class AuthMiddleware
 {
@@ -81,16 +83,30 @@ class AuthMiddleware
     {
         $this->logger->debug("AuthMiddleware::__invoke() Called");
         $this->logger->debug("AuthMiddleware::__invoke() SessionID is : " . session_id() . " / " . $this->auth->getSessionId());
-        
+        $now=time();
         if (!$this->checkAuthentified()) {
             $this->auth->setOriginalRequestedPage($_SERVER['REQUEST_URI']);
-            $this->logger->debug("AuthMiddleware::__invoke() Original Requested page is : ". $this->auth->getOriginalRequestedPage());
+            $this->logger->debug("AuthMiddleware::__invoke() Original Requested page is : " . $this->auth->getOriginalRequestedPage());
             //Create a new response to break the current flow
             $responseFactory = new ResponseFactory();
             $response = $responseFactory->createResponse();
             return $response->withHeader('Location',  $this->getLoginPath())
                 ->withStatus(303);
         } else {
+            if (isset($_SESSION['lastaction'])) {
+                if ($now - $_SESSION['lastaction'] >= 15) {
+                    $user = User::find($_SESSION['userid']);
+                    $user->lastaction =  Carbon::createFromTimestamp($now);
+                    $user->save();
+                    $_SESSION['lastaction'] =$now;
+                }
+            } else {
+                $user = User::find($_SESSION['userid']);
+                $user->lastaction =  Carbon::createFromTimestamp($now);
+                $user->save();
+                $_SESSION['lastaction'] = $now;
+            }
+            
             $response = $handler->handle($request);
             return $response;
         }

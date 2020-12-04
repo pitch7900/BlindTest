@@ -320,23 +320,39 @@ var Catalog = (function () {
       event.preventDefault();
     });
   };
+
+  var HandlerisWriting = function () {
+    $('body').on('keyup', '#YourGuess', function () {
+      // console.log("Writing");
+      $.post('/blindtest/game/'+gamesid+'/writing');
+    });
+  };
+
   var update_playerstatus = function () {
      setInterval(function () {
       $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
         .done(function (jsondata) {
+          $('#userslist').html("");
           jQuery.each(jsondata, function(i, val) {
-            console.log(val);
-            
+            // console.log(val);
+            var icon_writing="";
+            var icon_read="";
+            var icon_online="";
+            if (val.writing) {icon_writing = '<i class="fas fa-comment-dots"></i>';}
+            if (val.isready) {icon_read = '<i class="fas fa-check"></i>';}
+            if (val.online) {icon_online='<i class="fas fa-globe"></i>';}
+            $('#userslist').append('<li userid="' +val.id+ '">'+icon_writing+val.nickname+" "+icon_online+icon_read+'</li>');
           });
           
       });
-    }, 1000);
+    }, 2500);
   };
   return {
     init: function () {
       load_playlist();
       handler_CheckAnswer();
       update_playerstatus();
+      HandlerisWriting();
     },
   };
 })();

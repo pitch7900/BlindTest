@@ -38,7 +38,8 @@ class GamePlayers extends Model
             'nickname' => $user->nickname,
             'status' => $player['isready'],
             'writing' => $player['writing'],
-            'answered' => $player['answered']
+            'answered' => $player['answered'],
+            'online' => User::isOnline($user->id)
          ]);
       }
 
