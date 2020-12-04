@@ -18,8 +18,7 @@ var updateHiscoreDisplay = function (highscore) {
 /**
  * Countdown for this game
  */
-var StartCountDown = function () {
-  var seconds = 30;
+var StartCountDown = function (seconds) {
   var i = seconds;
   $("#countdown").attr("aria-valuenow", 30);
   $("#countdown").attr("style", "width: 100%");
@@ -127,7 +126,7 @@ var playtitle = function () {
       currenttrackid = jsondata.trackid;
       currentplaylistid = jsondata.playlistid;
       audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
-
+      audio.currentTime = Math.floor(jsondata.offset/1000)
       audio
         .play()
         .then(() => {
@@ -135,7 +134,7 @@ var playtitle = function () {
           $("#answer").addClass("invisible");
           //Allow interraction with sending the answer
           $("#Play").removeClass("invisible");
-          StartCountDown();
+          StartCountDown(30-Math.floor(jsondata.offset/1000));
         })
         .catch((error) => {
           // alert("Please allow your browser to autoplay music");
@@ -321,11 +320,23 @@ var Catalog = (function () {
       event.preventDefault();
     });
   };
-
+  var update_playerstatus = function () {
+     setInterval(function () {
+      $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
+        .done(function (jsondata) {
+          jQuery.each(jsondata, function(i, val) {
+            console.log(val);
+            
+          });
+          
+      });
+    }, 1000);
+  };
   return {
     init: function () {
       load_playlist();
       handler_CheckAnswer();
+      update_playerstatus();
     },
   };
 })();

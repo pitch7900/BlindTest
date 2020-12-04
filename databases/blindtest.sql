@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 30, 2020 at 01:51 PM
+-- Generation Time: Dec 04, 2020 at 05:45 PM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -81,6 +81,25 @@ CREATE TABLE IF NOT EXISTS `game` (
   KEY `game_gamesid` (`game_gamesid`),
   KEY `game_track` (`game_track`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gameplayers`
+--
+
+DROP TABLE IF EXISTS `gameplayers`;
+CREATE TABLE IF NOT EXISTS `gameplayers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `gameid` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `writing` tinyint(1) NOT NULL DEFAULT '0',
+  `isready` tinyint(1) NOT NULL DEFAULT '0',
+  `answered` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 

@@ -94,6 +94,10 @@ return function (App $app) {
                         ->setName('blindtest.playjsondata');
                 $group->get('/game/{gamesid}/currenttrack.json', BlindTestController::class . ':getCurrentTrackJson')
                         ->setName('blindtest.getcurrenttrackjson');
+                $group->get('/game/{gamesid}/updateplayers.json', BlindTestController::class . ':updatePlayers')
+                        ->setName('blindtest.updateplayers');
+                $group->get('/game/{gamesid}/{trackid}.mp3', BlindTestController::class . ':getGameStreamMP3')
+                        ->setName('blindtest.stream.game.mp3');
                 $group->get('/play/{playlistid}.html', BlindTestController::class . ':getNewPlay')
                         ->setName('blindtest.newplay');
                 $group->get('/play/{trackid}.mp3', BlindTestController::class . ':getStreamMP3')

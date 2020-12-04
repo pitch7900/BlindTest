@@ -32,7 +32,7 @@
 	<div id="MainPage" class="d-flex justify-content-center container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
 		<div
-			id="interactionpane" class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+			id="interactionpane" class="col-12 col-sm-4 col-md-4 col-lg-6 col-xl-6">
 			<!-- Display answer pane -->
 			<div id="answer" class="card mb-3 invisible">
 				<div class="row no-gutters">
@@ -139,7 +139,15 @@
 			</div>
 
 		</div>
+		<div id="userspane" class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-6">
 
+			<ul class="userpane">
+				{% for player in players %}
+					<li userid="{{player.id}}">{{player.nickname}}</li>
+				{% endfor %}
+			</ul>
+
+		</div>
 
 		<div id="Finished" class="invisible">
 			<h1>Congratulations you finished this game</h1>
