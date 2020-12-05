@@ -63,10 +63,13 @@ var waitfor = function (seconds) {
     });
     // console.log("p"+(Math.round((i/seconds)*100)));
     $("#waitbeforenextcircle").addClass("p" + (Math.round((i / seconds) * 100)));
-    if (i <= 0 && everyoneready) {
-      clearInterval(countdownwaitfor);
-      $("#btnsubmitanswer").prop("disabled", false);
-      playtitle();
+    if (i <= 0) {
+      $.post('/blindtest/game/'+gamesid+'/ready');
+      if (everyoneready) {
+        clearInterval(countdownwaitfor);
+        $("#btnsubmitanswer").prop("disabled", false);
+        playtitle();
+      }
     }
     i--;
   }, 1000);
@@ -96,9 +99,9 @@ var removeAccentsAndSpecialChars = function (input) {
  * Play the title that is returned by currenttrack.json
  */
 var playtitle = function () {
-  writing=false;
-  answergiven=false;
-  everyoneready=false;
+  writing = false;
+  answergiven = false;
+  everyoneready = false;
   $("#Start").addClass("invisible");
   $("#waitbeforenextcircle").addClass("hidden");
   $("#artistpoints").addClass("hidden");
@@ -131,7 +134,7 @@ var playtitle = function () {
       currenttrackid = jsondata.trackid;
       currentplaylistid = jsondata.playlistid;
       audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
-      audio.currentTime = Math.floor(jsondata.offset/1000)
+      audio.currentTime = Math.floor(jsondata.offset / 1000)
       audio
         .play()
         .then(() => {
@@ -139,7 +142,7 @@ var playtitle = function () {
           $("#answer").addClass("invisible");
           //Allow interraction with sending the answer
           $("#Play").removeClass("invisible");
-          StartCountDown(30-Math.floor(jsondata.offset/1000));
+          StartCountDown(30 - Math.floor(jsondata.offset / 1000));
         })
         .catch((error) => {
           // alert("Please allow your browser to autoplay music");
@@ -154,7 +157,7 @@ var playtitle = function () {
       //Last song of the game reached. Do an action
       $("#Finished").removeClass("invisible");
       $("#interactionpane").addClass("invisible");
-      fireworks($("#fireworksplace")[0],false);
+      fireworks($("#fireworksplace")[0], false);
     }
   });
 };
@@ -229,7 +232,7 @@ var skipCurrentSong = function (trackid) {
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
-  answergiven=true;
+  answergiven = true;
   // console.log("Post check answer : " + guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
@@ -263,7 +266,7 @@ var postcheckanswer = function (guessentered) {
       points = jsondata.score;
       totalscore = jsondata.totalscore;
       //Answer for artist is correct
-      object_current_user_coin=$("#coinscore_"+userid);
+      object_current_user_coin = $("#coinscore_" + userid);
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
         $("#artistpoints").removeClass('hidden');
@@ -289,7 +292,7 @@ var postcheckanswer = function (guessentered) {
         $("#title").addClass("alert alert-danger");
         $("#titlepoints").addClass("hidden");
       }
-      $("#currentscore_"+userid).html(points);
+      $("#currentscore_" + userid).html(points);
       $("#totalscore").html(totalscore);
       waitfor(4);
     }, "json")
@@ -329,47 +332,46 @@ var Catalog = (function () {
 
   var HandlerisWriting = function () {
     $('body').on('keyup', '#YourGuess', function () {
-      if (!writing){
+      if (!writing) {
         // console.log("Writing");
-        $.post('/blindtest/game/'+gamesid+'/writing');
-        writing=true;
+        $.post('/blindtest/game/' + gamesid + '/writing');
+        writing = true;
       }
     });
   };
 
   var UpdatePlayerstatus = function () {
-     setInterval(function () {
+    setInterval(function () {
       $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
         .done(function (jsondata) {
           $('#userslist').html("");
-          userid=jsondata.userid;
-          delete  jsondata.userid;
-          everyoneready=true;
-          jQuery.each(jsondata, function(i, val) {
+          userid = jsondata.userid;
+          delete jsondata.userid;
+          everyoneready = true;
+          jQuery.each(jsondata, function (i, val) {
             // console.log(val);
-            var icon_writing="";
-            var icon_read="";
-            var icon_online="";
+            var icon_writing = "";
+            var icon_read = "";
+            var icon_online = "";
             if (val.online) {
-              everyoneready=everyoneready&&val.status;
+              everyoneready = everyoneready && val.status;
             } else {
-              everyoneready=everyoneready&&true;
+              everyoneready = everyoneready && true;
             }
-            
+
             //Stop this track, somebody has answered !
-            console.log(val);
-            if (val.answered && val.id!=userid && !answergiven) {
+            if (val.answered && val.id != userid && !answergiven) {
               guessentered = $("input#YourGuess").first().val().toLowerCase();
               postcheckanswer(guessentered);
             }
-            if (val.writing) {icon_writing = '<i class="fas fa-comment-dots"></i>';}
-            if (val.isready) {icon_read = '<i class="fas fa-check"></i>';}
-            if (val.online) {icon_online='<i class="fas fa-globe green"></i>';}
-            scorevalue='<img id="coinscore_'+userid+'" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_'+userid+'"> '+val.score+'</span>';
-            $('#userslist').append('<li class="list-group-item" userid="' +val.id+ '">'+icon_writing+val.nickname+" "+icon_online+" "+scorevalue+" "+icon_read+'</li>');
+            if (val.writing) { icon_writing = '<i class="fas fa-comment-dots"></i>'; }
+            if (val.isready) { icon_read = '<i class="fas fa-check"></i>'; }
+            if (val.online) { icon_online = '<i class="fas fa-globe green"></i>'; }
+            scorevalue = '<img id="coinscore_' + userid + '" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_' + userid + '"> ' + val.score + '</span>';
+            $('#userslist').append('<li class="list-group-item" userid="' + val.id + '">' + icon_writing + val.nickname + " " + icon_online + " " + scorevalue + " " + icon_read + '</li>');
           });
-          
-      });
+
+        });
     }, 2500);
   };
   return {

@@ -468,7 +468,7 @@ class BlindTestController extends AbstractTwigController
         $gamesid = intval($args['gamesid']);
         //reset status for this track
         GamePlayers::resetStatus($gamesid);
-        GamePlayers::isReadyStatus($gamesid,false);
+        // GamePlayers::isReadyStatus($gamesid,false);
         $playlistid = Games::find($gamesid)->games_playlist;
         $currentTrackIndex = Game::getCurrentTrackIndex($gamesid);
         $numberoftracks = count(Game::where([
