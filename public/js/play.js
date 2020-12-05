@@ -349,7 +349,12 @@ var Catalog = (function () {
             var icon_writing="";
             var icon_read="";
             var icon_online="";
-            everyoneready=everyoneready&&(val.status||!val.online);
+            if (val.online) {
+              everyoneready=everyoneready&&val.status;
+            } else {
+              everyoneready=everyoneready&&true;
+            }
+            
             //Stop this track, somebody has answered !
             console.log(val);
             if (val.answered && val.id!=userid && !answergiven) {

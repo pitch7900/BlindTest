@@ -367,6 +367,7 @@ class BlindTestController extends AbstractTwigController
             ->where('gameid','=',$gamesid)
             ->first();
         $GamePlayer->answered=true;
+        $GamePlayer->isready=true;
         $GamePlayer->save();
         $currentgame = Game::where([
             ['game_gamesid', '=', $gamesid],
@@ -409,7 +410,7 @@ class BlindTestController extends AbstractTwigController
         if ($checktitle['result']) {
             $pointswon++;
         }
-        $score = $this->getCurrentUserScore($gamesid);
+       // $score = $this->getCurrentUserScore($gamesid);
         //Another user has already answered
         if ($currentgame->points != null) {
             //But less points than the current user, update the poitns attribution to the current user.
