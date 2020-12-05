@@ -78,11 +78,41 @@ class BlindTestController extends AbstractTwigController
 
         return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(303);
     }
-
+    
+    /**
+     * postGameWriting
+     *
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return void
+     */
     public function postGameWriting(Request $request, Response $response, $args)
     {
-        $user = GamePlayers::where("userid", "=", $this->auth->getUserId())->first();
+        $gamesid = $args['gamesid'];
+        $user = GamePlayers::where("userid", "=", $this->auth->getUserId())
+            ->where('gameid','=',$gamesid)
+            ->first();
         $user->writing = true;
+        $user->save();
+        return $response;
+    }
+    
+    /**
+     * postUserIsReady - Set readyness for next track status for current user to true
+     *
+     * @param  mixed $request
+     * @param  mixed $response
+     * @param  mixed $args
+     * @return void
+     */
+    public function postUserIsReady(Request $request, Response $response, $args)
+    {
+        $gamesid = $args['gamesid'];
+        $user = GamePlayers::where("userid", "=", $this->auth->getUserId())
+            ->where('gameid','=',$gamesid)
+            ->first();
+        $user->isready = true;
         $user->save();
         return $response;
     }
@@ -109,13 +139,14 @@ class BlindTestController extends AbstractTwigController
     public function getGameHTML(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        GamePlayers::updateOrCreate([
+        $GamePlayer = GamePlayers::updateOrCreate([
             'gameid' => $gamesid,
-            'userid' => $this->auth->getUserId(),
-            'writing' => false,
-            'isready' => true,
-            'answered' => false
+            'userid' => $this->auth->getUserId()
         ]);
+        $GamePlayer->writing=false;
+        $GamePlayer->isready=true;
+        $GamePlayer->answered=false;
+        $GamePlayer->save();
         $arguments['userpoints'] = User::getUserTotalPoints($this->auth->getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->playlist_title;
@@ -143,6 +174,7 @@ class BlindTestController extends AbstractTwigController
     public function getGameJson(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
+        
         $game = Game::where('game_gamesid', $gamesid)
             ->join('track', 'game.game_track', '=', 'track.id')
             ->whereNotNull('track_preview')
@@ -330,7 +362,12 @@ class BlindTestController extends AbstractTwigController
         $gamesid = intval($args['gamesid']);
         // $games = Games::find($gamesid);
         //$trackid = Game::getCurrentTrack($gamesid);//$games->games_currenttrackindex;
-
+        
+        $GamePlayer=GamePlayers::where('userid','=',$this->auth->getUserId())
+            ->where('gameid','=',$gamesid)
+            ->first();
+        $GamePlayer->answered=true;
+        $GamePlayer->save();
         $currentgame = Game::where([
             ['game_gamesid', '=', $gamesid],
             ['game_track', '=', $trackid]
@@ -341,15 +378,13 @@ class BlindTestController extends AbstractTwigController
         //$trackid = $currentgame->game_track;
 
         //$this->logger->debug("BlindTestController::postGameCheckCurrent Trackid : " . $trackid);
-
+        
         $checkartist = false;
         $checktitle = false;
         $track = Track::find($trackid);
         $artist = Artist::find($track->track_artist);
         $album = Album::find($track->track_album);
-        //$games->games_currenttrackindex = $currentTrackIndex + 1;
-        // $games->save();
-
+        
         if (!is_null($guess)) {
             $guess = $this->removeAccents(utf8_encode($guess));
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
@@ -430,6 +465,9 @@ class BlindTestController extends AbstractTwigController
     public function getCurrentTrackJson(Request $request, Response $response, $args)
     {
         $gamesid = intval($args['gamesid']);
+        //reset status for this track
+        GamePlayers::resetStatus($gamesid);
+        GamePlayers::isReadyStatus($gamesid,false);
         $playlistid = Games::find($gamesid)->games_playlist;
         $currentTrackIndex = Game::getCurrentTrackIndex($gamesid);
         $numberoftracks = count(Game::where([

@@ -5,6 +5,7 @@ var gamesid;
 var countdown;
 var currentplaylistid;
 var userid;
+var writing;
 
 /**
  * Update hiscore during the game
@@ -93,7 +94,7 @@ var removeAccentsAndSpecialChars = function (input) {
  * Play the title that is returned by currenttrack.json
  */
 var playtitle = function () {
-
+  writing=false;
   $("#Start").addClass("invisible");
   $("#waitbeforenextcircle").addClass("hidden");
   $("#artistpoints").addClass("hidden");
@@ -324,8 +325,11 @@ var Catalog = (function () {
 
   var HandlerisWriting = function () {
     $('body').on('keyup', '#YourGuess', function () {
-      // console.log("Writing");
-      $.post('/blindtest/game/'+gamesid+'/writing');
+      if (!writing){
+        // console.log("Writing");
+        $.post('/blindtest/game/'+gamesid+'/writing');
+        writing=true;
+      }
     });
   };
 

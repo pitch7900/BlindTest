@@ -84,6 +84,8 @@ return function (App $app) {
                         ->setName('blindtest.play');
                 $group->post('/game/{gamesid}/writing', BlindTestController::class . ':postGameWriting')
                         ->setName('blindtest.writing');
+                $group->post('/game/{gamesid}/ready', BlindTestController::class . ':postUserIsReady')
+                        ->setName('blindtest.user.isready');
                 $group->get('/game/{gamesid}/messages.json', BlindTestController::class . ':getGameMessages')
                         ->setName('blindtest.messages');
                 $group->get('/game/{gamesid}.json', BlindTestController::class . ':getGameJson')
