@@ -344,6 +344,7 @@ var Catalog = (function () {
           $('#userslist').html("");
           userid=jsondata.userid;
           delete  jsondata.userid;
+          everyoneready=true;
           jQuery.each(jsondata, function(i, val) {
             // console.log(val);
             var icon_writing="";
