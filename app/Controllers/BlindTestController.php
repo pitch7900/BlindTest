@@ -81,8 +81,8 @@ class BlindTestController extends AbstractTwigController
 
     public function postGameWriting(Request $request, Response $response, $args)
     {
-        $user = GamePlayers::where("userid","=",$this->auth->getUserId())->first();
-        $user->writing=true;
+        $user = GamePlayers::where("userid", "=", $this->auth->getUserId())->first();
+        $user->writing = true;
         $user->save();
         return $response;
     }
@@ -90,10 +90,13 @@ class BlindTestController extends AbstractTwigController
     public function getGameMessages(Request $request, Response $response, $args)
     {
     }
+
     public function updatePlayers(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        return $this->withJSON($response,GamePlayers::getPlayers($gamesid));
+        $payload = GamePlayers::getPlayers($gamesid);
+        $payload['userid'] = $this->auth->getUserId();
+        return $this->withJSON($response, $payload);
     }
 
     /**
@@ -111,9 +114,9 @@ class BlindTestController extends AbstractTwigController
             'userid' => $this->auth->getUserId(),
             'writing' => false,
             'isready' => true,
-            'answered' => false           
+            'answered' => false
         ]);
-        $arguments['userpoints'] = User::getCurrentUserTotalPoints($this->auth->getUserId());
+        $arguments['userpoints'] = User::getUserTotalPoints($this->auth->getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->playlist_title;
 
@@ -397,9 +400,9 @@ class BlindTestController extends AbstractTwigController
             'checkartist' => $checkartist['result'],
             'checktitle' => $checktitle['result'],
             'points' => intval($pointswon),
-            'score' => intval($score),
+            //'score' => intval($score),
             'highscore' => $highscore,
-            'totalscore' => User::getCurrentUserTotalPoints($this->auth->getUserId())
+            'totalscore' => User::getUserTotalPoints($this->auth->getUserId())
         ]);
     }
 
@@ -407,16 +410,12 @@ class BlindTestController extends AbstractTwigController
      * getCurrentUserScore - Return current score for current game
      *
      * @param  mixed $gamesid
-     * @return void
+     * @return int
      */
-    private function getCurrentUserScore($gamesid)
+    private function getCurrentUserScore($gamesid): int
     {
-        return Game::where([
-            ['game_gamesid', '=', $gamesid],
-            ['userid', '=', $this->auth->getUserId()]
-        ])->sum('points');
+        return Game::getUserScore($gamesid, $this->auth->getUserId());
     }
-
 
 
 

@@ -77,4 +77,20 @@ class Game  extends Model
       
       return ['userid' => $userid, 'score' => $userscore];
    }
+
+   
+    /**
+     * getUserScore - return specific userid score for a given gameId
+     *
+     * @param  mixed $gamesid
+     * @param  mixed $userid
+     * @return int
+     */
+    public static function getUserScore($gamesid, $userid): int
+    {
+        return intval(Game::where([
+            ['game_gamesid', '=', $gamesid],
+            ['userid', '=', $userid]
+        ])->sum('points'));
+    }
 }

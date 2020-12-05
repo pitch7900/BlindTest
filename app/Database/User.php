@@ -39,12 +39,12 @@ class User extends Model {
         return false;
     }
     /**
-     * getCurrentUserTotalPoints
+     * getUserTotalPoints
      *
      * @param  mixed $userid
      * @return int
      */
-    public static function getCurrentUserTotalPoints(int $userid):int{
+    public static function getUserTotalPoints(int $userid):int{
         return Game::where("userid","=",$userid)->sum("points");
     }
     

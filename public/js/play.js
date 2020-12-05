@@ -4,7 +4,7 @@ var points;
 var gamesid;
 var countdown;
 var currentplaylistid;
-
+var userid;
 
 /**
  * Update hiscore during the game
@@ -257,11 +257,12 @@ var postcheckanswer = function (guessentered) {
       points = jsondata.score;
       totalscore = jsondata.totalscore;
       //Answer for artist is correct
+      object_current_user_coin=$("#coinscore_"+userid);
       if (checkartist) {
         $("#artist").addClass("alert alert-success");
         $("#artistpoints").removeClass('hidden');
         //reward animation
-        moveObject($("#artistpoints1"), $("#coinscore"), 1);
+        moveObject($("#artistpoints1"), object_current_user_coin, 1);
         moveObject($("#artistpoints2"), $("#cointotalscore"), 1);
         points++;
         totalscore++
@@ -274,7 +275,7 @@ var postcheckanswer = function (guessentered) {
         $("#title").addClass("alert alert-success");
         $("#titlepoints").removeClass('hidden');
         //reward animation
-        moveObject($("#titlepoints1"), $("#coinscore"), 1);
+        moveObject($("#titlepoints1"), object_current_user_coin, 1);
         moveObject($("#titlepoints2"), $("#cointotalscore"), 1);
         points++;
         totalscore++
@@ -282,7 +283,7 @@ var postcheckanswer = function (guessentered) {
         $("#title").addClass("alert alert-danger");
         $("#titlepoints").addClass("hidden");
       }
-      $("#currentscore").html(points);
+      $("#currentscore_"+userid).html(points);
       $("#totalscore").html(totalscore);
       waitfor(4);
     }, "json")
@@ -333,6 +334,8 @@ var Catalog = (function () {
       $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
         .done(function (jsondata) {
           $('#userslist').html("");
+          userid=jsondata.userid;
+          delete  jsondata.userid;
           jQuery.each(jsondata, function(i, val) {
             // console.log(val);
             var icon_writing="";
@@ -340,8 +343,9 @@ var Catalog = (function () {
             var icon_online="";
             if (val.writing) {icon_writing = '<i class="fas fa-comment-dots"></i>';}
             if (val.isready) {icon_read = '<i class="fas fa-check"></i>';}
-            if (val.online) {icon_online='<i class="fas fa-globe"></i>';}
-            $('#userslist').append('<li userid="' +val.id+ '">'+icon_writing+val.nickname+" "+icon_online+icon_read+'</li>');
+            if (val.online) {icon_online='<i class="fas fa-globe green"></i>';}
+            scorevalue='<img id="coinscore_'+userid+'" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_'+userid+'"> '+val.score+'</span>';
+            $('#userslist').append('<li class="list-group-item" userid="' +val.id+ '">'+icon_writing+val.nickname+" "+icon_online+" "+scorevalue+" "+icon_read+'</li>');
           });
           
       });

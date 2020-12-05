@@ -32,7 +32,7 @@
 	<div id="MainPage" class="d-flex justify-content-center container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
 		<div
-			id="interactionpane" class="col-12 col-sm-4 col-md-4 col-lg-6 col-xl-6">
+			id="interactionpane" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
 			<!-- Display answer pane -->
 			<div id="answer" class="card mb-3 invisible">
 				<div class="row no-gutters">
@@ -130,20 +130,26 @@
 							with
 							<span id="highscore">{{highscores.score}}</span>
 							points</p>
-						<p class="card-text">Your score is :
-							<img id="coinscore" src="/img/goldcoin.png" width="30" height="30" alt="">
-							<span id="currentscore">0</span>
-							Points</p>
+						{# <p class="card-text">Your score is :
+													<img id="coinscore" src="/img/goldcoin.png" width="30" height="30" alt="">
+													<span id="currentscore">0</span>
+													Points</p> #}
 					</div>
 				</div>
 			</div>
 
 		</div>
-		<div id="userspane" class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-6">
+		<div id="userspane" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-6">
 
-			<ul id="userslist">
+			<ul id="userslist" class="list-group">
 				{% for player in players %}
-					<li userid="{{player.id}}">{{player.nickname}}</li>
+					<li class="list-group-item" userid="{{player.id}}">{{player.nickname}}
+						<i class="fas fa-globe green"></i>
+
+						<img id="coinscore" src="/img/goldcoin.png" width="20" height="20" alt="">
+						<span id="currentscore">{{player.score}}</span>
+
+					</li>
 				{% endfor %}
 			</ul>
 
