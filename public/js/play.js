@@ -316,7 +316,6 @@ var Catalog = (function () {
   var handler_CheckAnswer = function () {
     $("form#FormGuess").submit(function (event) {
       guessentered = $("input#YourGuess").first().val().toLowerCase();
-      // console.log("Guess is " + guessentered);
       postcheckanswer(guessentered);
 
       event.preventDefault();
@@ -333,7 +332,7 @@ var Catalog = (function () {
     });
   };
 
-  var update_playerstatus = function () {
+  var UpdatePlayerstatus = function () {
      setInterval(function () {
       $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
         .done(function (jsondata) {
@@ -345,6 +344,12 @@ var Catalog = (function () {
             var icon_writing="";
             var icon_read="";
             var icon_online="";
+            
+            //Stop this track, somebody has answered !
+            if (val.answered && val.id!=userid) {
+              guessentered = $("input#YourGuess").first().val().toLowerCase();
+              postcheckanswer(guessentered);
+            }
             if (val.writing) {icon_writing = '<i class="fas fa-comment-dots"></i>';}
             if (val.isready) {icon_read = '<i class="fas fa-check"></i>';}
             if (val.online) {icon_online='<i class="fas fa-globe green"></i>';}
@@ -359,7 +364,7 @@ var Catalog = (function () {
     init: function () {
       load_playlist();
       handler_CheckAnswer();
-      update_playerstatus();
+      UpdatePlayerstatus();
       HandlerisWriting();
     },
   };
