@@ -25,7 +25,7 @@ class User extends Model {
     }
      
     /**
-     * isOnline - REturn true if user seems to be online
+     * isOnline - Return true if user seems to be online
      *
      * @param  mixed $userid
      * @return bool

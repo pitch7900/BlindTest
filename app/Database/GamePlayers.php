@@ -36,9 +36,9 @@ class GamePlayers extends Model
          array_push($results, [
             'id' => $user->id,
             'nickname' => $user->nickname,
-            'status' => $player['isready'],
-            'writing' => $player['writing'],
-            'answered' => $player['answered'],
+            'status' => boolval($player['isready']),
+            'writing' => boolval($player['writing']),
+            'answered' => boolval($player['answered']),
             'online' => User::isOnline($user->id),
             'score' => Game::getUserScore($gameid, $user->id)
          ]);

@@ -7,6 +7,7 @@ var currentplaylistid;
 var userid;
 var writing;
 var answergiven;
+var everyoneready;
 
 /**
  * Update hiscore during the game
@@ -62,7 +63,7 @@ var waitfor = function (seconds) {
     });
     // console.log("p"+(Math.round((i/seconds)*100)));
     $("#waitbeforenextcircle").addClass("p" + (Math.round((i / seconds) * 100)));
-    if (i <= 0) {
+    if (i <= 0 && everyoneready) {
       clearInterval(countdownwaitfor);
       $("#btnsubmitanswer").prop("disabled", false);
       playtitle();
@@ -97,6 +98,7 @@ var removeAccentsAndSpecialChars = function (input) {
 var playtitle = function () {
   writing=false;
   answergiven=false;
+  everyoneready=false;
   $("#Start").addClass("invisible");
   $("#waitbeforenextcircle").addClass("hidden");
   $("#artistpoints").addClass("hidden");
@@ -316,7 +318,7 @@ var Catalog = (function () {
   /**
    * Handler on the form if an answer has been entered
    */
-  var handler_CheckAnswer = function () {
+  var HandlerCheckAnswer = function () {
     $("form#FormGuess").submit(function (event) {
       guessentered = $("input#YourGuess").first().val().toLowerCase();
       postcheckanswer(guessentered);
@@ -347,7 +349,7 @@ var Catalog = (function () {
             var icon_writing="";
             var icon_read="";
             var icon_online="";
-            
+            everyoneready=everyoneready&&(val.status||!val.online);
             //Stop this track, somebody has answered !
             console.log(val);
             if (val.answered && val.id!=userid && !answergiven) {
@@ -367,7 +369,7 @@ var Catalog = (function () {
   return {
     init: function () {
       load_playlist();
-      handler_CheckAnswer();
+      HandlerCheckAnswer();
       UpdatePlayerstatus();
       HandlerisWriting();
     },
