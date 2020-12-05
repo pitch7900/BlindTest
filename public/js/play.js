@@ -6,6 +6,7 @@ var countdown;
 var currentplaylistid;
 var userid;
 var writing;
+var answergiven;
 
 /**
  * Update hiscore during the game
@@ -95,6 +96,7 @@ var removeAccentsAndSpecialChars = function (input) {
  */
 var playtitle = function () {
   writing=false;
+  answergiven=false;
   $("#Start").addClass("invisible");
   $("#waitbeforenextcircle").addClass("hidden");
   $("#artistpoints").addClass("hidden");
@@ -225,6 +227,7 @@ var skipCurrentSong = function (trackid) {
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
+  answergiven=true;
   // console.log("Post check answer : " + guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
@@ -346,7 +349,8 @@ var Catalog = (function () {
             var icon_online="";
             
             //Stop this track, somebody has answered !
-            if (val.answered && val.id!=userid) {
+            console.log(val);
+            if (val.answered && val.id!=userid && !answergiven) {
               guessentered = $("input#YourGuess").first().val().toLowerCase();
               postcheckanswer(guessentered);
             }
