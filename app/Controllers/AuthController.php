@@ -256,6 +256,7 @@ class AuthController extends AbstractTwigController
             $redirectTo=$this->auth->getOriginalRequestedPage();
         } 
         $this->logger->debug("AuthController::postlogin Should now redirect user to : $redirectTo");
+        // $this->logger->debug("AuthController::postlogin ".var_export($_SESSION,true));
         return $this->withJSON($response, ['redirectTo'=>$redirectTo]);
     }
 

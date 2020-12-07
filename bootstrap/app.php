@@ -14,10 +14,21 @@ $rootPath = realpath(__DIR__ . '/..');
 // Set the default timezone.
 date_default_timezone_set('Europe/Zurich');
 
+$memcache = new Memcache;
+$memcache->connect('localhost', 11211) or die("Could not connect");
+
 /**Need memcached extension to work. See README.md for installation and configuraiton */
-ini_set('session.save_handler', 'memcache');
-ini_set('memcached.sess_locking','0');
-ini_set('session.save_path', 'tcp://127.0.0.1:11211?persistent=1&weight=1&timeout=1&retry_interval=2');
+
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    ini_set('session.save_handler', 'memcache');
+    ini_set('memcached.sess_locking', '0');
+    ini_set('session.save_path', 'tcp://127.0.0.1:11211');
+} else {
+    ini_set('session.save_handler', 'memcached');
+    ini_set('memcached.sess_locking', '0');
+    ini_set('session.save_path', '127.0.0.1:11211');
+}
+
 session_cache_limiter('public');
 session_start();
 
@@ -26,10 +37,10 @@ require $rootPath . '/vendor/autoload.php';
 
 try {
     // $dotenv = Dotenv::createImmutable($rootPath .'/config/');
-    $dotenv = Dotenv::createMutable($rootPath .'/config/');
-	$dotenv->load();
+    $dotenv = Dotenv::createMutable($rootPath . '/config/');
+    $dotenv->load();
 } catch (InvalidPathException $e) {
-	die("Unable to load configuration file");
+    die("Unable to load configuration file");
 }
 
 //Load DB configuration
@@ -50,7 +61,6 @@ require_once __DIR__ . '/database.php';
 // Create the container for dependency injection.
 try {
     $container = ContainerFactory::create($rootPath);
-
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -69,8 +79,7 @@ $app = AppFactory::create();
 //Call middleware functions
 $_SERVER['app'] = &$app;
 
-if (!function_exists('app'))
-{
+if (!function_exists('app')) {
     function app()
     {
         return $_SERVER['app'];
@@ -91,8 +100,3 @@ $displayErrorDetails = true;
 $logErrors = true;
 $logErrorDetails = false;
 $app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
-
-
-
-
-
