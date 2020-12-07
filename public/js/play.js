@@ -46,6 +46,7 @@ var StartCountDown = function (seconds) {
  * @param {integer} seconds 
  */
 var waitfor = function (seconds) {
+  postready=false;
   //initialize the countdown
   $("#waitbeforenext").html(seconds + "s");
   $("#waitbeforenextcircle").removeClass(function (index, className) {
@@ -64,7 +65,10 @@ var waitfor = function (seconds) {
     // console.log("p"+(Math.round((i/seconds)*100)));
     $("#waitbeforenextcircle").addClass("p" + (Math.round((i / seconds) * 100)));
     if (i <= 0) {
-      $.post('/blindtest/game/'+gamesid+'/ready');
+      if (!postready) {
+      $.post('/blindtest/game/' + gamesid + '/ready');
+      postready=true;
+    } 
       if (everyoneready) {
         clearInterval(countdownwaitfor);
         $("#btnsubmitanswer").prop("disabled", false);
@@ -340,46 +344,62 @@ var Catalog = (function () {
     });
   };
 
+  var UpdatePlayerData = function (jsondata) {
+    $('#userslist').html("");
+    userid = jsondata.userid;
+    delete jsondata.userid;
+    everyoneready = true;
+    jQuery.each(jsondata, function (i, val) {
+      // console.log(val);
+      var icon_writing = "";
+      var icon_read = "";
+      var icon_online = "";
+      if (val.online) {
+        everyoneready = everyoneready && val.status;
+      } else {
+        everyoneready = everyoneready && true;
+      }
+
+      //Stop this track, somebody has answered !
+      if (val.answered && val.id != userid && !answergiven) {
+        guessentered = $("input#YourGuess").first().val().toLowerCase();
+        postcheckanswer(guessentered);
+      }
+      if (val.writing) { icon_writing = '<i class="fas fa-comment-dots"></i>'; }
+      if (val.isready) { icon_read = '<i class="fas fa-check"></i>'; }
+      if (val.online) { icon_online = '<i class="fas fa-globe green"></i>'; }
+      scorevalue = '<img id="coinscore_' + userid + '" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_' + userid + '"> ' + val.score + '</span>';
+      $('#userslist').append('<li class="list-group-item" userid="' + val.id + '">' + icon_writing + val.nickname + " " + icon_online + " " + scorevalue + " " + icon_read + '</li>');
+    });
+  };
+
   var UpdatePlayerstatus = function () {
     setInterval(function () {
       $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
         .done(function (jsondata) {
-          $('#userslist').html("");
-          userid = jsondata.userid;
-          delete jsondata.userid;
-          everyoneready = true;
-          jQuery.each(jsondata, function (i, val) {
-            // console.log(val);
-            var icon_writing = "";
-            var icon_read = "";
-            var icon_online = "";
-            if (val.online) {
-              everyoneready = everyoneready && val.status;
-            } else {
-              everyoneready = everyoneready && true;
-            }
-
-            //Stop this track, somebody has answered !
-            if (val.answered && val.id != userid && !answergiven) {
-              guessentered = $("input#YourGuess").first().val().toLowerCase();
-              postcheckanswer(guessentered);
-            }
-            if (val.writing) { icon_writing = '<i class="fas fa-comment-dots"></i>'; }
-            if (val.isready) { icon_read = '<i class="fas fa-check"></i>'; }
-            if (val.online) { icon_online = '<i class="fas fa-globe green"></i>'; }
-            scorevalue = '<img id="coinscore_' + userid + '" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_' + userid + '"> ' + val.score + '</span>';
-            $('#userslist').append('<li class="list-group-item" userid="' + val.id + '">' + icon_writing + val.nickname + " " + icon_online + " " + scorevalue + " " + icon_read + '</li>');
-          });
+          UpdatePlayerData(jsondata);
 
         });
     }, 2500);
   };
+
+  var HandlerCheckPlayerMessages = function () {
+    console.log("listening..");
+    $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
+      .done(function (jsondata) {
+        UpdatePlayerData(jsondata);
+        HandlerCheckPlayerMessages();
+      });
+  };
+
+
   return {
     init: function () {
       load_playlist();
       HandlerCheckAnswer();
-      UpdatePlayerstatus();
+      // UpdatePlayerstatus();
       HandlerisWriting();
+      HandlerCheckPlayerMessages();
     },
   };
 })();

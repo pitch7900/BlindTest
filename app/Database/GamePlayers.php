@@ -3,8 +3,6 @@
 namespace App\Database;
 
 use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Database\Capsule\Manager as DB;
 use App\Database\Game;
 use App\Database\User;
 
@@ -57,6 +55,9 @@ class GamePlayers extends Model
       GamePlayers::where('gameid', '=', $gameid)->update(array('isready'=>$status));
    }
 
+   public function save(array $options = []) {
+      $GLOBALS['GamePlayersUpdate']=microtime(true);
+      parent::save($options);
+   }
 
-  
 }

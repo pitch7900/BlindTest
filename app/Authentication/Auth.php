@@ -162,7 +162,7 @@ class Auth
         if (isset($_SESSION['OriginalRequestedPage'])) {
             return $_SESSION['OriginalRequestedPage'];
         } else {
-            return null;
+            return (string)"";
         }
     }
 
@@ -223,6 +223,7 @@ class Auth
             $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
             $mail->addAddress($email);               // Add a recipient
             $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML

@@ -124,6 +124,16 @@ class BlindTestController extends AbstractTwigController
     public function updatePlayers(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
+        if (!isset($_SESSION['GamePlayersUpdate'])){
+            $_SESSION['GamePlayersUpdate']=microtime(true);
+        }
+        if (!isset($GLOBALS['GamePlayersUpdate'])){
+        $GLOBALS['GamePlayersUpdate']=microtime(true);
+        }
+        //wait for a change / message need to be pushed
+        while(floatval($GLOBALS['GamePlayersUpdate'])>floatval($_SESSION['GamePlayersUpdate'])){
+            sleep(500);
+        }
         $payload = GamePlayers::getPlayers($gamesid);
         $payload['userid'] = $this->auth->getUserId();
         return $this->withJSON($response, $payload);
@@ -139,6 +149,8 @@ class BlindTestController extends AbstractTwigController
     public function getGameHTML(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
+
+
         $GamePlayer = GamePlayers::updateOrCreate([
             'gameid' => $gamesid,
             'userid' => $this->auth->getUserId()

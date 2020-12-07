@@ -8,19 +8,25 @@ use Dotenv\Exception\InvalidPathException;
 
 use Dotenv\Dotenv;
 
-session_cache_limiter('public');
-session_start();
 
 // Set the absolute path to the root directory.
 $rootPath = realpath(__DIR__ . '/..');
 // Set the default timezone.
 date_default_timezone_set('Europe/Zurich');
 
+/**Need memcached extension to work. See README.md for installation and configuraiton */
+ini_set('session.save_handler', 'memcache');
+ini_set('memcached.sess_locking','0');
+ini_set('session.save_path', 'tcp://127.0.0.1:11211?persistent=1&weight=1&timeout=1&retry_interval=2');
+session_cache_limiter('public');
+session_start();
+
 
 require $rootPath . '/vendor/autoload.php';
 
 try {
-	$dotenv = Dotenv::createImmutable($rootPath .'/config/');
+    // $dotenv = Dotenv::createImmutable($rootPath .'/config/');
+    $dotenv = Dotenv::createMutable($rootPath .'/config/');
 	$dotenv->load();
 } catch (InvalidPathException $e) {
 	die("Unable to load configuration file");
@@ -28,6 +34,18 @@ try {
 
 //Load DB configuration
 require_once __DIR__ . '/database.php';
+
+// $sessionhandler = new SessionHandler();
+
+// // Pass DB details to create a new MySQLi connection
+// $sessionhandler->setDbDetails($_ENV['SQL_HOST'], $_ENV['SQL_USERNAME'], $_ENV['SQL_PASSWORD'], $_ENV['SQL_DATABASE']);
+
+// session_set_save_handler($sessionhandler, true);
+// session_cache_limiter('public');
+// session_start([
+//     'read_and_close' => true,
+// ]);
+
 
 // Create the container for dependency injection.
 try {
