@@ -14,12 +14,12 @@ $rootPath = realpath(__DIR__ . '/..');
 // Set the default timezone.
 date_default_timezone_set('Europe/Zurich');
 
-$memcache = new Memcache;
-$memcache->connect('localhost', 11211) or die("Could not connect");
 
-/**Need memcached extension to work. See README.md for installation and configuraiton */
 
+/**Need memcached extension to work. See README.md for installation and configuration */
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    $memcache = new Memcache;
+    $memcache->connect('localhost', 11211) or die("Could not connect");
     ini_set('session.save_handler', 'memcache');
     ini_set('memcached.sess_locking', '0');
     ini_set('session.save_path', 'tcp://127.0.0.1:11211');
