@@ -5,9 +5,8 @@ declare(strict_types=1);
 use App\ContainerFactory;
 use Slim\Factory\AppFactory;
 use Dotenv\Exception\InvalidPathException;
-
 use Dotenv\Dotenv;
-
+use Mouf\Utils\Session\SessionHandler\OptimisticSessionHandler;
 
 // Set the absolute path to the root directory.
 $rootPath = realpath(__DIR__ . '/..');
@@ -16,24 +15,31 @@ date_default_timezone_set('Europe/Zurich');
 
 
 
-/**Need memcached extension to work. See README.md for installation and configuration */
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    $memcache = new Memcache;
-    $memcache->connect('localhost', 11211) or die("Could not connect");
-    ini_set('session.save_handler', 'memcache');
-    ini_set('memcached.sess_locking', '0');
-    ini_set('session.save_path', 'tcp://127.0.0.1:11211');
-} else {
-    ini_set('session.save_handler', 'memcached');
-    ini_set('memcached.sess_locking', '0');
-    ini_set('session.save_path', '127.0.0.1:11211');
-}
+// /**Need memcached extension to work. See README.md for installation and configuration */
+// if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+//     $memcache = new Memcache;
+//     $memcache->connect('localhost', 11211) or die("Could not connect");
+//     ini_set('session.save_handler', 'memcache');
+//     ini_set('memcached.sess_locking', '0');
+//     ini_set('session.save_path', 'tcp://127.0.0.1:11211');
+// } else {
+//     ini_set('session.save_handler', 'memcached');
+//     ini_set('memcached.sess_locking', '0');
+//     ini_set('session.save_path', '127.0.0.1:11211');
+// }
+// session_cache_limiter('public');
+// session_start();
 
-session_cache_limiter('public');
-session_start();
 
 
 require $rootPath . '/vendor/autoload.php';
+
+
+
+$sessionhandler = new OptimisticSessionHandler();
+session_set_save_handler($sessionhandler, true);
+session_cache_limiter('public');
+session_start(['read_and_close' => true]);
 
 try {
     // $dotenv = Dotenv::createImmutable($rootPath .'/config/');
