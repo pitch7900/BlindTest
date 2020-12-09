@@ -13,6 +13,8 @@ use App\Database\User;
 use Carbon\Carbon;
 use App\Authentication\Recaptcha;
 use Psr\Container\ContainerInterface;
+
+
 /**
  * AuthController
  * @author : Pierre Christensen
@@ -82,7 +84,7 @@ class AuthController extends AbstractTwigController
         $validation = $this->auth->validateEmail($uuid);
         if ($validation) {
             $response = $response
-                ->withHeader('Location', '/')
+                ->withHeader('Location', $this->getUrlFor($request,"home"))
                 ->withStatus(303);
         } else {
             $response = $this->render($response, 'auth/signin.twig', $arguments);
@@ -135,7 +137,9 @@ class AuthController extends AbstractTwigController
     {
         $nickname = $request->getParam('nickname');
         $this->auth->setNickname($nickname);
-        return $this->withRedirect($response, "/user/preferences");
+        
+
+        return $this->withRedirect($response, $this->getUrlFor($request,"user.preferences"));
     }
 
     /**
@@ -164,7 +168,7 @@ class AuthController extends AbstractTwigController
         $password = $request->getParam('password');
         $password = password_hash($password, PASSWORD_DEFAULT);
         $this->auth->changePassword($password);
-        return $this->withRedirect($response, "/");
+        return $this->withRedirect($response, $this->getUrlFor($request,"home"));
     }
 
     /**
@@ -201,7 +205,7 @@ class AuthController extends AbstractTwigController
             $this->auth->resetPassword($uuid, $password);
         }
         $response = $response
-                ->withHeader('Location', '/')
+                ->withHeader('Location', $this->getUrlFor($request,"home"))
                 ->withStatus(303);
         return $response;
     }
@@ -218,7 +222,7 @@ class AuthController extends AbstractTwigController
     {
         if ($this->auth->getAuthentified()){
             $response = $response
-                ->withHeader('Location', '/')
+                ->withHeader('Location', $this->getUrlFor($request,"home"))
                 ->withStatus(303);
                 return $response;
         }
@@ -243,7 +247,7 @@ class AuthController extends AbstractTwigController
             $this->logger->debug("AuthController::postlogin Recaptcha is not success.");
         }
 
-        $redirectTo='/';
+        $redirectTo=$this->getUrlFor($request,"home");
 
         if (!is_null($this->auth->getOriginalRequestedPage())) {
             $redirectTo=$this->auth->getOriginalRequestedPage();
@@ -290,7 +294,7 @@ class AuthController extends AbstractTwigController
         } else {
             $this->logger->debug("AuthController::postforgotpassword Recaptcha is not success");
         }
-        return $this->withJSON($response, ['redirectTo'=>"/auth/signinconfirmation.html"]);
+        return $this->withJSON($response, ['redirectTo'=>$this->getUrlFor($request,"auth.signinconfirmation")]);
        
     }
 
@@ -335,7 +339,7 @@ class AuthController extends AbstractTwigController
             $this->logger->debug("AuthController::postsignin Recaptcha is not success");
 
         }
-        return $this->withJSON($response, ['redirectTo'=>"/auth/signinconfirmation.html"]);
+        return $this->withJSON($response, ['redirectTo'=>$this->getUrlFor($request,"auth.signinconfirmation")]);
     }
 
     /**
@@ -361,6 +365,6 @@ class AuthController extends AbstractTwigController
             $this->auth->sendValidationEmail($user->email, $user->emailchecklink);
             return $this->render($response, 'auth/validatoremail.twig', $arguments);
         }
-        return $this->withRedirect($response, '/');
+        return $this->withRedirect($response, $this->getUrlFor($request,"home"));
     }
 }

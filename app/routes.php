@@ -47,13 +47,13 @@ return function (App $app) {
                 $group->get('/signout', AuthController::class . ':signout')
                         ->setName('auth.signout');
                 $group->get('/changepassword', AuthController::class . ':changepassword')
-                        ->setName('auth.changepassword');
+                        ->setName('user.changepassword');
                 $group->get('/preferences', AuthController::class . ':preferences')
-                        ->setName('auth.preferences');
+                        ->setName('user.preferences');
                 $group->post('/changepassword', AuthController::class . ':postchangepassword')
-                        ->setName('auth.changepassword.post');
+                        ->setName('user.changepassword.post');
                 $group->post('/preferences', AuthController::class . ':postpreferences')
-                        ->setName('auth.preferences.post');
+                        ->setName('user.preferences.post');
         })->add(new AuthMiddleware($app));
 
         $app->get('/spinner.html', HomeController::class . ':getWaitingIcons')

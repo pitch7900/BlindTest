@@ -7,8 +7,6 @@ namespace App\Controllers;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Http\ServerRequest as Request;
-use Slim\Views\Twig;
-use Psr\Log\LoggerInterface;
 use App\Database\Game;
 use App\Database\Games;
 use App\Database\Album;

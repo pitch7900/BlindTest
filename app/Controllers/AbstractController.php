@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 namespace App\Controllers;
-use App\Actions\Action;
-use JsonSerializable;
+
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use App\Authentication\Authentification;
+use Slim\Http\ServerRequest;
+use Slim\Routing\RouteContext;
+
 /**
  * This abstract class defines methods and properties used by all controllers.
  *
@@ -21,5 +22,18 @@ abstract class AbstractController {
     {
         $this->container = $container;
         $this->logger = $container->get(LoggerInterface::class);
+    }
+    
+    /**
+     * getUrlFor - Return url for named route
+     *
+     * @param  ServerRequest $request
+     * @param  string $route
+     * @return string
+     */
+    public function getUrlFor(ServerRequest $request,string $route):string {
+        $routeParser = RouteContext::fromRequest($request)->getRouteParser();                                                                                                             
+        $UrlFor = $routeParser->urlFor($route);
+        return $UrlFor;
     }
 }
