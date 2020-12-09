@@ -18,38 +18,19 @@ use App\Authentication\Recaptcha;
 
 return [
     DeezerController::class => function (ContainerInterface $container): DeezerController {
-        return new DeezerController($container->get(Twig::class),
-            $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class)
-        );
+        return new DeezerController($container);
     },
     BlindtestController::class => function (ContainerInterface $container): BlindtestController {
-        return new BlindtestController($container->get(Twig::class),
-            $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class),
-            $container->get(Auth::class)
-        );
+        return new BlindtestController($container);
     },
     HomeController::class => function (ContainerInterface $container): HomeController {
-        return new HomeController($container->get(Twig::class), 
-            $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class),
-            $container->get(StaticPlaylists::class),
-            $container->get(Auth::class)
-        );
+        return new HomeController($container);
     },
     AuthController::class => function (ContainerInterface $container): AuthController {
-        return new AuthController($container->get(Twig::class), 
-            $container->get(LoggerInterface::class),
-            $container->get(Auth::class),
-            $container->get(Recaptcha::class)
-        );
+        return new AuthController($container);
     },
 
     ErrorsController::class => function (ContainerInterface $container): ErrorsController {
-        return new ErrorsController($container->get(Twig::class), 
-            $container->get(LoggerInterface::class),
-            $container->get(DeezerApiInterface::class)
-        );
+        return new ErrorsController($container);
     }
 ];

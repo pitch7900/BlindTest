@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Stream;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractTwigController extends AbstractController
 {
@@ -19,9 +20,10 @@ abstract class AbstractTwigController extends AbstractController
      *
      * @param Twig $twig
      */
-    public function __construct(Twig $twig)
+    public function __construct(ContainerInterface $container)
     {
-        $this->twig = $twig;
+        parent::__construct($container);
+        $this->twig = $container->get(Twig::class);
     }
 
     /**

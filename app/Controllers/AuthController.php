@@ -5,29 +5,20 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
-use Psr\Log\LoggerInterface;
+use Slim\Http\ServerRequest as Request;
 use App\Controllers\AbstractTwigController;
 use App\Authentication\Auth;
 use App\Authentication\UUID;
 use App\Database\User;
 use Carbon\Carbon;
 use App\Authentication\Recaptcha;
-
+use Psr\Container\ContainerInterface;
 /**
  * AuthController
  * @author : Pierre Christensen
  */
 class AuthController extends AbstractTwigController
 {
-
-    /**
-     * logger
-     *
-     * @var Psr\Log\LoggerInterface
-     */
-    private $logger;
 
     /**
      * auth
@@ -50,13 +41,15 @@ class AuthController extends AbstractTwigController
      * @param  mixed $logger
      * @return void
      */
-    public function __construct(Twig $twig, LoggerInterface $logger, Auth $auth, Recaptcha $recaptcha)
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct($twig);
-        $this->logger = $logger;
-        $this->recaptcha = $recaptcha;
+        parent::__construct($container);
+        $this->recaptcha = $container->get(Recaptcha::class);
         $this->logger->debug("AuthController::__construct() Constructor called");
-        $this->auth = $auth;
+        $this->auth = $container->get(Auth::class);
+
+        
+        
     }
 
 

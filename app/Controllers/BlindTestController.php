@@ -6,7 +6,7 @@ namespace App\Controllers;
 
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Http\ServerRequest as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
 use App\Database\Game;
@@ -19,6 +19,7 @@ use App\Database\User;
 use App\Database\GamePlayers;
 use App\Authentication\Auth;
 use Carbon\Carbon;
+use Psr\Container\ContainerInterface;
 
 /**
  * Description of BlindTestController
@@ -32,19 +33,13 @@ class BlindTestController extends AbstractTwigController
      */
     private $deezer;
 
-    /**
-     * @var LoggerInterface $logger
-     */
-    private $logger;
-
     private $auth;
 
-    public function __construct(Twig $twig, LoggerInterface $logger, DeezerApiInterface $deezer, Auth $auth)
+    public function __construct(ContainerInterface $container)
     {
-        parent::__construct($twig);
-        $this->logger = $logger;
-        $this->deezer = $deezer;
-        $this->auth = $auth;
+        parent::__construct($container);
+        $this->deezer = $container->get(DeezerApiInterface::class);
+        $this->auth = $container->get(Auth::class);
     }
 
 
@@ -78,7 +73,7 @@ class BlindTestController extends AbstractTwigController
 
         return $response->withHeader('Location', '/blindtest/game/' . $games->id . '/game.html')->withStatus(303);
     }
-    
+
     /**
      * postGameWriting
      *
@@ -91,13 +86,13 @@ class BlindTestController extends AbstractTwigController
     {
         $gamesid = $args['gamesid'];
         $user = GamePlayers::where("userid", "=", $this->auth->getUserId())
-            ->where('gameid','=',$gamesid)
+            ->where('gameid', '=', $gamesid)
             ->first();
         $user->writing = true;
         $user->save();
         return $response;
     }
-    
+
     /**
      * postUserIsReady - Set readyness for next track status for current user to true
      *
@@ -110,7 +105,7 @@ class BlindTestController extends AbstractTwigController
     {
         $gamesid = $args['gamesid'];
         $user = GamePlayers::where("userid", "=", $this->auth->getUserId())
-            ->where('gameid','=',$gamesid)
+            ->where('gameid', '=', $gamesid)
             ->first();
         $user->isready = true;
         $user->save();
@@ -124,14 +119,14 @@ class BlindTestController extends AbstractTwigController
     public function updatePlayers(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        if (!isset($_SESSION['GamePlayersUpdate'])){
-            $_SESSION['GamePlayersUpdate']=microtime(true);
+        if (!isset($_SESSION['GamePlayersUpdate'])) {
+            $_SESSION['GamePlayersUpdate'] = microtime(true);
         }
-        if (!isset($GLOBALS['GamePlayersUpdate'])){
-        $GLOBALS['GamePlayersUpdate']=microtime(true);
+        if (!isset($GLOBALS['GamePlayersUpdate'])) {
+            $GLOBALS['GamePlayersUpdate'] = microtime(true);
         }
         //wait for a change / message need to be pushed
-        while(floatval($GLOBALS['GamePlayersUpdate'])>floatval($_SESSION['GamePlayersUpdate'])){
+        while (floatval($GLOBALS['GamePlayersUpdate']) > floatval($_SESSION['GamePlayersUpdate'])) {
             sleep(500);
         }
         $payload = GamePlayers::getPlayers($gamesid);
@@ -155,9 +150,9 @@ class BlindTestController extends AbstractTwigController
             'gameid' => $gamesid,
             'userid' => $this->auth->getUserId()
         ]);
-        $GamePlayer->writing=false;
-        $GamePlayer->isready=true;
-        $GamePlayer->answered=false;
+        $GamePlayer->writing = false;
+        $GamePlayer->isready = true;
+        $GamePlayer->answered = false;
         $GamePlayer->save();
         $arguments['userpoints'] = User::getUserTotalPoints($this->auth->getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;
@@ -186,7 +181,7 @@ class BlindTestController extends AbstractTwigController
     public function getGameJson(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        
+
         $game = Game::where('game_gamesid', $gamesid)
             ->join('track', 'game.game_track', '=', 'track.id')
             ->whereNotNull('track_preview')
@@ -374,12 +369,12 @@ class BlindTestController extends AbstractTwigController
         $gamesid = intval($args['gamesid']);
         // $games = Games::find($gamesid);
         //$trackid = Game::getCurrentTrack($gamesid);//$games->games_currenttrackindex;
-        
-        $GamePlayer=GamePlayers::where('userid','=',$this->auth->getUserId())
-            ->where('gameid','=',$gamesid)
+
+        $GamePlayer = GamePlayers::where('userid', '=', $this->auth->getUserId())
+            ->where('gameid', '=', $gamesid)
             ->first();
-        $GamePlayer->answered=true;
-        $GamePlayer->isready=true;
+        $GamePlayer->answered = true;
+        $GamePlayer->isready = true;
         $GamePlayer->save();
         $currentgame = Game::where([
             ['game_gamesid', '=', $gamesid],
@@ -391,13 +386,13 @@ class BlindTestController extends AbstractTwigController
         //$trackid = $currentgame->game_track;
 
         //$this->logger->debug("BlindTestController::postGameCheckCurrent Trackid : " . $trackid);
-        
+
         $checkartist = false;
         $checktitle = false;
         $track = Track::find($trackid);
         $artist = Artist::find($track->track_artist);
         $album = Album::find($track->track_album);
-        
+
         if (!is_null($guess)) {
             $guess = $this->removeAccents(utf8_encode($guess));
             $this->logger->debug("BlindTestController::postGameCheckCurrent Guess is now transformed to : " . $guess);
@@ -422,7 +417,7 @@ class BlindTestController extends AbstractTwigController
         if ($checktitle['result']) {
             $pointswon++;
         }
-       // $score = $this->getCurrentUserScore($gamesid);
+        // $score = $this->getCurrentUserScore($gamesid);
         //Another user has already answered
         if ($currentgame->points != null) {
             //But less points than the current user, update the poitns attribution to the current user.

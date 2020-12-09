@@ -8,18 +8,16 @@ namespace App\Controllers;
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
-use Psr\Log\LoggerInterface;
 use App\Config\StaticPlaylists;
 use App\Database\User;
 use App\Database\Playlist;
 use App\Authentication\Auth;
+use Psr\Container\ContainerInterface;
 
 class HomeController extends AbstractTwigController
 {
 
     private $deezer;
-    private $logger;
     private $staticplaylists;
     private $auth;
 
@@ -32,16 +30,17 @@ class HomeController extends AbstractTwigController
      * @param  mixed $staticplaylists
      * @return void
      */
-    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer, StaticPlaylists $staticplaylists, Auth $auth) {
-        parent::__construct($twig);
-        $this->logger = $logger;
-        $this->deezer = $deezer;
-        $this->staticplaylists = $staticplaylists;
-        $this->auth=$auth;
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->deezer = $container->get(DeezerApiInterface::class);
+        $this->staticplaylists = $container->get(StaticPlaylists::class);
+        $this->auth = $container->get(Auth::class);
+
         $this->logger->debug("HomeController::_construct Constructor of HomeController called");
     }
 
-         
+
     /**
      * home
      * Return the "Home" view 
@@ -50,22 +49,23 @@ class HomeController extends AbstractTwigController
      * @param  mixed $args
      * @return Response
      */
-    public function home(Request $request, Response $response, array $args = []): Response {
+    public function home(Request $request, Response $response, array $args = []): Response
+    {
         //$arguments['dynamicplaylists'] = ;
         //$arguments['staticplaylists'] = $this->staticplaylists->getPlaylists();
         //$search=$this->deezer->searchPlaylist('blind test')['data'];
-        foreach ($this->deezer->searchPlaylist('blind test')['data'] as $playlist ) {
+        foreach ($this->deezer->searchPlaylist('blind test')['data'] as $playlist) {
             $this->deezer->DBAddPlaylist($playlist['id']);
         }
-        foreach ($this->staticplaylists->getPlaylists() as $playlist ) {
+        foreach ($this->staticplaylists->getPlaylists() as $playlist) {
             $this->deezer->DBAddPlaylist($playlist['id']);
         }
         //$arguments['playlists']=Playlist::orderBy('playlist_title','ASC')->get()->toArray();
-        $arguments['playlists']=Playlist::getPlaylists();
+        $arguments['playlists'] = Playlist::getPlaylists();
         //$this->deezer->DBAddPlaylist($this->staticplaylists->getPlaylists());
         $arguments['userpoints'] = User::getUserTotalPoints($this->auth->getUserId());
         //$this->logger->debug("HomeController::home arguments  " . json_encode($arguments, JSON_PRETTY_PRINT));
-        $arguments['homescreen']=true;
+        $arguments['homescreen'] = true;
         // $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));
         return $this->render($response, 'home.twig', $arguments);
     }
@@ -77,7 +77,8 @@ class HomeController extends AbstractTwigController
      * @param Response $response
      * @return type
      */
-    public function getWaitingIcons(Request $request, Response $response, array $args = []): Response  {
+    public function getWaitingIcons(Request $request, Response $response, array $args = []): Response
+    {
         return $this->render($response, 'waiting.twig');
     }
 }
