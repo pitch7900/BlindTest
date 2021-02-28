@@ -28,7 +28,6 @@ class AuthMiddleware
 
     private $app;
 
-    private $auth;
 
     /**
      * @param App    $app
@@ -37,7 +36,7 @@ class AuthMiddleware
     {
         $this->app = $app;
         $this->container = $this->app->getContainer();
-        $this->auth = $this->container->get(Auth::class);
+
         $this->logger = $this->container->get(LoggerInterface::class);
         $this->logger->debug("AuthMiddleware::__construct() Called");
     }
@@ -49,13 +48,13 @@ class AuthMiddleware
      */
     private function checkAuthentified(): bool
     {
-        if (!$this->auth->getAuthentified()) {
+        if (!Auth::IsAuthentified()) {
 
             $this->logger->debug("AuthMiddleware::checkAuthentified() Not authentified. Should redirect to login page ");
             $this->logger->debug("AuthMiddleware::checkAuthentified() " . print_r($_SESSION, true));
             return false;
         } else {
-            $this->logger->debug("AuthMiddleware::checkAuthentified() User " . $this->auth->getUserId() . " Authentified. Continue");
+            $this->logger->debug("AuthMiddleware::checkAuthentified() User " . Auth::getUserId() . " Authentified. Continue");
             return true;
         }
     }
@@ -82,33 +81,16 @@ class AuthMiddleware
     public function __invoke(ServerRequestInterface  $request, RequestHandlerInterface  $handler): ResponseInterface
     {
         $this->logger->debug("AuthMiddleware::__invoke() Called");
-        $this->logger->debug("AuthMiddleware::__invoke() SessionID is : " . session_id() . " / " . $this->auth->getSessionId());
-        $now=time();
+        $this->logger->debug("AuthMiddleware::__invoke() SessionID is : " . session_id());
         if (!$this->checkAuthentified()) {
-            $this->auth->setOriginalRequestedPage($_SERVER['REQUEST_URI']);
-            $this->logger->debug("AuthMiddleware::__invoke() Original Requested page is : " . $this->auth->getOriginalRequestedPage());
-            //Create a new response to break the current flow
             $responseFactory = new ResponseFactory();
             $response = $responseFactory->createResponse();
             return $response->withHeader('Location',  $this->getLoginPath())
                 ->withStatus(303);
-        } else {
-            if (isset($_SESSION['lastaction'])) {
-                if ($now - $_SESSION['lastaction'] >= 15) {
-                    $user = User::find($_SESSION['userid']);
-                    $user->lastaction =  Carbon::createFromTimestamp($now);
-                    $user->save();
-                    $_SESSION['lastaction'] =$now;
-                }
-            } else {
-                $user = User::find($_SESSION['userid']);
-                $user->lastaction =  Carbon::createFromTimestamp($now);
-                $user->save();
-                $_SESSION['lastaction'] = $now;
-            }
-            
-            $response = $handler->handle($request);
-            return $response;
         }
+
+        $response = $handler->handle($request);
+        return $response;
+        
     }
 }

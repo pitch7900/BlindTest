@@ -44,6 +44,7 @@ return [
             ]
         );
         $twig->addExtension(new \Twig\Extension\DebugExtension());
+        require_once __DIR__.'/container-twigextentions.php';
         return $twig;
     },
     DeezerApiInterface::class => function (ContainerInterface $container): DeezerApiInterface {
@@ -62,4 +63,5 @@ return [
         $recaptcha = new Recaptcha($container->get(LoggerInterface::class));
         return $recaptcha;
     }
+    
 ];

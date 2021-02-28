@@ -1,0 +1,32 @@
+{# {{dump(suggestions) }} #}
+
+<div class="row">
+{% for suggestion in suggestions %}
+    <div class="col-6">
+	<div trackid="{{suggestion.id}}" class="submitanswer card">
+
+
+		<img class="trackimage card-img-top" src="{{suggestion.cover}}" alt="albumimage">
+
+
+		<div class="card-body">
+
+			{{suggestion.artist}}
+			-
+			{{suggestion.song}}
+			<img class="invisible points1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+			<img class="invisible points2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+
+
+			<div class="progress invisible">
+
+				<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5"></div>
+
+			</div>
+
+		</div>
+
+	</div>
+    </div>
+{% endfor %}
+</div>

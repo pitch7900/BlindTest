@@ -292,26 +292,20 @@ class DeezerApi implements DeezerApiInterface
         return $this->PlaylistInfoFormat($playlistID);
     }
 
-    private function getTrackArray($track)
-    {
-        $array = [
-            "id" => $track["id"],
-            // "Artist" => $track["artist"]["name"],
-            "artist" => $track["artist"],
-            // "Album" => $track["album"]["title"],
-            "album" => $track["album"],
-            "title" => $track["title"],
-            "link" => $track["link"],
-            "duration" => $track["duration"],
-            // "Time" => intval($track["duration"]) * 1000,
-            // "Track" => null,
-            // "TotalTracks" => null,
-            "preview" => $track['preview'],
-            // "Picture" => $track['album']['cover']
-            "readable" => $track['readable']
-        ];
-        return $array;
-    }
+    // private function getTrackArray($track)
+    // {
+    //     $array = [
+    //         "id" => $track["id"],
+    //         "artist" => $track["artist"],
+    //         "album" => $track["album"],
+    //         "title" => $track["title"],
+    //         "link" => $track["link"],
+    //         "duration" => $track["duration"],
+    //         "preview" => $track['preview'],
+    //         "readable" => $track['readable']
+    //     ];
+    //     return $array;
+    // }
 
     /**
      * getLargePlaylistTracks : For playlists with more than 400 tracks
@@ -332,7 +326,7 @@ class DeezerApi implements DeezerApiInterface
             foreach ($tracks['data'] as $track) {
                 $this->logger->debug("DeezerApi::getLargePlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
 
-                array_push($tracklist, $this->getTrackArray($track));
+                array_push($tracklist, $track);
             }
         } while (array_key_exists('next', $tracks));
         return $tracklist;
@@ -495,7 +489,7 @@ class DeezerApi implements DeezerApiInterface
             foreach ($playlist_array['tracks']['data'] as $track) {
                 // $this->logger->debug("DeezerApi::DBaddPlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
 
-                array_push($tracks, $this->getTrackArray($track));
+                array_push($tracks, $track);
             }
         } else {
             $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do Extended search");

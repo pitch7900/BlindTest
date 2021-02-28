@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Controllers\DeezerController;
-use App\Controllers\HomeController;
-use App\Controllers\BlindTestController;
 use App\Controllers\AuthController;
+use App\Controllers\HomeController;
+use App\Controllers\DeezerController;
 use App\Controllers\ErrorsController;
 use Psr\Container\ContainerInterface;
-
+use App\Controllers\BlindTestController;
 
 return [
     DeezerController::class => function (ContainerInterface $container): DeezerController {
@@ -26,4 +25,5 @@ return [
     ErrorsController::class => function (ContainerInterface $container): ErrorsController {
         return new ErrorsController($container);
     }
+    
 ];

@@ -7,7 +7,7 @@ use SimpleXMLElement;
 /**
  * Class Track for Illuminate (DB) queries
  */
-class Track extends Model {
+class Track extends AbstractModel {
     public $timestamps = true;
     protected $table = 'track';
     protected $primaryKey = 'id';

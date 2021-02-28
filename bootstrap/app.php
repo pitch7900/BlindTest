@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
+use Dotenv\Dotenv;
 use App\ContainerFactory;
 use Slim\Factory\AppFactory;
+use App\SessionsHandler\DBSessionsHandler;
 use Dotenv\Exception\InvalidPathException;
-use Dotenv\Dotenv;
-use Mouf\Utils\Session\SessionHandler\OptimisticSessionHandler;
+
 
 // Set the absolute path to the root directory.
 $rootPath = realpath(__DIR__ . '/..');
@@ -14,35 +15,10 @@ $rootPath = realpath(__DIR__ . '/..');
 date_default_timezone_set('Europe/Zurich');
 
 
-
-// /**Need memcached extension to work. See README.md for installation and configuration */
-// if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-//     $memcache = new Memcache;
-//     $memcache->connect('localhost', 11211) or die("Could not connect");
-//     ini_set('session.save_handler', 'memcache');
-//     ini_set('memcached.sess_locking', '0');
-//     ini_set('session.save_path', 'tcp://127.0.0.1:11211');
-// } else {
-//     ini_set('session.save_handler', 'memcached');
-//     ini_set('memcached.sess_locking', '0');
-//     ini_set('session.save_path', '127.0.0.1:11211');
-// }
-// session_cache_limiter('public');
-// session_start();
-
-
-
 require $rootPath . '/vendor/autoload.php';
 
 
-
-$sessionhandler = new OptimisticSessionHandler();
-session_set_save_handler($sessionhandler, true);
-session_cache_limiter('public');
-session_start(['read_and_close' => true]);
-
 try {
-    // $dotenv = Dotenv::createImmutable($rootPath .'/config/');
     $dotenv = Dotenv::createMutable($rootPath . '/config/');
     $dotenv->load();
 } catch (InvalidPathException $e) {
@@ -52,16 +28,16 @@ try {
 //Load DB configuration
 require_once __DIR__ . '/database.php';
 
-// $sessionhandler = new SessionHandler();
+session_cache_limiter('public');
+ini_set("session.cookie_httponly", "1");
+session_name('BLINDTEST_SID');
 
-// // Pass DB details to create a new MySQLi connection
-// $sessionhandler->setDbDetails($_ENV['SQL_HOST'], $_ENV['SQL_USERNAME'], $_ENV['SQL_PASSWORD'], $_ENV['SQL_DATABASE']);
+//Use a custom SessionHandler Based on database.
+// $handler = new DBSessionsHandler(3600,'user',$rootPath."/logs/sessions.log",true);
+$handler = new DBSessionsHandler(3600,'userid',$rootPath."/logs/sessions.log",false);
+session_set_save_handler($handler, true);
+session_start();
 
-// session_set_save_handler($sessionhandler, true);
-// session_cache_limiter('public');
-// session_start([
-//     'read_and_close' => true,
-// ]);
 
 
 // Create the container for dependency injection.
@@ -96,8 +72,7 @@ if (!function_exists('app')) {
 (require __DIR__ . '/middleware.php')($app);
 
 // Register routes
-$routes = require $rootPath . '/app/routes.php';
-$routes($app);
+(require __DIR__ . '/routes.php')($app);
 
 
 

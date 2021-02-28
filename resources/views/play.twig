@@ -29,84 +29,51 @@
 
 		</div>
 	</div>
-	<div id="MainPage" class="d-flex justify-content-center container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
-
-		<div
-			id="interactionpane" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
-			<!-- Display answer pane -->
-			<div id="answer" class="card mb-3 invisible">
-				<div class="row no-gutters">
-					<div class="col-2 my-auto">
-						<div class="image-container">
-							<a id="track_link" href="" target="_blank">
-								<img id="trackimage" class="card-img hidden" src="" alt="albumimage">
-								<img class="image-helper-center" src="/img/icons/deezer-brands.svg">
-							</a>
-						</div>
-						<div id="waitbeforenextcircle" class="c100 p0 hidden">
-							<span id="waitbeforenext">5</span>
-							<div class="slice">
-								<div class="bar"></div>
-								<div class="fill"></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-10">
-						<div class="card-body">
-							<h5 class="card-title">The answer was</h5>
-
-							<div id="artist" role="alert" class="hidden">
-								<span id="artistname"></span>
-								<img class="hidden" id="artistpoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-								<img class="hidden" id="artistpoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-							</div>
+	<div
+		id="MainPage" class="d-flex justify-content-center container-fluid row" playlistid="{{playlistid}}" gamesid="{{gamesid}}">
 
 
-							<div id="title" role="alert" class="hidden">
-								<span id="titlename"></span>
-								<img class="hidden" id="titlepoints1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-								<img class="hidden" id="titlepoints2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-							</div>
-
-
-						</div>
+		<!-- Actual play pane -->
+		<div id="Play" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
+			<div class="row ">
+				<div class="col-3">
+					<button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
+						<i id="audiocontroller_mute" class="fas fa-volume-mute"></i>
+						<i id="audiocontroller_unmute" class="fas fa-volume-up invisible"></i>
+					</button>
+				</div>
+				<div id="countdownprogress" class="col-9">
+					<div class="progress">
+						<div id="countdown" class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="30"></div>
 					</div>
 				</div>
-			</div>
-			<!-- Actual play pane -->
-			<div id="Play" class="invisible container-fluid">
-				<div class="row ">
-					<div class="col-3">
-						<button id="audiocontroller" class="btn btn-primary" type="button" onclick="playpause();">
-							<i id="audiocontroller_mute" class="fas fa-volume-mute"></i>
-							<i id="audiocontroller_unmute" class="fas fa-volume-up invisible"></i>
-						</button>
-					</div>
-					<div class="col-9">
-						<div class="progress">
-							<div id="countdown" class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="30"></div>
-						</div>
-					</div>
 
-				</div>
-				<div class="row ">
-					<div
-						class="col-12">
-						<!-- Default form -->
-						<form id="FormGuess" class="text-center" action="#!">
-							<input
-							id="YourGuess" type="text" class="form-control mb-4" placeholder="">
-							<!-- Send button -->
-							<button id="btnsubmitanswer" class="btn btn-info btn-block" type="submit">Submit Answer</button>
-						</form>
-						<!-- Default form -->
-					</div>
-				</div>
 			</div>
-			<!-- Before the game start pane -->
-			<div id="Start" class="row">
-				<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
+
+			<div id="suggestionspane" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
+			
+
 			</div>
+		</div>
+		<!-- Before the game start pane -->
+		<div id="Start" class="row">
+			<button id="startbutton" class="btn btn-info btn-block" onclick="playtitle();" disabled>Start the Game</button>
+		</div>
+
+
+		<div id="userspane" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-6">
+
+			<ul id="userslist" class="list-group">
+				{% for player in players %}
+					<li class="list-group-item" userid="{{player.id}}">{{player.nickname}}
+						<i class="fas fa-globe green"></i>
+
+						<img id="coinscore_{{player.id}}" src="/img/goldcoin.png" width="20" height="20" alt="">
+						<span id="currentscore_{{player.id}}">{{player.score}}</span>
+
+					</li>
+				{% endfor %}
+			</ul>
 			<!-- Playlist information -->
 			<div id="Playlistinfo" class="row ">
 				<div class="row col-12">
@@ -130,29 +97,10 @@
 							with
 							<span id="highscore">{{highscores.score}}</span>
 							points</p>
-						{# <p class="card-text">Your score is :
-													<img id="coinscore" src="/img/goldcoin.png" width="30" height="30" alt="">
-													<span id="currentscore">0</span>
-													Points</p> #}
+
 					</div>
 				</div>
 			</div>
-
-		</div>
-		<div id="userspane" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-6">
-
-			<ul id="userslist" class="list-group">
-				{% for player in players %}
-					<li class="list-group-item" userid="{{player.id}}">{{player.nickname}}
-						<i class="fas fa-globe green"></i>
-
-						<img id="coinscore" src="/img/goldcoin.png" width="20" height="20" alt="">
-						<span id="currentscore">{{player.score}}</span>
-
-					</li>
-				{% endfor %}
-			</ul>
-
 		</div>
 
 		<div id="Finished" class="invisible">

@@ -4,7 +4,7 @@ namespace App\Database;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Games extends Model {
+class Games extends AbstractModel {
    public $timestamps = true;
    protected $table = 'games';
    protected $primaryKey = 'id';

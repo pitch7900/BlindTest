@@ -2,17 +2,18 @@
 
 namespace App\Database;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Authentication\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Track for Illuminate (DB) queries
  */
-class User extends Model {
+class User extends AbstractModel {
     public $timestamps = true;
     protected $table = 'user';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','nickname','email','emailchecklink','emailchecklinktimeout','emailchecked','resetpasswordlink','resetpasswordlinktimeout','password','approvaleuuid','adminapproved','lastaction'];
+    protected $fillable = ['id','nickname','email','emailchecklink','emailchecklinktimeout','emailchecked','resetpasswordlink','resetpasswordlinktimeout','password','approvaleuuid','adminapproved','lastaction','darktheme'];
         
     /**
      * getNickName
@@ -48,4 +49,34 @@ class User extends Model {
         return Game::where("userid","=",$userid)->sum("points");
     }
     
+    /**
+     * isDarkTheme - Tell if dark Theme is enabled for current user. Default is false
+     *
+     * @return bool
+     */
+    public static function isDarkTheme():bool
+    {
+        if (Auth::IsAuthentified()) {
+            return boolval(User::find(Auth::CurrentUserID())->darktheme);
+        } else {
+            return false;
+        }
+    }
+        
+    /**
+     * getUserName - reutrn user's id name properly formated for display
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public static function getUserName($id)
+    {
+        if (!(is_null($id) || $id == -1)) {
+            $user = User::find($id);
+            return $user->firstname . " " . $user->lastname;
+        } else {
+            return "";
+        }
+    }
+
 }

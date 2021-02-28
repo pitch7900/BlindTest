@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Database\Game;
 use App\Database\User;
 
-class GamePlayers extends Model
+class GamePlayers extends AbstractModel
 {
    public $timestamps = true;
    protected $table = 'gameplayers';
    protected $primaryKey = 'id';
    protected $fillable = ['gameid', 'userid', 'writing', 'isready', 'answered'];
-
-
 
    /**
     * getCurrentTrack : Return the current track to play with based on gameid
