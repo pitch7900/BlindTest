@@ -43,22 +43,20 @@ a#ShowPlaylist.nav-link {
   top: 0px;
   width: 100%;
   left: 0px;
-  filter: invert(99%) sepia(0%) saturate(4510%) hue-rotate(
-247deg
-) brightness(111%) contrast(75%);
+  filter: invert(99%) sepia(0%) saturate(4510%) hue-rotate(247deg)
+    brightness(111%) contrast(75%);
   opacity: 0.5;
 }
 
-
 .image-helper-bottomright {
-    border: 0px;
-    padding-left: 10px;
-    padding-right: 0px;
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    background: lightgray;
-  }
+  border: 0px;
+  padding-left: 10px;
+  padding-right: 0px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  background: lightgray;
+}
 
 .searchwarning {
   background-color: lightyellow !important;
@@ -138,6 +136,35 @@ a.dropdown-item,
   background-color: #f8d7da;
 }
 
-.card-light{
+.card-light {
   background-color: rgb(229, 229, 229);
+}
+
+#startbutton {
+  height: 200px;
+}
+
+.submitanswer {
+  border-color: black;
+  border: 1px solid;
+  border-radius: 0.25rem;
+  height: 200px;
+  margin-bottom: 15px;
+}
+
+.submitanswer .trackimage {
+  margin-top: 15px;
+  width: 50%;
+  height: auto;
+}
+
+.submitanswer .progress {
+  bottom: 5px;
+}
+
+#MainPage {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
 }

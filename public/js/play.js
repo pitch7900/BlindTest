@@ -278,15 +278,17 @@ var postcheckanswer = function (guessentered) {
       });
       
       if (check) {
-        $("#artistpoints").removeClass('hidden');
-        //reward animation
 
         points++;
         totalscore++
       }
 
       $("#currentscore_" + userid).html(points);
+      console.log("Points: "+points);
+      console.log($("#currentscore_" + userid));
       $("#totalscore").html(totalscore);
+
+      
       waitfor(4,countdownProgressBeforeNextSong);
     }, "json")
     .fail(function () {
