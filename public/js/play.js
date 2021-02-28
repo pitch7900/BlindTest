@@ -100,14 +100,8 @@ var playtitle = function () {
   answergiven = false;
   everyoneready = false;
   $("#Start").addClass("invisible");
-  $("#waitbeforenextcircle").addClass("hidden");
-  $("#artistpoints").addClass("hidden");
-  $("#titlepoints").addClass("hidden");
-  $("#trackimage").addClass("hidden");
-  $("#artistname").addClass("hidden");
-  $("#titlename").addClass("hidden");
-  $("#artist").addClass("hidden");
-  $("#title").addClass("hidden");
+  
+  $("#countdownprogress").removeClass("invisible");
   //Try to set the JS audio player
   try {
     audio.pause();
@@ -115,8 +109,7 @@ var playtitle = function () {
     console.log("Can't stop the music");
   }
 
-  $("input#YourGuess").first().val("");
-  $("#YourGuess").focus();
+
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
     // console.log(audio);
     if (typeof audio === 'undefined') {
@@ -125,7 +118,7 @@ var playtitle = function () {
     }
     //We haven't reached the last song of the game. Play
     if (jsondata.trackid != -1) {
-      $.get("/blindtest/game/" + gamesid + "/suggestions", function (suggestionsdata) {
+      $.get("/blindtest/game/" + gamesid + "/suggestions.html", function (suggestionsdata) {
         $('#suggestionspane').html(suggestionsdata);
         points = jsondata.score;
         $("#currentscore").html(points);
@@ -260,10 +253,10 @@ var postcheckanswer = function (guessentered) {
       totalscore = jsondata.totalscore;
       var countdownProgressBeforeNextSong = null;
       $('.submitanswer').each(function (index) {
-        $(this).removeClass('list-group-item-primary');
+        $(this).removeClass('card-light');
         //Correct answer in the list
         if ($(this).attr('trackid') == jsondata.trackid) {
-          $(this).addClass('list-group-item-success');
+          $(this).addClass('card-success');
           $(this).find('.image-container').removeClass('invisible');
           $(this).find('.track_link').attr("href", jsondata.track_link);
           $(this).find('.trackimage').attr("src", jsondata.picture);
@@ -272,7 +265,7 @@ var postcheckanswer = function (guessentered) {
         }
         //Wrong answer
         if ($(this).attr('trackid') == jsondata.guess && !check) {
-          $(this).addClass('list-group-item-danger');
+          $(this).addClass('card-danger');
         }
         //Correct answer -- Do the animation for gold coins
         if ($(this).attr('trackid') == jsondata.guess && check) {

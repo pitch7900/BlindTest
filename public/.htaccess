@@ -7,10 +7,10 @@
 </IfModule>
 
 #Disable Cache for these files
-<filesMatch "\.(html|json|mp3|css|js)$">
-    <IfModule mod_expires.c> 		
-        ExpiresActive Off 	
-    </IfModule> 	
+<FilesMatch "\.(css|flv|gif|htm|html|ico|jpe|jpeg|jpg|js|mp3|mp4|png|pdf|swf|txt)$">
+    <IfModule mod_expires.c>
+        ExpiresActive Off
+    </IfModule>
     <IfModule mod_headers.c>
         FileETag None
         Header unset ETag

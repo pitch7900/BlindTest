@@ -28,7 +28,7 @@ return function (App $app) {
             ->setName('blindtest.playjsondata');
         $group->get('/game/{gamesid}/currenttrack.json', BlindTestController::class . ':getCurrentTrackJson')
             ->setName('blindtest.getcurrenttrackjson');
-        $group->get('/game/{gamesid}/suggestions', BlindTestController::class . ':getGameSuggestions')
+        $group->get('/game/{gamesid}/suggestions.html', BlindTestController::class . ':getGameSuggestions')
             ->setName('blindtest.getGameSuggestions');
         $group->get('/game/{gamesid}/updateplayers.json', BlindTestController::class . ':updatePlayers')
             ->setName('blindtest.updateplayers');

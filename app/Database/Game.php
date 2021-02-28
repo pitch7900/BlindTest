@@ -64,6 +64,7 @@ class Game  extends AbstractModel
       array_push($returnarray,$currentgamesuggestion[1]['game_track']);
       array_push($returnarray,$currentgamesuggestion[2]['game_track']);
       array_push($returnarray,$currentgamesuggestion[3]['game_track']);
+      array_push($returnarray,$currentgamesuggestion[4]['game_track']);
       array_push($returnarray,Game::where([
          ['game_gamesid', '=', $gamesid],
          ['game_order', '=', $currentTrackIndex]

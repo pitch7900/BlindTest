@@ -3,16 +3,16 @@
 <div class="row">
 {% for suggestion in suggestions %}
     <div class="col-6">
-	<div trackid="{{suggestion.id}}" class="submitanswer card">
+	<div trackid="{{suggestion.id}}" class="submitanswer card card-light">
 
 
-		<img class="trackimage card-img-top" src="{{suggestion.cover}}" alt="albumimage">
+		<img class="trackimage card-img-top center" src="{{suggestion.cover}}" alt="albumimage">
 
 
-		<div class="card-body">
+		<div class="card-body center">
 
 			{{suggestion.artist}}
-			-
+			<br>
 			{{suggestion.song}}
 			<img class="invisible points1" src="/img/golcoinanim.gif" width="30" height="30" alt="">
 			<img class="invisible points2" src="/img/golcoinanim.gif" width="30" height="30" alt="">
