@@ -171,3 +171,8 @@ a.dropdown-item,
   margin-right: 0px;
   margin-left: 0px;
 }
+
+.carddata .card-body{
+  padding-left:0px;
+  padding-right:0px;
+}
