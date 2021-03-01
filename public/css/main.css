@@ -109,6 +109,9 @@ a.dropdown-item,
 .center {
   margin: auto;
   text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .center-horizontal {
@@ -137,7 +140,7 @@ a.dropdown-item,
 }
 
 .card-light {
-  background-color: rgb(229, 229, 229);
+  background-color: #d0d7ff;
 }
 
 #startbutton {
@@ -148,8 +151,8 @@ a.dropdown-item,
   border-color: black;
   border: 1px solid;
   border-radius: 0.25rem;
-  height: 200px;
-  margin-bottom: 15px;
+  height: calc(100% - 5px);
+  margin-bottom: 20px;
 }
 
 .submitanswer .trackimage {

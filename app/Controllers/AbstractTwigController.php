@@ -38,7 +38,7 @@ abstract class AbstractTwigController extends AbstractController
     protected function render(Response $response, string $template, array $renderData = []): Response
     {
         $response = $response->withHeader('Cache-Control', 'no-cache, must-revalidate')
-        ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^');
+            ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^');
         return $this->twig->render($response, $template, $renderData);
     }
 

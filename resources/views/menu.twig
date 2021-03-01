@@ -1,20 +1,18 @@
 <!--Navbar-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#MainNavBar" aria-controls="MainNavBar" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#MainNavBar" aria-controls="MainNavBar" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<!-- Navbar brand -->
 
 	<div class="navbar-brand">
-	{% if homescreen %}
-	<form class="form-inline my-2 my-lg-0">
-					<input id="FilterSongs" class="form-control mr-sm-2" type="search" placeholder="Filter" aria-label="Search">
+		{% if homescreen %}
+			<form class="form-inline my-2 my-lg-0">
+				<input id="FilterSongs" class="form-control mr-sm-2" type="search" placeholder="Filter" aria-label="Search">
 
-				</form>
-				{% else %}
-		<a class="nav-link" href="/"><img src="/img/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">Home</a>
-		
-				
+			</form>
+		{% else %}
+			<a class="nav-link" href="/"><img src="/img/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">Home</a>
 		{% endif %}
 	</div>
 
@@ -31,22 +29,23 @@
 
 		</li>
 	</ul>
-	<div class="collapse  navbar-collapse" id="MainNavBar">
-	{# Only displayed in the home screen #}
+	<div
+		class="collapse  navbar-collapse" id="MainNavBar">
+		{# Only displayed in the home screen #}
 		{% if homescreen %}
-		<ul class="navbar-nav mr-auto">
+			<ul class="navbar-nav mr-auto">
 
-			<li class="nav-item active ">
+				<li class="nav-item active ">
 
-				<a class="nav-link" data-toggle="modal" data-target="#AddPlaylistModal">Add playlist</a>
-			</li>
-			
-			
-		</ul>
+					<a class="nav-link" data-bs-toggle="modal" data-bs-target="#AddPlaylistModal">Add playlist</a>
+				</li>
+
+
+			</ul>
 		{% endif %}
 		<ul class="navbar-nav">
 			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<a class="nav-link dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-user"></i>User
 				</a>
 				<div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="userDropdown">

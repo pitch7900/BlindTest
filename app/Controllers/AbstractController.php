@@ -49,6 +49,8 @@ abstract class AbstractController {
     protected function withRedirect(Response $response, string $path, int $code=302): Response
     {
         $response = $response
+            ->withHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^')
             ->withHeader('Location', $path)
             ->withStatus($code);
         return $response;

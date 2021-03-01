@@ -100,7 +100,7 @@ var playtitle = function () {
   answergiven = false;
   everyoneready = false;
   $("#Start").addClass("invisible");
-  
+  $('#userspane').removeClass('invisible');
   $("#countdownprogress").removeClass("invisible");
   //Try to set the JS audio player
   try {
