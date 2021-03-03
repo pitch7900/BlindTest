@@ -1,54 +1,56 @@
 {% macro playlistcard(id,playlistname,picture,link,tracks,played) %}
 
 	<!-- Card -->
-	<div class="card col-sm-6 col-md-4 col-lg-3 col-xl-2">
-		
-	
-			<div id="loading" class="invisible">
-				<center>
-					<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-						<span class="sr-only">Updating...</span>
-					</div>
-				</center>
-			</div>
-			<div id="carddata">
-				<div class="image-container">
-					<!-- Card image -->
-					<a href="/blindtest/play/{{id}}.html">
-						<img class="card-img-top" src="{{picture}}" alt="{{playlistname}}">
-						<img class="image-helper-center" src="/img/icons/play-circle-regular.svg">
-						
-					</a>
-					<div class="image-helper-bottomright">
-					<span class="tracksnumber">{% if tracks == 0 %}
-					?
-					{% else %}
-					{{tracks}}
-					{% endif %}
-					</span> tracks
-						<button type="button" class="btn btn-light updatetracksaction" playlist="{{id}}">
-							<i class="fas fa-sync"></i>
-						</button>
-						</div>
+	<div class="card col-6 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+
+
+		<div class="carddata">
+			<div
+				class="image-container">
+				<!-- Card image -->
+				<a href="/blindtest/play/{{id}}.html">
+					<img class="card-img-top" src="{{picture}}" alt="{{playlistname}}">
+					<img class="image-helper-center" src="/img/icons/play-circle-regular.svg">
+
+				</a>
+				<div class="image-helper-bottomright">
+					<span class="tracksnumber">
+						{% if tracks == 0 %}
+							?
+						{% else %}
+							{{tracks}}
+						{% endif %}
+					</span>
+					tracks
+					<button type="button" class="btn btn-light updatetracksaction" playlist="{{id}}">
+						<i class="fas fa-sync"></i>
+					</button>
 				</div>
-				<!-- Card content -->
-				<div class="card-body">
-					<!-- Title -->
-					<h4 class="card-title playlistname">
-						{{playlistname}}
-					</h4>
-					<p>Played {{played}} times</p>
+			</div>
+			<!-- Card content -->
+			<div
+				class="card-body">
+				<!-- Title -->
+
+				<button class="btn btn-light playlistname" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{id}}" aria-expanded="false" aria-controls="collapse{{id}}">
+					{{playlistname}} <i class="fas fa-caret-square-down"></i>
+				</button>
+				<div class="collapse" id="collapse{{id}}">
+					<p class="center">Played
+						{{played}}
+						times</p>
 					<!-- Button -->
 					{# <a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
-						<i class="fas fa-play"></i>
-						Play</a> #}
-					<a href="{{ link }}" target="_blank" class="btn btn-light col-sm-12">
+											<i class="fas fa-play"></i>
+											Play</a> #}
+					<a href="{{ link }}" target="_blank" class="center btn btn-light col-sm-12">
 						<i class="fab fa-deezer"></i>
-						Link to deezer</a>
+						Deezer</a>
 				</div>
 			</div>
 		</div>
-		<!-- Card -->
+	</div>
+	<!-- Card -->
 
 
 {% endmacro %}

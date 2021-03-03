@@ -3,24 +3,40 @@
 namespace App\Database;
 
 use Illuminate\Database\Eloquent\Model;
+
 use SimpleXMLElement;
-/**
- * Class Track for Illuminate (DB) queries
- */
-class Album extends AbstractModel {
-    public $timestamps = true;
-    protected $table = 'album';
-    protected $primaryKey = 'id';
-    protected $fillable = ['id','album_title','album_tracklist','album_cover'];
-    
-   
-    
+
+abstract class AbstractModel extends Model
+{
     /**
-     * Return XML formatted data for an entry
+     * Dump the current SQL and bindings.
+     *
+     * @return $this
+     */
+    public function dump()
+    {
+        dump($this->toSql(), $this->getBindings());
+
+        return $this;
+    }
+
+    /**
+     * Die and dump the current SQL and bindings.
+     *
+     * @return void
+     */
+    public function dd()
+    {
+        dd($this->toSql(), $this->getBindings());
+    }
+
+     /**
+     * Return XML formated data for an entry
      * @return type
      */
-    public function toXML() {
-        $xml = new SimpleXMLElement('<'.array_pop(explode('\\', get_class($this))).'/>');
+    public function toXML()
+    {
+        $xml = new SimpleXMLElement('<' . array_pop(explode('\\', get_class($this))) . '/>');
         foreach ($this->first()->attributes as $key => $value) {
             if (is_numeric($key)) {
                 $key = 'item' . $key; //dealing with <0/>..<n/> issues

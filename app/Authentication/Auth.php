@@ -8,7 +8,7 @@ use App\Database\User;
 use Carbon\Carbon;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use Psr\Log\LoggerInterface;
+
 
 /**
  * @author: Pierre Christensen
@@ -16,49 +16,22 @@ use Psr\Log\LoggerInterface;
  */
 class Auth
 {
-    /**
-     * logger
-     *
-     * @var mixed
-     */
-    private $logger;
 
-    /**
-     * __construct
+
+         /**
+     * IsAuthentified
      *
-     * @return void
+     * @return bool
      */
-    public function __construct(LoggerInterface $logger)
+    public static function IsAuthentified(): bool
     {
-        $this->logger = $logger;
-        if (isset($_SESSION['authentified'])) {
-            $this->logger->debug('Auth::__contruct SuperGlobal Variable Session authentified is set to ' . $_SESSION['authentified']);
+        if (isset($_SESSION['userid'])) {
+            return true;
         } else {
-            $this->setAuthentified(false);
+            return false;
         }
     }
-
-    /**
-     * unvalidate : Logout user. Remove $_SESSION variable for authentication
-     *
-     * @return void
-     */
-    private function unvalidate()
-    {
-        $this->setAuthentified(false);
-        unset($_SESSION['authentified']);
-        unset($_SESSION["userid"]);
-    }
-
-    /**
-     * getSessionId : Get PHP Session ID
-     *
-     * @return string
-     */
-    public function getSessionId(): string
-    {
-        return session_id();
-    }
+    
 
     /**
      * setUserID : Set database user id for current session
@@ -66,7 +39,7 @@ class Auth
      * @param  mixed $userid
      * @return void
      */
-    private function setUserID($userid)
+    private static function setUserID($userid)
     {
         $_SESSION["userid"] = $userid;
     }
@@ -76,7 +49,7 @@ class Auth
      *
      * @return int
      */
-    public function getUserId(): int
+    public static function getUserId(): int
     {
         return $_SESSION["userid"];
     }
@@ -86,9 +59,9 @@ class Auth
      *
      * @return string
      */
-    public function getUserEmail(): string
+    public static function getUserEmail(): string
     {
-        $user = User::find($this->getUserId());
+        $user = User::find(Auth::getUserId());
         return  $user->email;
     }
 
@@ -97,9 +70,9 @@ class Auth
      *
      * @return string
      */
-    public function getUserNickName(): string
+    public static function getUserNickName(): string
     {
-        return  User::find($this->getUserId())->nickname;
+        return  User::find(Auth::getUserId())->nickname;
     }
 
     /**
@@ -109,45 +82,30 @@ class Auth
      * @param  mixed $password
      * @return bool
      */
-    public function checkPassword(string $email, string $password): bool
+    public static function checkPassword(string $email, string $password): bool
     {
         $email = strtolower($email);
-        $this->logger->debug("Auth::checkPassword() should check password for " . $email);
+
         $user = User::where([
             ['email', '=', $email]
         ])->first();
 
-        if (!$user) {
-            $this->logger->debug("Auth::checkPassword() User not found : ");
-            $this->unvalidate();
+        if (is_null($user)) {
+            unset($_SESSION["userid"]);
             return false;
         }
-        $this->logger->debug("Auth::checkPassword() User found : " . $user->id);
+     
         if (password_verify($password, $user->password)) {
-            $this->setUserID($user->id);
-            $this->setAuthentified(true);
-            $this->logger->debug("Auth::checkPassword() User " . $user->email . " authentification OK");
+            Auth::setUserID($user->id);
+        
             return true;
         }
-        $this->setAuthentified(false);
+       
         return false;
     }
 
-    /**
-     * getAuthentified : return if user is authentified or not 
-     *
-     * @return void
-     */
-    public function getAuthentified()
-    {
-        if (isset($_SESSION['authentified'])) {
-            return $_SESSION['authentified'];
-        } else {
-            return false;
-        }
-    }
 
-    public function setOriginalRequestedPage(string $page)
+    public static function setOriginalRequestedPage(string $page)
     {
         if (strcmp('/user/signout',$page)==0) {
             $_SESSION['OriginalRequestedPage'] = '/';
@@ -157,36 +115,27 @@ class Auth
         
     }
 
-    public function getOriginalRequestedPage(): string
+    public static function getOriginalRequestedPage(): string
     {
         if (isset($_SESSION['OriginalRequestedPage'])) {
             return $_SESSION['OriginalRequestedPage'];
         } else {
-            return null;
+            return "";
         }
     }
 
-    /**
-     * setAuthentified : Change the authentification satus
-     *
-     * @param  mixed $authentified
-     * @return void
-     */
-    private function setAuthentified(bool $authentified)
-    {
-        $_SESSION['authentified'] = $authentified;
-    }
+ 
 
     /**
      * signout user and remove all $_SESSION entries
      *
      * @return void
      */
-    public function signout()
+    public static function signout()
     {
-        $this->logger->debug("Auth::signout() Called");
+      
         unset($_SESSION['norobot']);
-        $this->unvalidate();
+        unset($_SESSION["userid"]);
     }
 
 
@@ -197,7 +146,7 @@ class Auth
      * @param  mixed $v4uuid
      * @return void
      */
-    public function sendValidationEmail(string $email, string $v4uuid)
+    public static function sendValidationEmail(string $email, string $v4uuid)
     {
         $mail = new PHPMailer(true);
         try {
@@ -208,13 +157,13 @@ class Auth
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidationEmail() Use SMTP Auth for email");
+              
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidationEmail() Use SSL for email");
+             
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -223,6 +172,7 @@ class Auth
             $mail->setFrom($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
             $mail->addAddress($email);               // Add a recipient
             $mail->addReplyTo($_ENV['SMTP_MAILFROM'], 'Blindtest mailer daemon');
+
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML
@@ -238,9 +188,8 @@ class Auth
 
             $mail->send();
 
-            $this->logger->debug("Auth::sendValidationEmail() Mail sent to $email");
         } catch (Exception $e) {
-            $this->logger->error("Auth::sendValidationEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+           
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
     }
@@ -251,7 +200,7 @@ class Auth
      * @param  mixed $email
      * @return void
      */
-    public function sendAdminsitratorEmail(string $email)
+    public static function sendAdminsitratorEmail(string $email)
     {
         $mail = new PHPMailer(true);
         try {
@@ -262,13 +211,13 @@ class Auth
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
+               
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
+               
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -291,14 +240,27 @@ class Auth
 
             $mail->send();
 
-            $this->logger->debug("Auth::sendValidatorEmail() Mail sent to " . $_ENV['REGISTRATION_ADMIN_EMAIL']);
+           
         } catch (Exception $e) {
-            $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
     }
 
+    /**
+     * CurrentUserID
+     *
+     * @return int
+     */
+    public static function CurrentUserID(): int
+    {
 
+        if (isset($_SESSION['userid'])) {
+            return intval($_SESSION['userid']);
+        } else {
+                return -1;
+            
+        }
+    }
 
     /**
      * sendValidationEmail : Send a validation email with link to validate email
@@ -307,7 +269,7 @@ class Auth
      * @param  mixed $v4uuid
      * @return void
      */
-    public function sendValidatorEmail(string $email, string $v4uuid)
+    public static function sendValidatorEmail(string $email, string $v4uuid)
     {
         $mail = new PHPMailer(true);
         try {
@@ -318,13 +280,13 @@ class Auth
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidatorEmail() Use SMTP Auth for email");
+               
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                $this->logger->debug("Auth::sendValidatorEmail() Use SSL for email");
+              
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -347,9 +309,9 @@ class Auth
 
             $mail->send();
 
-            $this->logger->debug("Auth::sendValidatorEmail() Mail sent to " . $_ENV['REGISTRATION_ADMIN_EMAIL']);
+           
         } catch (Exception $e) {
-            $this->logger->error("Auth::sendValidatorEmail() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
     }
@@ -361,7 +323,7 @@ class Auth
      * @param  mixed $encryptedpassword
      * @return bool
      */
-    public function addUser(string $email, string $encryptedpassword, string $nickname): bool
+    public static function addUser(string $email, string $encryptedpassword, string $nickname): bool
     {
         $email = strtolower($email);
         $user = User::where([
@@ -388,14 +350,14 @@ class Auth
 
             ]);
             if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
-                $this->sendValidatorEmail($email, $v4uuid_validator);
+                Auth::sendValidatorEmail($email, $v4uuid_validator);
             } else {
                 $user = User::where([
                     ['email', '=', $email]
                 ])->first();
                 $user->adminapproved = true;
-                $this->sendAdminsitratorEmail($email);
-                $this->sendValidationEmail($email, $v4uuid_user);
+                Auth::sendAdminsitratorEmail($email);
+                Auth::sendValidationEmail($email, $v4uuid_user);
             }
         }
         return true;
@@ -407,7 +369,7 @@ class Auth
      * @param  mixed $uuid
      * @return bool
      */
-    public function validateEmail(string $uuid): bool
+    public static function validateEmail(string $uuid): bool
     {
         $user = User::where([
             ['emailchecklink', 'like', $uuid]
@@ -415,24 +377,22 @@ class Auth
 
         if (!is_null($user)) {
             $time = $user->emailchecklinktimeout;
-            $this->logger->debug("Auth::validateEmail() UUID found for user : " . $user->email . " and link timeout is : " . $time);
+
             $validationtime = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $time);
             $currenttime =  Carbon::createFromTimestamp(time());
-            $this->logger->debug("Auth::validateEmail() compare $validationtime >=  $currenttime");
-
+           
             if ($validationtime->gte($currenttime)) {
                 //Mail is checked, we can trust this user
-                $this->logger->debug("Auth::validateEmail() TimeStamp for validation is OK");
+               
                 $user->emailchecked = true;
                 $user->save();
-                $this->setUserID($user->id);
-                $this->setAuthentified(true);
+                Auth::setUserID($user->id);
                 return true;
             } else {
-                $this->logger->debug("Auth::validateEmail() TimeStamp for validation is not OK");
+               
                 $user->emailchecked = false;
                 $user->save();
-                $this->unvalidate();
+                unset($_SESSION["userid"]);
                 return false;
             }
         }
@@ -445,13 +405,23 @@ class Auth
      * @param  mixed $nickname
      * @return void
      */
-    public function setNickname(string $nickname)
+    public static function setNickname(string $nickname)
     {
-        $user = User::find($this->getUserId());
+        $user = User::find(Auth::getUserId());
         $user->nickname = $nickname;
         $user->save();
     }
 
+
+     /**
+     * return current user name
+     * @return string
+     */
+    public static function CurrentUserName()
+    {
+        return User::getUserName(Auth::CurrentUserID());
+    }
+    
     /**
      * resetPassword : set a new password for the uuid passed
      *
@@ -459,9 +429,9 @@ class Auth
      * @param  mixed $encryptedpassword
      * @return void
      */
-    public function resetPassword(string $uuid, string $encryptedpassword): void
+    public static function resetPassword(string $uuid, string $encryptedpassword): void
     {
-        if ($this->checkUUIDpasswordreset($uuid)) {
+        if (Auth::checkUUIDpasswordreset($uuid)) {
             $user = User::where([
                 ['resetpasswordlink', 'like', $uuid]
             ])->first();
@@ -479,9 +449,9 @@ class Auth
      * @param  mixed $newencryptedpasssword
      * @return void
      */
-    public function changePassword(string $newencryptedpasssword)
+    public static function changePassword(string $newencryptedpasssword)
     {
-        User::find($this->getUserId())->password = $newencryptedpasssword;
+        User::find(Auth::getUserId())->password = $newencryptedpasssword;
     }
 
     /**
@@ -490,7 +460,7 @@ class Auth
      * @param  mixed $uuid
      * @return bool
      */
-    public function checkUUIDpasswordreset(string $uuid): bool
+    public static function checkUUIDpasswordreset(string $uuid): bool
     {
         $user = User::where([
             ['resetpasswordlink', 'like', $uuid]
@@ -512,7 +482,7 @@ class Auth
      * @param  mixed $email
      * @return bool
      */
-    public function sendResetPasswordLink(string $email): bool
+    public static function sendResetPasswordLink(string $email): bool
     {
         $email = strtolower($email);
         $user = User::where([
@@ -536,13 +506,13 @@ class Auth
                 $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
                 if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                    $this->logger->debug("Auth::resetPassword() Use SMTP Auth for email");
+                    
                     $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                     $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                     $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
                 }
                 if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                    $this->logger->debug("Auth::resetPassword() Use SSL for email");
+                   
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
                 }
                 $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -571,9 +541,8 @@ class Auth
 
                 $mail->send();
 
-                $this->logger->debug("Auth::resetPassword() Mail sent to $email");
             } catch (Exception $e) {
-                $this->logger->error("Auth::resetPassword() Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+              
                 die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
             }
         }

@@ -8,7 +8,7 @@ use App\Database\PlaylistTracks;
 /**
  * Class Track for Illuminate (DB) queries
  */
-class Playlist extends Model {
+class Playlist extends AbstractModel {
     public $timestamps = true;
     protected $table = 'playlist';
     protected $primaryKey = 'id';

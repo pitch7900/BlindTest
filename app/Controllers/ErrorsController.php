@@ -6,15 +6,11 @@ namespace App\Controllers;
 
 
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
-use Psr\Log\LoggerInterface;
-use App\MusicSources\Deezer\DeezerApi;
+use Slim\Http\ServerRequest as Request;
 use App\MusicSources\Deezer\DeezerApiInterface;
+use Psr\Container\ContainerInterface;
 class ErrorsController extends AbstractTwigController
 {
-
-     private $logger;
 
     /**
      * @var DeezerApiInterface $deezer
@@ -28,10 +24,10 @@ class ErrorsController extends AbstractTwigController
      * @param  mixed $logger
      * @return void
      */
-    public function __construct(Twig $twig,LoggerInterface $logger,DeezerApiInterface $deezer) {
-        parent::__construct($twig);
-        $this->logger = $logger;
-        $this->deezer = $deezer;
+    public function __construct(ContainerInterface $container) {
+        parent::__construct($container);
+
+        $this->deezer = $container->get(DeezerApiInterface::class);
         $this->logger->debug("ErrorsController::_construct Constructor of HomeController called");
     }
 

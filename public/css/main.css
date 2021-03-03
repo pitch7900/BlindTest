@@ -43,19 +43,20 @@ a#ShowPlaylist.nav-link {
   top: 0px;
   width: 100%;
   left: 0px;
-  filter:invert(99%) sepia(0%) saturate(4510%) hue-rotate(247deg) brightness(111%) contrast(75%);
+  filter: invert(99%) sepia(0%) saturate(4510%) hue-rotate(247deg)
+    brightness(111%) contrast(75%);
   opacity: 0.5;
 }
 
 .image-helper-bottomright {
-    border: 0px;
-    padding-left: 10px;
-    padding-right: 0px;
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    background: lightgray;
-  }
+  border: 0px;
+  padding-left: 10px;
+  padding-right: 0px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  background: lightgray;
+}
 
 .searchwarning {
   background-color: lightyellow !important;
@@ -108,9 +109,75 @@ a.dropdown-item,
 .center {
   margin: auto;
   text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .center-horizontal {
   margin-left: auto;
   margin-right: auto;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.submitanswer {
+  cursor: default;
+}
+
+.card-success {
+  background-color: #d1e7dd;
+}
+
+.card-danger {
+  background-color: #f8d7da;
+}
+
+.card-light {
+  background-color: #d0d7ff;
+}
+
+#startbutton {
+  height: 200px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.submitanswer {
+  border-color: black;
+  border: 1px solid;
+  border-radius: 0.25rem;
+  height: calc(100% - 5px);
+  margin-bottom: 20px;
+}
+
+.submitanswer .trackimage {
+  margin-top: 15px;
+  width: 50%;
+  height: auto;
+}
+
+.submitanswer .progress {
+  bottom: 5px;
+}
+
+#MainPage {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.carddata .card-body{
+  padding-left:0px;
+  padding-right:0px;
 }

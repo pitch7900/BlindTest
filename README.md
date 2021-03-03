@@ -16,6 +16,43 @@ All links for Deezer's playlist or songs are reachable during the game.
 
 ## Installation
 
+### Install memcached
+
+Why, please see : <https://ma.ttias.be/php-session-locking-prevent-sessions-blocking-in-requests/>
+
+#### On linux (Ubuntu)
+
+Documentation can be found at : <https://devdocs.magento.com/guides/v2.4/config-guide/memcache/memcache_ubuntu.html>
+
+```bash
+apt install php-memcached memcached
+service memcached restart
+service apache2 restart
+```
+
+#### On Windows (Wamp64 server)
+
+Documentation for service and DLL : <https://commaster.net/posts/installing-memcached-windows/>
+
+Extract the zip for to C:\wamp64\bin\memcached
+
+In an elevetad command prompt:
+
+```bash
+schtasks /create /sc onstart /tn memcached /tr "'C:\wamp64\bin\memcached\memcached.exe' -m 512"
+```
+
+Download php extension
+PHP extension: <https://pecl.php.net/package/memcache>
+
+Extract to C:\wamp64\bin\php\php<version>\ext
+and change the php.ini by adding the extension
+extension=memcache
+
+Restart Wamp services
+
+### Download project from GitHub
+
 Download the project from github, remove the vendor folder (if needed) and reinstall composer packages
 
 ```bash
@@ -25,7 +62,9 @@ rm -rf vendor
 composer install
 ```
 
-and setup your webserver configuration to point to the /public folder.
+### Configure Apache2 site
+
+Set up your webserver configuration to point to the /public folder.
 
 For example, the project is downloaded to /var/www/BlindTest and the virtual host points to /var/www/BlindTest/public
 
@@ -79,7 +118,7 @@ REGISTRATION_REQUIRE_APPROVAL = "true"
 REGISTRATION_ADMIN_EMAIL = "admin.email@domain.com"
 GOOGLE_RECAPTCHA_SITE_KEY="TOBEFILLED_WITH_VALID_KEY"
 GOOGLE_RECAPTCHA_SECRET_KEY="TOBEFILLED_WITH_VALID_SECRET"
-````
+```
 
 ## Docker
 

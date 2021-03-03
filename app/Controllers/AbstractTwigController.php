@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Stream;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractTwigController extends AbstractController
 {
@@ -19,9 +20,10 @@ abstract class AbstractTwigController extends AbstractController
      *
      * @param Twig $twig
      */
-    public function __construct(Twig $twig)
+    public function __construct(ContainerInterface $container)
     {
-        $this->twig = $twig;
+        parent::__construct($container);
+        $this->twig = $container->get(Twig::class);
     }
 
     /**
@@ -35,8 +37,11 @@ abstract class AbstractTwigController extends AbstractController
      */
     protected function render(Response $response, string $template, array $renderData = []): Response
     {
+        $response = $response->withHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^');
         return $this->twig->render($response, $template, $renderData);
     }
+
     /**
      * Return the payload as JSON
      * @author Pierre Christensen <pierre.christensen@gmail.com>
@@ -51,25 +56,19 @@ abstract class AbstractTwigController extends AbstractController
         $response = $response
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->withHeader('Expires','Mon, 26 Jul 1997 05:00:00 GMT^')
+            ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^')
             ->withBody($stream)
             ->withStatus(200);
         return $response;
     }
 
-    protected function withRedirect(Response $response, string $path): Response
-    {
-        $response = $response
-            ->withHeader('Location', $path)
-            ->withStatus(302);
-        return $response;
-    }
+
 
     protected function withMP3(Response $response, string $mp3filepath): Response
     {
         $stream = (new StreamFactory())->createStreamFromFile($mp3filepath, 'rb');
         return $response->withHeader('Content-type', 'audio/mp3')->withBody($stream)
             ->withHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->withHeader('Expires','Mon, 26 Jul 1997 05:00:00 GMT^');
+            ->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT^');
     }
 }

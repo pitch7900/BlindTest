@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
-
+use Psr\Container\ContainerInterface;
 /**
  * Description of DeezerController
  *
@@ -20,12 +20,9 @@ class DeezerController extends AbstractTwigController
 
     private $deezer;
 
-    private $logger;
-
-    public function __construct(Twig $twig,LoggerInterface $logger, DeezerApiInterface $deezer) {
-        parent::__construct($twig);
-        $this->deezer = $deezer;  
-        $this->logger = $logger;
+    public function __construct(ContainerInterface $container) {
+        parent::__construct($container);
+        $this->deezer = $container->get(DeezerApiInterface::class);  
         $this->logger->debug("Construct of DeezerController called");
     }
 

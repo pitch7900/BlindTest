@@ -6,17 +6,18 @@
 {% block content %}
 	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
-			<img src="/img/deezer.png" class="title">
+			<img src="/img/deezer.png" class="title center">
 			<h1 class="h3 mb-3 font-weight-normal center">Log in to Deezer Music Blindtest</h1>
 			<form class="form-login"  method="post">
 
 
 				<label for="email" class="sr-only">Email address</label>
 				<input type="email" id="email" name="email" class="form-control" placeholder="Email address" required autofocus>
+				<br>
 				<label for="password" class="sr-only">Password</label>
 				<input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="Password" required>
-
-				<button class="btn btn-lg btn-primary btn-block g-recaptcha" 
+				<br>
+				<button class="btn btn-lg btn-primary btn-block g-recaptcha center " 
 					type="submit"
 					data-sitekey="{{recaptcha_api_key}}" 
 					data-callback='onSubmitSecure' 
@@ -25,7 +26,7 @@
 
 
 		</div>
-		<div class="col-sm-8 mx-auto">
+		<div class="col-sm-8 mx-auto center">
 			<a href="{{ url_for('auth.forgotpassword')}}">
 				Forgot password ?
 			</a>

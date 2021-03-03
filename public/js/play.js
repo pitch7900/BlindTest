@@ -3,8 +3,12 @@ var audio;
 var points;
 var gamesid;
 var countdown;
+var timer;
 var currentplaylistid;
-
+var userid;
+var writing;
+var answergiven;
+var everyoneready;
 
 /**
  * Update hiscore during the game
@@ -18,8 +22,7 @@ var updateHiscoreDisplay = function (highscore) {
 /**
  * Countdown for this game
  */
-var StartCountDown = function () {
-  var seconds = 30;
+var StartCountDown = function (seconds) {
   var i = seconds;
   $("#countdown").attr("aria-valuenow", 30);
   $("#countdown").attr("style", "width: 100%");
@@ -29,42 +32,48 @@ var StartCountDown = function () {
 
     $("#countdown").attr("aria-valuenow", i);
     $("#countdown").attr("style", "width: " + Math.floor(i / seconds * 100) + "%");
+    $("#countdown").html(i + " s");
     if (i <= 0) {
       // clearInterval(countdown);
-      guessentered = $("input#YourGuess").first().val().toLowerCase();
+      // guessentered = $("input#YourGuess").first().val().toLowerCase();
       // console.log("Guess is " + guessentered);
-      postcheckanswer(guessentered);
+      postcheckanswer("");
     }
   }, 1000);
 }
 
+var StartAnserTimer = function () {
+  var time = 0;
+  timer = setInterval(function () {
+    $("#answerTimer").html((time / 100).toFixed(2) + " s");
+    $("#answerTimer").attr('time-in-ms',time);
+    time++;
+  }, 10);
+}
 
 /**
  * CountDown before next song
  * @param {integer} seconds 
  */
-var waitfor = function (seconds) {
+var waitfor = function (seconds, object) {
+  postready = false;
   //initialize the countdown
-  $("#waitbeforenext").html(seconds + "s");
-  $("#waitbeforenextcircle").removeClass(function (index, className) {
-    return (className.match(/(^|\s)p\S+/g) || []).join(' ');
-  });
-  $("#waitbeforenextcircle").addClass("p100");
+
   //Let's start countdown
   var i = seconds;
-  $("#btnsubmitanswer").prop("disabled", true);
+
   var countdownwaitfor = setInterval(function () {
 
-    $("#waitbeforenext").html(i + "s");
-    $("#waitbeforenextcircle").removeClass(function (index, className) {
-      return (className.match(/(^|\s)p\S+/g) || []).join(' ');
-    });
-    // console.log("p"+(Math.round((i/seconds)*100)));
-    $("#waitbeforenextcircle").addClass("p" + (Math.round((i / seconds) * 100)));
+    object.find('.progress-bar').attr('aria-valuenow', i);
+    object.find('.progress-bar').attr('aria-valuenow', i);
+    object.find('.progress-bar').css('width', (Math.round((i / seconds) * 100)) + "%");
+
+
     if (i <= 0) {
       clearInterval(countdownwaitfor);
-      $("#btnsubmitanswer").prop("disabled", false);
+
       playtitle();
+
     }
     i--;
   }, 1000);
@@ -94,16 +103,12 @@ var removeAccentsAndSpecialChars = function (input) {
  * Play the title that is returned by currenttrack.json
  */
 var playtitle = function () {
-
+  writing = false;
+  answergiven = false;
+  everyoneready = false;
   $("#Start").addClass("invisible");
-  $("#waitbeforenextcircle").addClass("hidden");
-  $("#artistpoints").addClass("hidden");
-  $("#titlepoints").addClass("hidden");
-  $("#trackimage").addClass("hidden");
-  $("#artistname").addClass("hidden");
-  $("#titlename").addClass("hidden");
-  $("#artist").addClass("hidden");
-  $("#title").addClass("hidden");
+  $('#userspane').removeClass('invisible');
+  $("#countdownprogress").removeClass("invisible");
   //Try to set the JS audio player
   try {
     audio.pause();
@@ -111,8 +116,7 @@ var playtitle = function () {
     console.log("Can't stop the music");
   }
 
-  $("input#YourGuess").first().val("");
-  $("#YourGuess").focus();
+
   $.get("/blindtest/game/" + gamesid + "/currenttrack.json", function (jsondata) {
     // console.log(audio);
     if (typeof audio === 'undefined') {
@@ -121,36 +125,41 @@ var playtitle = function () {
     }
     //We haven't reached the last song of the game. Play
     if (jsondata.trackid != -1) {
-      points = jsondata.score;
-      $("#currentscore").html(points);
-      updateHiscoreDisplay(jsondata.highscore);
-      currenttrackid = jsondata.trackid;
-      currentplaylistid = jsondata.playlistid;
-      audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
+      $.get("/blindtest/game/" + gamesid + "/suggestions.html", function (suggestionsdata) {
+        $('#suggestionspane').html(suggestionsdata);
+        points = jsondata.score;
+        $("#currentscore").html(points);
+        updateHiscoreDisplay(jsondata.highscore);
+        currenttrackid = jsondata.trackid;
+        currentplaylistid = jsondata.playlistid;
+        audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
+        audio.currentTime = Math.floor(jsondata.offset / 1000)
+        audio
+          .play()
+          .then(() => {
+            //Hide the answer field
+            $("#answer").addClass("invisible");
+            //Allow interraction with sending the answer
+            $("#PlayTimer").removeClass("invisible");
+            StartCountDown(30 - Math.floor(jsondata.offset / 1000));
+            StartAnserTimer();
+          })
+          .catch((error) => {
+            // alert("Please allow your browser to autoplay music");
+            $("#MainPage").addClass("invisible");
+            $("#BrowserError").removeClass("invisible");
+            // console.log(jsondata);
+            $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
+            $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
+            $.post("/errors/player", jsondata);
+          });
+      });
 
-      audio
-        .play()
-        .then(() => {
-          //Hide the answer field
-          $("#answer").addClass("invisible");
-          //Allow interraction with sending the answer
-          $("#Play").removeClass("invisible");
-          StartCountDown();
-        })
-        .catch((error) => {
-          // alert("Please allow your browser to autoplay music");
-          $("#MainPage").addClass("invisible");
-          $("#BrowserError").removeClass("invisible");
-          // console.log(jsondata);
-          $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
-          $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
-          $.post("/errors/player", jsondata);
-        });
     } else {
       //Last song of the game reached. Do an action
       $("#Finished").removeClass("invisible");
       $("#interactionpane").addClass("invisible");
-      fireworks($("#fireworksplace")[0],false);
+      fireworks($("#fireworksplace")[0], false);
     }
   });
 };
@@ -180,7 +189,8 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   sourceObject.removeClass("hidden");
   sourceObject.css("transition", "left 1s ease-out, top " + speedInSeconds + "s ease-out");
   sourceObject.css("z-index", "999999");
-  // console.log(sourceObject);
+  console.log(sourceObject);
+  console.log(targetObject);
   //var target = $("#coinscore");
   var xTarget = targetObject.offset().left;
   var yTarget = targetObject.offset().top;
@@ -225,67 +235,72 @@ var skipCurrentSong = function (trackid) {
  * @param {string} guessentered
  */
 var postcheckanswer = function (guessentered) {
+  //Stop chrono
+  clearInterval(timer);
+  //Stop CountDown.
+  clearInterval(countdown);
+
+  answergiven = true;
+  userid = $("#totalscore").attr('userid');
   // console.log("Post check answer : " + guessentered);
   $("#MainPage").removeClass("invisible");
   $("#BrowserError").addClass("invisible");
-  //Stop CountDown.
-  clearInterval(countdown);
+
+
   guessentered = removeAccentsAndSpecialChars(guessentered);
   //Hide the Play field
-  $("#Play").addClass("invisible");
+  //$("#Play").addClass("invisible");
   //show the answer field
-  $("#answer").removeClass("invisible");
+  time = $('#answerTimer').attr('time-in-ms');
 
   $.post("/blindtest/game/" + gamesid + "/check.json", {
     guess: guessentered,
     trackid: currenttrackid,
+    timer: time
   })
     .done(function (jsondata) {
       updateHiscoreDisplay(jsondata.highscore);
-      $("#waitbeforenextcircle").removeClass("hidden");
-      $("#trackimage").removeClass("hidden");
-      $("#artistname").removeClass("hidden");
-      $("#titlename").removeClass("hidden");
-      $("#trackimage").attr("src", jsondata.picture);
-      $("#artistname").html(jsondata.artist);
-      $("#titlename").html(jsondata.title);
-      $("#track_link").attr("href", jsondata.track_link);
-      $("#artist").removeClass();
-      $("#title").removeClass();
 
-      checkartist = jsondata.checkartist;
-      checktitle = jsondata.checktitle;
-      points = jsondata.score;
+      $('#PlayerTimer').addClass('invisible');
+
+      check = jsondata.check;
+      score = jsondata.score;
       totalscore = jsondata.totalscore;
-      //Answer for artist is correct
-      if (checkartist) {
-        $("#artist").addClass("alert alert-success");
-        $("#artistpoints").removeClass('hidden');
-        //reward animation
-        moveObject($("#artistpoints1"), $("#coinscore"), 1);
-        moveObject($("#artistpoints2"), $("#cointotalscore"), 1);
-        points++;
-        totalscore++
-      } else {
-        $("#artist").addClass("alert alert-danger");
-        $("#artistpoints").addClass("hidden");
-      }
-      //Answer for title is correct
-      if (checktitle) {
-        $("#title").addClass("alert alert-success");
-        $("#titlepoints").removeClass('hidden');
-        //reward animation
-        moveObject($("#titlepoints1"), $("#coinscore"), 1);
-        moveObject($("#titlepoints2"), $("#cointotalscore"), 1);
-        points++;
-        totalscore++
-      } else {
-        $("#title").addClass("alert alert-danger");
-        $("#titlepoints").addClass("hidden");
-      }
-      $("#currentscore").html(points);
+      var countdownProgressBeforeNextSong = null;
+      $('.submitanswer').each(function (index) {
+        $(this).removeClass('card-light');
+        //Correct answer in the list
+        if ($(this).attr('trackid') == jsondata.trackid) {
+          $(this).addClass('card-success');
+          $(this).find('.image-container').removeClass('invisible');
+          $(this).find('.track_link').attr("href", jsondata.track_link);
+          $(this).find('.trackimage').attr("src", jsondata.picture);
+          $(this).find('.progress').removeClass('invisible');
+          countdownProgressBeforeNextSong = $(this).find('.progress');
+        }
+        //Wrong answer
+        if ($(this).attr('trackid') == jsondata.guess && !check) {
+          $(this).addClass('card-danger');
+        }
+        //Correct answer -- Do the animation for gold coins
+        if ($(this).attr('trackid') == jsondata.guess && check) {
+          // $(this).find('.points1').removeClass("invisible");
+          // $(this).find('.points1').removeClass("invisible");
+          //moveObject($(this).find('.points1'), $("#coinscore_" + userid), 1);
+          // moveObject($(this).find('.points2'), $("#cointotalscore"), 1);
+        }
+
+      });
+
+
+      console.log("USER ID : " + userid);
+      $("#currentscore_" + userid).html(score);
+      console.log("Points: " + score);
+      console.log($("#currentscore_" + totalscore));
       $("#totalscore").html(totalscore);
-      waitfor(4);
+
+
+      waitfor(4, countdownProgressBeforeNextSong);
     }, "json")
     .fail(function () {
       alert("ERROR");
@@ -312,20 +327,88 @@ var Catalog = (function () {
   /**
    * Handler on the form if an answer has been entered
    */
-  var handler_CheckAnswer = function () {
-    $("form#FormGuess").submit(function (event) {
-      guessentered = $("input#YourGuess").first().val().toLowerCase();
-      // console.log("Guess is " + guessentered);
-      postcheckanswer(guessentered);
+  var HandlerCheckAnswer = function () {
+    $('body').on('click', '.submitanswer', function (event) {
 
-      event.preventDefault();
+
+      if (!$(this).hasClass('boder')) {
+        console.log($(this));
+        $(this).addClass('boder border-primary border-5');
+        guessentered = $(this).attr('trackid');
+        console.log("SEND GUESS");
+        postcheckanswer(guessentered);
+      }
     });
   };
+
+  var HandlerisWriting = function () {
+    $('body').on('keyup', '#YourGuess', function () {
+      if (!writing) {
+        // console.log("Writing");
+        $.post('/blindtest/game/' + gamesid + '/writing');
+        writing = true;
+      }
+    });
+  };
+
+  var UpdatePlayerData = function (jsondata) {
+    console.log("updating Players data");
+    $('#userslist').html("");
+    userid = jsondata.userid;
+    delete jsondata.userid;
+    everyoneready = true;
+    jQuery.each(jsondata, function (i, val) {
+      // console.log(val);
+      var icon_writing = "";
+      var icon_read = "";
+      var icon_online = "";
+      if (val.online) {
+        everyoneready = everyoneready && val.status;
+      } else {
+        everyoneready = everyoneready && true;
+      }
+
+      //Stop this track, somebody has answered !
+      if (val.answered && val.id != userid && !answergiven) {
+        guessentered = $("input#YourGuess").first().val().toLowerCase();
+        postcheckanswer(guessentered);
+      }
+      if (val.writing) { icon_writing = '<i class="fas fa-comment-dots"></i>'; }
+      if (val.isready) { icon_read = '<i class="fas fa-check"></i>'; }
+      if (val.online) { icon_online = '<i class="fas fa-globe green"></i>'; }
+      scorevalue = '<img id="coinscore_' + userid + '" src="/img/goldcoin.png" width="20" height="20" alt=""><span id="currentscore_' + userid + '"> ' + val.score + '</span>';
+      $('#userslist').append('<li class="list-group-item" userid="' + val.id + '">' + icon_writing + val.nickname + " " + icon_online + " " + scorevalue + " " + icon_read + '</li>');
+    });
+  };
+
+  var UpdatePlayerstatus = function () {
+    setInterval(function () {
+      $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
+        .done(function (jsondata) {
+          UpdatePlayerData(jsondata);
+
+        });
+    }, 2500);
+  };
+
+  var HandlerCheckPlayerMessages = function () {
+    console.log("listening..");
+    $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
+      .done(function (jsondata) {
+        UpdatePlayerData(jsondata);
+        HandlerCheckPlayerMessages();
+      });
+  };
+
+
 
   return {
     init: function () {
       load_playlist();
-      handler_CheckAnswer();
+      HandlerCheckAnswer();
+      // UpdatePlayerstatus();
+      HandlerisWriting();
+      HandlerCheckPlayerMessages();
     },
   };
 })();

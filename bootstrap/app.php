@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
+use Dotenv\Dotenv;
 use App\ContainerFactory;
 use Slim\Factory\AppFactory;
+use App\SessionsHandler\DBSessionsHandler;
 use Dotenv\Exception\InvalidPathException;
 
-use Dotenv\Dotenv;
-
-session_cache_limiter('public');
-session_start();
 
 // Set the absolute path to the root directory.
 $rootPath = realpath(__DIR__ . '/..');
@@ -19,20 +17,32 @@ date_default_timezone_set('Europe/Zurich');
 
 require $rootPath . '/vendor/autoload.php';
 
+
 try {
-	$dotenv = Dotenv::createImmutable($rootPath .'/config/');
-	$dotenv->load();
+    $dotenv = Dotenv::createMutable($rootPath . '/config/');
+    $dotenv->load();
 } catch (InvalidPathException $e) {
-	die("Unable to load configuration file");
+    die("Unable to load configuration file");
 }
 
 //Load DB configuration
 require_once __DIR__ . '/database.php';
 
+session_cache_limiter('public');
+ini_set("session.cookie_httponly", "1");
+session_name('BLINDTEST_SID');
+
+//Use a custom SessionHandler Based on database.
+// $handler = new DBSessionsHandler(3600,'user',$rootPath."/logs/sessions.log",true);
+$handler = new DBSessionsHandler(3600,'userid',$rootPath."/logs/sessions.log",false);
+session_set_save_handler($handler, true);
+session_start();
+
+
+
 // Create the container for dependency injection.
 try {
     $container = ContainerFactory::create($rootPath);
-
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -51,8 +61,7 @@ $app = AppFactory::create();
 //Call middleware functions
 $_SERVER['app'] = &$app;
 
-if (!function_exists('app'))
-{
+if (!function_exists('app')) {
     function app()
     {
         return $_SERVER['app'];
@@ -63,8 +72,7 @@ if (!function_exists('app'))
 (require __DIR__ . '/middleware.php')($app);
 
 // Register routes
-$routes = require $rootPath . '/app/routes.php';
-$routes($app);
+(require __DIR__ . '/routes.php')($app);
 
 
 
@@ -73,8 +81,3 @@ $displayErrorDetails = true;
 $logErrors = true;
 $logErrorDetails = false;
 $app->addErrorMiddleware($displayErrorDetails, $logErrors, $logErrorDetails);
-
-
-
-
-
