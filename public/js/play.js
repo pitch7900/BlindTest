@@ -65,7 +65,6 @@ var StartCountDown = function (seconds) {
     if (i <= 0) {
       // clearInterval(countdown);
       // guessentered = $("input#YourGuess").first().val().toLowerCase();
-      // console.log("Guess is " + guessentered);
       postcheckanswer("");
     }
   }, 1000);
@@ -218,8 +217,7 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
   sourceObject.removeClass("hidden");
   sourceObject.css("transition", "left 1s ease-out, top " + speedInSeconds + "s ease-out");
   sourceObject.css("z-index", "999999");
-  console.log(sourceObject);
-  console.log(targetObject);
+
   //var target = $("#coinscore");
   var xTarget = targetObject.offset().left;
   var yTarget = targetObject.offset().top;
@@ -323,10 +321,8 @@ var postcheckanswer = function (guessentered) {
       });
 
 
-      console.log("USER ID : " + userid);
       $("#currentscore_" + userid).html(score);
-      console.log("Points: " + score);
-      console.log($("#currentscore_" + totalscore));
+    
       $("#totalscore").html(totalscore);
 
 
@@ -362,10 +358,10 @@ var Catalog = (function () {
 
 
       if (!$(this).hasClass('boder')) {
-        console.log($(this));
+       
         $(this).addClass('boder border-primary border-5');
         guessentered = $(this).attr('trackid');
-        console.log("SEND GUESS");
+        
         postcheckanswer(guessentered);
       }
     });
@@ -374,7 +370,6 @@ var Catalog = (function () {
   var HandlerisWriting = function () {
     $('body').on('keyup', '#YourGuess', function () {
       if (!writing) {
-        // console.log("Writing");
         $.post('/blindtest/game/' + gamesid + '/writing');
         writing = true;
       }
@@ -382,13 +377,12 @@ var Catalog = (function () {
   };
 
   var UpdatePlayerData = function (jsondata) {
-    console.log("updating Players data");
     $('#userslist').html("");
     userid = jsondata.userid;
     delete jsondata.userid;
     everyoneready = true;
     jQuery.each(jsondata, function (i, val) {
-      // console.log(val);
+    
       var icon_writing = "";
       var icon_read = "";
       var icon_online = "";
@@ -422,7 +416,7 @@ var Catalog = (function () {
   };
 
   var HandlerCheckPlayerMessages = function () {
-    console.log("listening..");
+   
     $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
       .done(function (jsondata) {
         UpdatePlayerData(jsondata);

@@ -294,20 +294,6 @@ class DeezerApi implements DeezerApiInterface
         return $this->PlaylistInfoFormat($playlistID);
     }
 
-    // private function getTrackArray($track)
-    // {
-    //     $array = [
-    //         "id" => $track["id"],
-    //         "artist" => $track["artist"],
-    //         "album" => $track["album"],
-    //         "title" => $track["title"],
-    //         "link" => $track["link"],
-    //         "duration" => $track["duration"],
-    //         "preview" => $track['preview'],
-    //         "readable" => $track['readable']
-    //     ];
-    //     return $array;
-    // }
 
     /**
      * getLargePlaylistTracks : For playlists with more than 400 tracks
@@ -345,7 +331,7 @@ class DeezerApi implements DeezerApiInterface
         $artistdb = Artist::find($artist['id']);
 
         if (is_null($artistdb)) {
-            $this->logger->debug("DeezerApi::DBaddArtist Adding Artist : " . $this->forceLatinChars($artist['name']) . "(" . $artist['id'] . ")");
+            // $this->logger->debug("DeezerApi::DBaddArtist Adding Artist : " . $this->forceLatinChars($artist['name']) . "(" . $artist['id'] . ")");
             Artist::updateOrCreate([
                 'id' => $artist['id'],
                 'artist_name' => $this->forceLatinChars($artist['name']),
@@ -388,7 +374,7 @@ class DeezerApi implements DeezerApiInterface
     {
         $albumdb = Album::find($album['id']);
         if (is_null($albumdb)) {
-            $this->logger->debug("DeezerApi::DBaddAlbum Adding album : " . $this->forceLatinChars($album['title']) . " (" . $album['id'] . ")");
+            // $this->logger->debug("DeezerApi::DBaddAlbum Adding album : " . $this->forceLatinChars($album['title']) . " (" . $album['id'] . ")");
             Album::updateOrCreate([
                 'id' => $album['id'],
                 'album_title' => $this->forceLatinChars($album['title']),
@@ -411,7 +397,7 @@ class DeezerApi implements DeezerApiInterface
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
         if (is_null($trackdb)) {
-            $this->logger->debug("DeezerApi::DBaddTrack Add track : " . $this->forceLatinChars($track['title']) . " (" . $track['id'] . ")");
+            // $this->logger->debug("DeezerApi::DBaddTrack Add track : " . $this->forceLatinChars($track['title']) . " (" . $track['id'] . ")");
             Track::updateOrCreate([
                 'id' => $track['id'],
                 'track_title' => $this->forceLatinChars($track['title']),
@@ -485,7 +471,7 @@ class DeezerApi implements DeezerApiInterface
         $playlist_exist = $this->DBaddPlaylist($playlistID);
         $playlist_array = $this->api("/playlist/" . $playlistID);
         if ($playlist_array['nb_tracks'] <= 400) {
-            $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do normal search");
+            // $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do normal search");
 
             foreach ($playlist_array['tracks']['data'] as $track) {
                 // $this->logger->debug("DeezerApi::DBaddPlaylistTracks \n" . json_encode($track, JSON_PRETTY_PRINT));
@@ -493,7 +479,7 @@ class DeezerApi implements DeezerApiInterface
                 array_push($tracks, $track);
             }
         } else {
-            $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do Extended search");
+            // $this->logger->debug("DeezerApi::DBaddPlaylistTracks Playlist has " . $playlist_array['nb_tracks'] . " tracks. Do Extended search");
             $tracks = $this->getLargePlaylistTracks($playlistID);
         }
 
@@ -549,12 +535,12 @@ class DeezerApi implements DeezerApiInterface
             $latestupdate = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $playlisttracks->orderBy('updated_at', 'DESC')->first()->updated_at);
 
             if ($latestupdate->lte($oneweekbefore)) {
-                $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID Lastest update is " . $playlisttracks->orderBy('updated_at', 'DESC')->first()->updated_at);
-                $this->logger->debug("DeeezerApi::getPlaylistItems Forcing udpate");
+                // $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID Lastest update is " . $playlisttracks->orderBy('updated_at', 'DESC')->first()->updated_at);
+                // $this->logger->debug("DeeezerApi::getPlaylistItems Forcing udpate");
                 $this->DBaddPlaylistTracks($playlistID);
             }
 
-            $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
+            // $this->logger->debug("DeeezerApi::getPlaylistItems Playlist already in DB cache");
         }
 
         $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
