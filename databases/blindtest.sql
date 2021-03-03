@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 05, 2020 at 04:40 PM
+-- Generation Time: Mar 03, 2021 at 08:45 AM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `blindtest`
 --
-CREATE DATABASE IF NOT EXISTS `blindtest` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `blindtest`;
 
 -- --------------------------------------------------------
 
@@ -157,6 +155,37 @@ CREATE TABLE IF NOT EXISTS `playlisttracks` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `session`
+--
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE IF NOT EXISTS `session` (
+  `Session_Id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `Session_Expires` datetime NOT NULL,
+  `Session_Data` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+  PRIMARY KEY (`Session_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` varchar(32) NOT NULL,
+  `timestamp` int(10) UNSIGNED DEFAULT NULL,
+  `data` mediumtext,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `timestamp` (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `track`
 --
 
@@ -199,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `approvaleuuid` varchar(250) DEFAULT NULL,
   `adminapproved` tinyint(1) DEFAULT NULL,
   `lastaction` timestamp NULL DEFAULT NULL,
+  `darktheme` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
