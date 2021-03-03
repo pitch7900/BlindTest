@@ -35,19 +35,16 @@
 
 		<!-- Actual play pane -->
 		<div id="Play" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
-		
-				<div id="countdownprogress" class="col-12 invisible">
+			<div id="PlayTimer" class="row invisible">
+				<div id="countdownprogress" class="col-10">
 					<div class="progress ">
 						<div id="countdown" class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="30"></div>
 					</div>
 				</div>
-
-	
-
-			<div id="suggestionspane" class="col-12">
-			
+				<div id="answerTimer" class="col-2 badge bg-primary" time-in-ms="0">0.00s</div>
 
 			</div>
+			<div id="suggestionspane" class="col-12"></div>
 		</div>
 		<!-- Before the game start pane -->
 		<div id="Start" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">

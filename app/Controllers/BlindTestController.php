@@ -155,6 +155,7 @@ class BlindTestController extends AbstractTwigController
 
         $arguments['playlistid'] = $playlistid;
         $arguments['gamesid'] = $gamesid;
+        $arguments['userid'] = Auth::getUserId();
         $arguments['highscores'] = $this->getPlaylistHighScore($playlistid);
         $arguments['playlist_picture'] = Playlist::find($playlistid)->playlist_picture;
         $arguments['playlist_link'] = Playlist::find($playlistid)->playlist_link;
@@ -331,7 +332,7 @@ class BlindTestController extends AbstractTwigController
             'guess' => $guess,
             'trackid' => $trackid,
             'check' => $check,
-            'points' => intval($pointswon),
+            'score' =>  $this->getCurrentUserScore($gamesid),
             'highscore' => $highscore,
             'totalscore' => User::getUserTotalPoints(Auth::getUserId()),
             'answer' => $artist->artist_name . " - " . $track->track_title,
