@@ -32,7 +32,15 @@ class User extends AbstractModel {
      * @return bool
      */
     public static function isOnline($userid):bool{
-        $lastaction = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, USER::find($userid)->lastaction);
+        if (is_null(USER::find($userid)->lastaction)){
+            $user = USER::find($userid);
+            $user->lastaction =Carbon::now();
+            $user->save();
+
+        } 
+            $lastaction = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, USER::find($userid)->lastaction);
+        
+        
         $timetocompare =  Carbon::createFromTimestamp(time()-15);
         if ($lastaction->gte($timetocompare)) {
             return true;
