@@ -192,8 +192,8 @@ class BlindTestController extends AbstractTwigController
         return $this->withJson($response, $arguments);
     }
 
-   
-   
+
+
     /**
      * getPlaylistHighScore - return the HighScore for this playlist
      *
@@ -258,6 +258,24 @@ class BlindTestController extends AbstractTwigController
         $currentgame->points = 0;
         $currentgame->save();
     }
+    
+    /**
+     * ComputePointsToWin - Compute the amount points player won depending on the time (in 100th of seconds) take to answer.
+     *
+     * @param  mixed $time
+     * @return int
+     */
+    private function  ComputePointsToWin(int $time):int
+    { 
+        $points =  floor(5 - 5 * log($time/100 + 1) / log(30 + 1)) + 1;
+        $this->logger->debug("BlindTestController::ComputePointsToWin time  : " . $time);
+        $this->logger->debug("BlindTestController::ComputePointsToWin points  : " . $points);
+        if ($points<0) {
+            return 0;
+        }
+        return intval($points);
+    }
+
     /**
      * Check current user answer and increment the current playlist item for current game
      * @param ServerRequestInterface $request
@@ -268,6 +286,7 @@ class BlindTestController extends AbstractTwigController
     public function postGameCheckCurrent(Request $request, Response $response, $args)
     {
         $guess = $request->getParam('guess');
+        $timer = intval($request->getParam('timer'));
         $this->logger->debug("BlindTestController::postGameCheckCurrent Guess passed is  : " . $guess);
         $trackid = $request->getParam('trackid');
         $this->logger->debug("BlindTestController::postGameCheckCurrent TrackID passed is  : " . $trackid);
@@ -301,7 +320,7 @@ class BlindTestController extends AbstractTwigController
 
         if (!is_null($guess)) {
             if ($guess == $trackid) {
-                $pointswon++;
+                $pointswon=$this->ComputePointsToWin($timer);
                 $check = true;
             }
         } else {
@@ -311,21 +330,11 @@ class BlindTestController extends AbstractTwigController
 
 
 
-        // $score = $this->getCurrentUserScore($gamesid);
-        //Another user has already answered
-        if ($currentgame->points != null) {
-            //But less points than the current user, update the points attribution to the current user.
-            if ($currentgame->points < $pointswon) {
-                $currentgame->userid = Auth::getUserId();
-                $currentgame->points = $pointswon;
-                $currentgame->save();
-            }
-        } else {
-            //First to answer, write your score to the DB
+     
             $currentgame->userid = Auth::getUserId();
             $currentgame->points = $pointswon;
             $currentgame->save();
-        }
+            $this->logger->debug("BlindTestController::postGameCheckCurrent points won : ".$pointswon);
 
         $highscore = $this->getPlaylistHighScore($playlistid);
         return $this->withJson($response, [
@@ -333,11 +342,12 @@ class BlindTestController extends AbstractTwigController
             'trackid' => $trackid,
             'check' => $check,
             'score' =>  $this->getCurrentUserScore($gamesid),
+            'pointswon' => $pointswon,
             'highscore' => $highscore,
             'totalscore' => User::getUserTotalPoints(Auth::getUserId()),
             'answer' => $artist->artist_name . " - " . $track->track_title,
             'picture' => $album->album_cover,
-            'track_link' => $track->track_link           
+            'track_link' => $track->track_link
         ]);
     }
 

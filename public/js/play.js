@@ -9,6 +9,10 @@ var userid;
 var writing;
 var answergiven;
 var everyoneready;
+//maximum song duration in seconds for a game
+var MaxSongDuration = 30;
+//maximum Point we can win in a round
+var MaxPointToWinPerSong = 5;
 
 /**
  * Update hiscore during the game
@@ -19,20 +23,45 @@ var updateHiscoreDisplay = function (highscore) {
   $("#highscore").html(highscore.score);
 }
 
+var ComputePointsToWin = function (time) {
+  return Math.floor(MaxPointToWinPerSong - MaxPointToWinPerSong * Math.log(time + 1) / Math.log(MaxSongDuration + 1)) + 1;
+}
+
 /**
  * Countdown for this game
  */
 var StartCountDown = function (seconds) {
   var i = seconds;
-  $("#countdown").attr("aria-valuenow", 30);
+  $("#countdown").attr("aria-valuenow", MaxSongDuration);
   $("#countdown").attr("style", "width: 100%");
 
   countdown = setInterval(function () {
     i--;
+    pointstowin = ComputePointsToWin(30 - i);
+    switch (pointstowin) {
+      case 4:
+        bgcolor = "bg-success";
+        break;
+      case 3:
+        bgcolor = "bg-info";
+        break;
+      case 2:
+        bgcolor = "bg-warning";
+        break;
+      case 1:
+        bgcolor = "bg-danger";
+        break;
+      default:
+        bgcolor = "";
+    }
+    $("#countdown").removeClass();
+    $("#countdown").addClass("progress-bar " + bgcolor);
+
 
     $("#countdown").attr("aria-valuenow", i);
     $("#countdown").attr("style", "width: " + Math.floor(i / seconds * 100) + "%");
-    $("#countdown").html(i + " s");
+    $("#countdown").attr("pointstowin", pointstowin);
+    $("#countdown").html(pointstowin + " Points");
     if (i <= 0) {
       // clearInterval(countdown);
       // guessentered = $("input#YourGuess").first().val().toLowerCase();
@@ -46,7 +75,7 @@ var StartAnserTimer = function () {
   var time = 0;
   timer = setInterval(function () {
     $("#answerTimer").html((time / 100).toFixed(2) + " s");
-    $("#answerTimer").attr('time-in-ms',time);
+    $("#answerTimer").attr('time-in-ms', time);
     time++;
   }, 10);
 }
@@ -141,7 +170,7 @@ var playtitle = function () {
             $("#answer").addClass("invisible");
             //Allow interraction with sending the answer
             $("#PlayTimer").removeClass("invisible");
-            StartCountDown(30 - Math.floor(jsondata.offset / 1000));
+            StartCountDown(MaxSongDuration - Math.floor(jsondata.offset / 1000));
             StartAnserTimer();
           })
           .catch((error) => {
@@ -284,10 +313,11 @@ var postcheckanswer = function (guessentered) {
         }
         //Correct answer -- Do the animation for gold coins
         if ($(this).attr('trackid') == jsondata.guess && check) {
-          // $(this).find('.points1').removeClass("invisible");
-          // $(this).find('.points1').removeClass("invisible");
-          //moveObject($(this).find('.points1'), $("#coinscore_" + userid), 1);
-          // moveObject($(this).find('.points2'), $("#cointotalscore"), 1);
+          var i;
+          for ( i=1; i<=jsondata.pointswon; i++ ){
+            $(this).find('.points_'+i).removeClass("invisible");
+            moveObject($(this).find('.points_'+i), $("#coinscore_" + userid), 1);
+          }
         }
 
       });
