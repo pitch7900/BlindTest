@@ -160,7 +160,7 @@ var playtitle = function () {
         updateHiscoreDisplay(jsondata.highscore);
         currenttrackid = jsondata.trackid;
         currentplaylistid = jsondata.playlistid;
-        audio.src = "/blindtest/play/" + jsondata.trackid + ".mp3";
+        audio.src = jsondata.tracklink ; //"/blindtest/play/" + jsondata.trackid + ".mp3";
         audio.currentTime = Math.floor(jsondata.offset / 1000)
         audio
           .play()
