@@ -13,6 +13,7 @@ var AddCustomPlaylist = function () {
 };
 
 
+
 var Catalog = (function () {
     /**
      * Listen to the update playlist action button
@@ -58,11 +59,21 @@ var Catalog = (function () {
             }
         });
     };
-
+    var ClickOnPlayList = function (){
+        $('body').on('click', '.playlistlink', function () {
+            
+            var CreatingGameModal = new bootstrap.Modal(document.getElementById('CreatingGameModal'), {
+                keyboard: false
+              });
+              CreatingGameModal.show();
+              
+        });
+    }
     return {
         init: function () {
             HandlerUpdatePlaylist();
             HandlerFilterPlaylists();
+            ClickOnPlayList();
         }
     };
 })();
@@ -73,4 +84,8 @@ var Catalog = (function () {
  */
 $(document).ready(function () {
     Catalog.init();
+    var CreatingGameModal = new bootstrap.Modal(document.getElementById('CreatingGameModal'), {
+        keyboard: false
+      });
+      CreatingGameModal.hide();
 });

@@ -11,6 +11,7 @@ use App\Database\PlaylistTracks;
 use Psr\Log\LoggerInterface;;
 
 use App\Database\Game;
+use App\Database\TrackErrors;
 use \hamburgscleanest\GuzzleAdvancedThrottle as GuzzleAdvancedThrottle;
 use Carbon\Carbon;
 
@@ -396,7 +397,8 @@ class DeezerApi implements DeezerApiInterface
         $this->DBaddAlbum($track['album']);
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
-        if (is_null($trackdb)) {
+        $trackerror = TrackErrors::find($track['id']);
+        if (is_null($trackdb) && is_null($trackerror)) {
             // $this->logger->debug("DeezerApi::DBaddTrack Add track : " . $this->forceLatinChars($track['title']) . " (" . $track['id'] . ")");
             Track::updateOrCreate([
                 'id' => $track['id'],
@@ -522,10 +524,16 @@ class DeezerApi implements DeezerApiInterface
     public function getPlaylistItems(int $playlistID, bool $forceudpate = false): array
     {
         $playlist = Playlist::find($playlistID);
-        $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID);
+        $trackerrors = TrackErrors::select('id')->get();
+        $tmp_array = array();
+        foreach ($trackerrors as $trackerror) {
+            array_push($tmp_array,$trackerror->id);
+        }
+        $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
+        ->whereNotIn('playlisttracks_track', $tmp_array);
 
 
-        //playlist is not in the DB yet, or there is no track, or hte lateset update is one week all. Add or update it.
+        //playlist is not in the DB yet, or there is no track, or the lateset update is more than one week old. Add or update it.
         if (empty($playlist) || $playlisttracks->count() == 0 || $forceudpate) {
             $this->logger->debug("DeeezerApi::getPlaylistItems Playlist $playlistID not in DB cache adding it");
             $this->DBaddPlaylistTracks($playlistID);
@@ -544,6 +552,7 @@ class DeezerApi implements DeezerApiInterface
         }
 
         $tracklist = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
+            ->whereNotIn('playlisttracks_track', $tmp_array)
             ->join('playlist', 'playlisttracks.playlisttracks_playlist', '=', 'playlist.id')
             ->join('track', 'playlisttracks.playlisttracks_track', '=', 'track.id')
             ->join('album', 'track.track_album', '=', 'album.id')
