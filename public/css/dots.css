@@ -1,28 +1,17 @@
 @charset "UTF-8";
 /**
- *
- * three-dots.css v0.1.0
- *
- * https://nzbin.github.io/three-dots/
- *
- * Copyright (c) 2018 nzbin
- *
- * Released under the MIT license
- *
- */
-/**
  * ==============================================
  * Dot Elastic
  * ==============================================
  */
 .dot-elastic {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotElastic 1s infinite linear;
+  animation: dot-elastic 1s infinite linear;
 }
 
 .dot-elastic::before, .dot-elastic::after {
@@ -33,26 +22,26 @@
 }
 
 .dot-elastic::before {
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: -45px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotElasticBefore 1s infinite linear;
+  animation: dot-elastic-before 1s infinite linear;
 }
 
 .dot-elastic::after {
-  left: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: 45px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotElasticAfter 1s infinite linear;
+  animation: dot-elastic-after 1s infinite linear;
 }
 
-@keyframes dotElasticBefore {
+@keyframes dot-elastic-before {
   0% {
     transform: scale(1, 1);
   }
@@ -70,7 +59,7 @@
   }
 }
 
-@keyframes dotElastic {
+@keyframes dot-elastic {
   0% {
     transform: scale(1, 1);
   }
@@ -88,7 +77,7 @@
   }
 }
 
-@keyframes dotElasticAfter {
+@keyframes dot-elastic-after {
   0% {
     transform: scale(1, 1);
   }
@@ -114,13 +103,13 @@
 .dot-pulse {
   position: relative;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
   box-shadow: 9999px 0 0 -5px #9880ff;
-  animation: dotPulse 1.5s infinite linear;
+  animation: dot-pulse 1.5s infinite linear;
   animation-delay: .25s;
 }
 
@@ -129,39 +118,39 @@
   display: inline-block;
   position: absolute;
   top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
 
 .dot-pulse::before {
-  box-shadow: 9984px 0 0 -5px #9880ff;
-  animation: dotPulseBefore 1.5s infinite linear;
+  box-shadow: 9954px 0 0 -5px #9880ff;
+  animation: dot-pulse-before 1.5s infinite linear;
   animation-delay: 0s;
 }
 
 .dot-pulse::after {
-  box-shadow: 10014px 0 0 -5px #9880ff;
-  animation: dotPulseAfter 1.5s infinite linear;
+  box-shadow: 10044px 0 0 -5px #9880ff;
+  animation: dot-pulse-after 1.5s infinite linear;
   animation-delay: .5s;
 }
 
-@keyframes dotPulseBefore {
+@keyframes dot-pulse-before {
   0% {
-    box-shadow: 9984px 0 0 -5px #9880ff;
+    box-shadow: 9954px 0 0 -5px #9880ff;
   }
   30% {
-    box-shadow: 9984px 0 0 2px #9880ff;
+    box-shadow: 9954px 0 0 2px #9880ff;
   }
   60%,
   100% {
-    box-shadow: 9984px 0 0 -5px #9880ff;
+    box-shadow: 9954px 0 0 -5px #9880ff;
   }
 }
 
-@keyframes dotPulse {
+@keyframes dot-pulse {
   0% {
     box-shadow: 9999px 0 0 -5px #9880ff;
   }
@@ -174,16 +163,16 @@
   }
 }
 
-@keyframes dotPulseAfter {
+@keyframes dot-pulse-after {
   0% {
-    box-shadow: 10014px 0 0 -5px #9880ff;
+    box-shadow: 10044px 0 0 -5px #9880ff;
   }
   30% {
-    box-shadow: 10014px 0 0 2px #9880ff;
+    box-shadow: 10044px 0 0 2px #9880ff;
   }
   60%,
   100% {
-    box-shadow: 10014px 0 0 -5px #9880ff;
+    box-shadow: 10044px 0 0 -5px #9880ff;
   }
 }
 
@@ -194,12 +183,12 @@
  */
 .dot-flashing {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFlashing 1s infinite linear alternate;
+  animation: dot-flashing 1s infinite linear alternate;
   animation-delay: .5s;
 }
 
@@ -211,28 +200,28 @@
 }
 
 .dot-flashing::before {
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: -45px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFlashing 1s infinite alternate;
+  animation: dot-flashing 1s infinite alternate;
   animation-delay: 0s;
 }
 
 .dot-flashing::after {
-  left: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: 45px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFlashing 1s infinite alternate;
+  animation: dot-flashing 1s infinite alternate;
   animation-delay: 1s;
 }
 
-@keyframes dotFlashing {
+@keyframes dot-flashing {
   0% {
     background-color: #9880ff;
   }
@@ -249,9 +238,9 @@
  */
 .dot-collision {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
@@ -264,27 +253,27 @@
 }
 
 .dot-collision::before {
-  left: -10px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: -30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotCollisionBefore 2s infinite ease-in;
+  animation: dot-collision-before 2s infinite ease-in;
 }
 
 .dot-collision::after {
-  left: 10px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  left: 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotCollisionAfter 2s infinite ease-in;
+  animation: dot-collision-after 2s infinite ease-in;
   animation-delay: 1s;
 }
 
-@keyframes dotCollisionBefore {
+@keyframes dot-collision-before {
   0%,
   50%,
   75%,
@@ -292,11 +281,11 @@
     transform: translateX(0);
   }
   25% {
-    transform: translateX(-15px);
+    transform: translateX(-45px);
   }
 }
 
-@keyframes dotCollisionAfter {
+@keyframes dot-collision-after {
   0%,
   50%,
   75%,
@@ -304,7 +293,7 @@
     transform: translateX(0);
   }
   25% {
-    transform: translateX(15px);
+    transform: translateX(45px);
   }
 }
 
@@ -315,9 +304,9 @@
  */
 .dot-revolution {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
@@ -330,29 +319,29 @@
 
 .dot-revolution::before {
   left: 0;
-  top: -15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  top: -45px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  transform-origin: 5px 20px;
-  animation: dotRevolution 1.4s linear infinite;
+  transform-origin: 15px 60px;
+  animation: dot-revolution 1.4s linear infinite;
 }
 
 .dot-revolution::after {
   left: 0;
-  top: -30px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  top: -90px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  transform-origin: 5px 35px;
-  animation: dotRevolution 1s linear infinite;
+  transform-origin: 15px 105px;
+  animation: dot-revolution 1s linear infinite;
 }
 
-@keyframes dotRevolution {
+@keyframes dot-revolution {
   0% {
     transform: rotateZ(0deg) translate3d(0, 0, 0);
   }
@@ -369,24 +358,24 @@
 .dot-carousel {
   position: relative;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
-  animation: dotCarousel 1.5s infinite linear;
+  box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
+  animation: dot-carousel 1.5s infinite linear;
 }
 
-@keyframes dotCarousel {
+@keyframes dot-carousel {
   0% {
-    box-shadow: 9984px 0 0 -1px #9880ff, 9999px 0 0 1px #9880ff, 10014px 0 0 -1px #9880ff;
+    box-shadow: 9954px 0 0 -1px #9880ff, 9999px 0 0 1px #9880ff, 10044px 0 0 -1px #9880ff;
   }
   50% {
-    box-shadow: 10014px 0 0 -1px #9880ff, 9984px 0 0 -1px #9880ff, 9999px 0 0 1px #9880ff;
+    box-shadow: 10044px 0 0 -1px #9880ff, 9954px 0 0 -1px #9880ff, 9999px 0 0 1px #9880ff;
   }
   100% {
-    box-shadow: 9999px 0 0 1px #9880ff, 10014px 0 0 -1px #9880ff, 9984px 0 0 -1px #9880ff;
+    box-shadow: 9999px 0 0 1px #9880ff, 10044px 0 0 -1px #9880ff, 9954px 0 0 -1px #9880ff;
   }
 }
 
@@ -398,36 +387,36 @@
 .dot-typing {
   position: relative;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
-  animation: dotTyping 1.5s infinite linear;
+  box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
+  animation: dot-typing 1.5s infinite linear;
 }
 
-@keyframes dotTyping {
+@keyframes dot-typing {
   0% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
   16.667% {
-    box-shadow: 9984px -10px 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px -10px 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
   33.333% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
   50% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px -10px 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px -10px 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
   66.667% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
   83.333% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px -10px 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px -10px 0 0 #9880ff;
   }
   100% {
-    box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10044px 0 0 0 #9880ff;
   }
 }
 
@@ -439,13 +428,13 @@
 .dot-windmill {
   position: relative;
   top: -10px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
   transform-origin: 5px 15px;
-  animation: dotWindmill 2s infinite linear;
+  animation: dot-windmill 2s infinite linear;
 }
 
 .dot-windmill::before, .dot-windmill::after {
@@ -457,9 +446,9 @@
 .dot-windmill::before {
   left: -8.66px;
   top: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
@@ -467,14 +456,14 @@
 .dot-windmill::after {
   left: 8.66px;
   top: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
 
-@keyframes dotWindmill {
+@keyframes dot-windmill {
   0% {
     transform: rotateZ(0deg) translate3d(0, 0, 0);
   }
@@ -490,56 +479,56 @@
  */
 .dot-bricks {
   position: relative;
-  top: 8px;
+  top: 18px;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  box-shadow: 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff;
-  animation: dotBricks 2s infinite ease;
+  box-shadow: 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff;
+  animation: dot-bricks 2s infinite ease;
 }
 
-@keyframes dotBricks {
+@keyframes dot-bricks {
   0% {
-    box-shadow: 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff;
+    box-shadow: 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff;
   }
   8.333% {
-    box-shadow: 10007px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff;
+    box-shadow: 10017px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff;
   }
   16.667% {
-    box-shadow: 10007px -16px 0 0 #9880ff, 9991px -16px 0 0 #9880ff, 10007px 0 0 0 #9880ff;
+    box-shadow: 10017px -36px 0 0 #9880ff, 9981px -36px 0 0 #9880ff, 10017px 0 0 0 #9880ff;
   }
   25% {
-    box-shadow: 10007px -16px 0 0 #9880ff, 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff;
+    box-shadow: 10017px -36px 0 0 #9880ff, 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff;
   }
   33.333% {
-    box-shadow: 10007px 0 0 0 #9880ff, 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff;
+    box-shadow: 10017px 0 0 0 #9880ff, 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff;
   }
   41.667% {
-    box-shadow: 10007px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff;
+    box-shadow: 10017px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff;
   }
   50% {
-    box-shadow: 10007px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff, 9991px -16px 0 0 #9880ff;
+    box-shadow: 10017px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff, 9981px -36px 0 0 #9880ff;
   }
   58.333% {
-    box-shadow: 9991px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff, 9991px -16px 0 0 #9880ff;
+    box-shadow: 9981px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff, 9981px -36px 0 0 #9880ff;
   }
   66.666% {
-    box-shadow: 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff, 9991px -16px 0 0 #9880ff;
+    box-shadow: 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff, 9981px -36px 0 0 #9880ff;
   }
   75% {
-    box-shadow: 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff;
+    box-shadow: 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff;
   }
   83.333% {
-    box-shadow: 9991px -16px 0 0 #9880ff, 10007px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff;
+    box-shadow: 9981px -36px 0 0 #9880ff, 10017px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff;
   }
   91.667% {
-    box-shadow: 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff, 10007px -16px 0 0 #9880ff;
+    box-shadow: 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff, 10017px -36px 0 0 #9880ff;
   }
   100% {
-    box-shadow: 9991px -16px 0 0 #9880ff, 9991px 0 0 0 #9880ff, 10007px 0 0 0 #9880ff;
+    box-shadow: 9981px -36px 0 0 #9880ff, 9981px 0 0 0 #9880ff, 10017px 0 0 0 #9880ff;
   }
 }
 
@@ -550,12 +539,12 @@
  */
 .dot-floating {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFloating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
+  animation: dot-floating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
 }
 
 .dot-floating::before, .dot-floating::after {
@@ -567,37 +556,37 @@
 
 .dot-floating::before {
   left: -12px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFloatingBefore 3s infinite ease-in-out;
+  animation: dot-floating-before 3s infinite ease-in-out;
 }
 
 .dot-floating::after {
   left: -24px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFloatingAfter 3s infinite cubic-bezier(0.4, 0, 1, 1);
+  animation: dot-floating-after 3s infinite cubic-bezier(0.4, 0, 1, 1);
 }
 
-@keyframes dotFloating {
+@keyframes dot-floating {
   0% {
-    left: calc(-50% - 5px);
+    left: calc(-50% - 15px);
   }
   75% {
-    left: calc(50% + 105px);
+    left: calc(50% + 115px);
   }
   100% {
-    left: calc(50% + 105px);
+    left: calc(50% + 115px);
   }
 }
 
-@keyframes dotFloatingBefore {
+@keyframes dot-floating-before {
   0% {
     left: -50px;
   }
@@ -612,7 +601,7 @@
   }
 }
 
-@keyframes dotFloatingAfter {
+@keyframes dot-floating-after {
   0% {
     left: -100px;
   }
@@ -635,13 +624,13 @@
 .dot-fire {
   position: relative;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  box-shadow: 9999px 22.5px 0 -5px #9880ff;
-  animation: dotFire 1.5s infinite linear;
+  box-shadow: 9999px 67.5px 0 -5px #9880ff;
+  animation: dot-fire 1.5s infinite linear;
   animation-delay: -.85s;
 }
 
@@ -650,34 +639,34 @@
   display: inline-block;
   position: absolute;
   top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
 }
 
 .dot-fire::before {
-  box-shadow: 9999px 22.5px 0 -5px #9880ff;
-  animation: dotFire 1.5s infinite linear;
+  box-shadow: 9999px 67.5px 0 -5px #9880ff;
+  animation: dot-fire 1.5s infinite linear;
   animation-delay: -1.85s;
 }
 
 .dot-fire::after {
-  box-shadow: 9999px 22.5px 0 -5px #9880ff;
-  animation: dotFire 1.5s infinite linear;
+  box-shadow: 9999px 67.5px 0 -5px #9880ff;
+  animation: dot-fire 1.5s infinite linear;
   animation-delay: -2.85s;
 }
 
-@keyframes dotFire {
+@keyframes dot-fire {
   1% {
-    box-shadow: 9999px 22.5px 0 -5px #9880ff;
+    box-shadow: 9999px 67.5px 0 -5px #9880ff;
   }
   50% {
-    box-shadow: 9999px -5.625px 0 2px #9880ff;
+    box-shadow: 9999px -16.875px 0 2px #9880ff;
   }
   100% {
-    box-shadow: 9999px -22.5px 0 -5px #9880ff;
+    box-shadow: 9999px -67.5px 0 -5px #9880ff;
   }
 }
 
@@ -688,40 +677,40 @@
  */
 .dot-spin {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: transparent;
   color: transparent;
-  box-shadow: 0 -18px 0 0 #9880ff, 12.72984px -12.72984px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.72984px 12.72984px 0 0 rgba(152, 128, 255, 0), 0 18px 0 0 rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 0 rgba(152, 128, 255, 0), -18px 0 0 0 rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 0 rgba(152, 128, 255, 0);
-  animation: dotSpin 1.5s infinite linear;
+  box-shadow: 0 -54px 0 0 #9880ff, 38.18953px -38.18953px 0 0 #9880ff, 54px 0 0 0 #9880ff, 38.18953px 38.18953px 0 0 rgba(152, 128, 255, 0), 0 54px 0 0 rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 0 rgba(152, 128, 255, 0), -54px 0 0 0 rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 0 rgba(152, 128, 255, 0);
+  animation: dot-spin 1.5s infinite linear;
 }
 
-@keyframes dotSpin {
+@keyframes dot-spin {
   0%,
   100% {
-    box-shadow: 0 -18px 0 0 #9880ff, 12.72984px -12.72984px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+    box-shadow: 0 -54px 0 0 #9880ff, 38.18953px -38.18953px 0 0 #9880ff, 54px 0 0 0 #9880ff, 38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), 0 54px 0 -5px rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), -54px 0 0 -5px rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0);
   }
   12.5% {
-    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.72984px 12.72984px 0 0 #9880ff, 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+    box-shadow: 0 -54px 0 -5px rgba(152, 128, 255, 0), 38.18953px -38.18953px 0 0 #9880ff, 54px 0 0 0 #9880ff, 38.18953px 38.18953px 0 0 #9880ff, 0 54px 0 -5px rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), -54px 0 0 -5px rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0);
   }
   25% {
-    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 0 #9880ff, 12.72984px 12.72984px 0 0 #9880ff, 0 18px 0 0 #9880ff, -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+    box-shadow: 0 -54px 0 -5px rgba(152, 128, 255, 0), 38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0), 54px 0 0 0 #9880ff, 38.18953px 38.18953px 0 0 #9880ff, 0 54px 0 0 #9880ff, -38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), -54px 0 0 -5px rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0);
   }
   37.5% {
-    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 0 #9880ff, 0 18px 0 0 #9880ff, -12.72984px 12.72984px 0 0 #9880ff, -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+    box-shadow: 0 -54px 0 -5px rgba(152, 128, 255, 0), 38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0), 54px 0 0 -5px rgba(152, 128, 255, 0), 38.18953px 38.18953px 0 0 #9880ff, 0 54px 0 0 #9880ff, -38.18953px 38.18953px 0 0 #9880ff, -54px 0 0 -5px rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0);
   }
   50% {
-    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 0 #9880ff, -12.72984px 12.72984px 0 0 #9880ff, -18px 0 0 0 #9880ff, -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+    box-shadow: 0 -54px 0 -5px rgba(152, 128, 255, 0), 38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0), 54px 0 0 -5px rgba(152, 128, 255, 0), 38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), 0 54px 0 0 #9880ff, -38.18953px 38.18953px 0 0 #9880ff, -54px 0 0 0 #9880ff, -38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0);
   }
   62.5% {
-    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 0 #9880ff, -18px 0 0 0 #9880ff, -12.72984px -12.72984px 0 0 #9880ff;
+    box-shadow: 0 -54px 0 -5px rgba(152, 128, 255, 0), 38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0), 54px 0 0 -5px rgba(152, 128, 255, 0), 38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), 0 54px 0 -5px rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 0 #9880ff, -54px 0 0 0 #9880ff, -38.18953px -38.18953px 0 0 #9880ff;
   }
   75% {
-    box-shadow: 0 -18px 0 0 #9880ff, 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 0 #9880ff, -12.72984px -12.72984px 0 0 #9880ff;
+    box-shadow: 0 -54px 0 0 #9880ff, 38.18953px -38.18953px 0 -5px rgba(152, 128, 255, 0), 54px 0 0 -5px rgba(152, 128, 255, 0), 38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), 0 54px 0 -5px rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), -54px 0 0 0 #9880ff, -38.18953px -38.18953px 0 0 #9880ff;
   }
   87.5% {
-    box-shadow: 0 -18px 0 0 #9880ff, 12.72984px -12.72984px 0 0 #9880ff, 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 0 #9880ff;
+    box-shadow: 0 -54px 0 0 #9880ff, 38.18953px -38.18953px 0 0 #9880ff, 54px 0 0 -5px rgba(152, 128, 255, 0), 38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), 0 54px 0 -5px rgba(152, 128, 255, 0), -38.18953px 38.18953px 0 -5px rgba(152, 128, 255, 0), -54px 0 0 -5px rgba(152, 128, 255, 0), -38.18953px -38.18953px 0 0 #9880ff;
   }
 }
 
@@ -733,13 +722,13 @@
 .dot-falling {
   position: relative;
   left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
   box-shadow: 9999px 0 0 0 #9880ff;
-  animation: dotFalling 1s infinite linear;
+  animation: dot-falling 1s infinite linear;
   animation-delay: .1s;
 }
 
@@ -751,28 +740,28 @@
 }
 
 .dot-falling::before {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFallingBefore 1s infinite linear;
+  animation: dot-falling-before 1s infinite linear;
   animation-delay: 0s;
 }
 
 .dot-falling::after {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotFallingAfter 1s infinite linear;
+  animation: dot-falling-after 1s infinite linear;
   animation-delay: .2s;
 }
 
-@keyframes dotFalling {
+@keyframes dot-falling {
   0% {
-    box-shadow: 9999px -15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 9999px -45px 0 0 rgba(152, 128, 255, 0);
   }
   25%,
   50%,
@@ -780,35 +769,35 @@
     box-shadow: 9999px 0 0 0 #9880ff;
   }
   100% {
-    box-shadow: 9999px 15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 9999px 45px 0 0 rgba(152, 128, 255, 0);
   }
 }
 
-@keyframes dotFallingBefore {
+@keyframes dot-falling-before {
   0% {
-    box-shadow: 9984px -15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 9954px -45px 0 0 rgba(152, 128, 255, 0);
   }
   25%,
   50%,
   75% {
-    box-shadow: 9984px 0 0 0 #9880ff;
+    box-shadow: 9954px 0 0 0 #9880ff;
   }
   100% {
-    box-shadow: 9984px 15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 9954px 45px 0 0 rgba(152, 128, 255, 0);
   }
 }
 
-@keyframes dotFallingAfter {
+@keyframes dot-falling-after {
   0% {
-    box-shadow: 10014px -15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 10044px -45px 0 0 rgba(152, 128, 255, 0);
   }
   25%,
   50%,
   75% {
-    box-shadow: 10014px 0 0 0 #9880ff;
+    box-shadow: 10044px 0 0 0 #9880ff;
   }
   100% {
-    box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
+    box-shadow: 10044px 45px 0 0 rgba(152, 128, 255, 0);
   }
 }
 
@@ -819,13 +808,13 @@
  */
 .dot-stretching {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
   transform: scale(1.25, 1.25);
-  animation: dotStretching 2s infinite ease-in;
+  animation: dot-stretching 2s infinite ease-in;
 }
 
 .dot-stretching::before, .dot-stretching::after {
@@ -836,24 +825,24 @@
 }
 
 .dot-stretching::before {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotStretchingBefore 2s infinite ease-in;
+  animation: dot-stretching-before 2s infinite ease-in;
 }
 
 .dot-stretching::after {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #9880ff;
   color: #9880ff;
-  animation: dotStretchingAfter 2s infinite ease-in;
+  animation: dot-stretching-after 2s infinite ease-in;
 }
 
-@keyframes dotStretching {
+@keyframes dot-stretching {
   0% {
     transform: scale(1.25, 1.25);
   }
@@ -866,7 +855,7 @@
   }
 }
 
-@keyframes dotStretchingBefore {
+@keyframes dot-stretching-before {
   0% {
     transform: translate(0) scale(0.7, 0.7);
   }
@@ -879,7 +868,7 @@
   }
 }
 
-@keyframes dotStretchingAfter {
+@keyframes dot-stretching-after {
   0% {
     transform: translate(0) scale(0.7, 0.7);
   }
@@ -894,7 +883,7 @@
 
 /**
  * ==============================================
- * Experiment-Gooey Effect
+ * Experiment: Gooey Effect
  * Dot Gathering
  * ==============================================
  */
@@ -922,14 +911,14 @@
   color: transparent;
   opacity: 0;
   filter: blur(2px);
-  animation: dotGathering 2s infinite ease-in;
+  animation: dot-gathering 2s infinite ease-in;
 }
 
 .dot-gathering::after {
   animation-delay: .5s;
 }
 
-@keyframes dotGathering {
+@keyframes dot-gathering {
   0% {
     opacity: 0;
     transform: translateX(0);
@@ -947,13 +936,13 @@
 
 /**
  * ==============================================
- * Experiment-Gooey Effect
+ * Experiment: Gooey Effect
  * Dot Hourglass
  * ==============================================
  */
 .dot-hourglass {
   position: relative;
-  top: -15px;
+  top: -45px;
   width: 12px;
   height: 12px;
   border-radius: 6px;
@@ -961,8 +950,8 @@
   color: transparent;
   margin: -1px 0;
   filter: blur(2px);
-  transform-origin: 5px 20px;
-  animation: dotHourglass 2.4s infinite ease-in-out;
+  transform-origin: 15px 60px;
+  animation: dot-hourglass 2.4s infinite ease-in-out;
   animation-delay: .6s;
 }
 
@@ -981,14 +970,14 @@
 }
 
 .dot-hourglass::before {
-  top: 30px;
+  top: 90px;
 }
 
 .dot-hourglass::after {
-  animation: dotHourglassAfter 2.4s infinite cubic-bezier(0.65, 0.05, 0.36, 1);
+  animation: dot-hourglass-after 2.4s infinite cubic-bezier(0.65, 0.05, 0.36, 1);
 }
 
-@keyframes dotHourglass {
+@keyframes dot-hourglass {
   0% {
     transform: rotateZ(0deg);
   }
@@ -1006,15 +995,15 @@
   }
 }
 
-@keyframes dotHourglassAfter {
+@keyframes dot-hourglass-after {
   0% {
     transform: translateY(0);
   }
   25% {
-    transform: translateY(30px);
+    transform: translateY(90px);
   }
   50% {
-    transform: translateY(30px);
+    transform: translateY(90px);
   }
   75% {
     transform: translateY(0);
@@ -1026,7 +1015,7 @@
 
 /**
  * ==============================================
- * Experiment-Gooey Effect
+ * Experiment: Gooey Effect
  * Dot Overtaking
  * ==============================================
  */
@@ -1040,7 +1029,7 @@
   margin: -1px 0;
   box-shadow: 0 -20px 0 0;
   filter: blur(2px);
-  animation: dotOvertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dot-overtaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
 }
 
 .dot-overtaking::before, .dot-overtaking::after {
@@ -1059,16 +1048,16 @@
 }
 
 .dot-overtaking::before {
-  animation: dotOvertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dot-overtaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
   animation-delay: .3s;
 }
 
 .dot-overtaking::after {
-  animation: dotOvertaking 1.5s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dot-overtaking 1.5s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
   animation-delay: .6s;
 }
 
-@keyframes dotOvertaking {
+@keyframes dot-overtaking {
   0% {
     transform: rotateZ(0deg);
   }
@@ -1079,13 +1068,13 @@
 
 /**
  * ==============================================
- * Experiment-Gooey Effect
+ * Experiment: Gooey Effect
  * Dot Shuttle
  * ==============================================
  */
 .dot-shuttle {
   position: relative;
-  left: -15px;
+  left: -45px;
   width: 12px;
   height: 12px;
   border-radius: 6px;
@@ -1109,37 +1098,37 @@
 }
 
 .dot-shuttle::before {
-  left: 15px;
-  animation: dotShuttle 2s infinite ease-out;
+  left: 45px;
+  animation: dot-shuttle 2s infinite ease-out;
 }
 
 .dot-shuttle::after {
-  left: 30px;
+  left: 90px;
 }
 
-@keyframes dotShuttle {
+@keyframes dot-shuttle {
   0%,
   50%,
   100% {
     transform: translateX(0);
   }
   25% {
-    transform: translateX(-45px);
+    transform: translateX(-135px);
   }
   75% {
-    transform: translateX(45px);
+    transform: translateX(135px);
   }
 }
 
 /**
  * ==============================================
- * Experiment-Emoji
+ * Experiment: Emoji
  * Dot Bouncing
  * ==============================================
  */
 .dot-bouncing {
   position: relative;
-  height: 10px;
+  height: 30px;
   font-size: 10px;
 }
 
@@ -1147,10 +1136,10 @@
   content: '⚽🏀🏐';
   display: inline-block;
   position: relative;
-  animation: dotBouncing 1s infinite;
+  animation: dot-bouncing 1s infinite;
 }
 
-@keyframes dotBouncing {
+@keyframes dot-bouncing {
   0% {
     top: -20px;
     animation-timing-function: ease-in;
@@ -1176,13 +1165,13 @@
 
 /**
  * ==============================================
- * Experiment-Emoji
+ * Experiment: Emoji
  * Dot Rolling
  * ==============================================
  */
 .dot-rolling {
   position: relative;
-  height: 10px;
+  height: 30px;
   font-size: 10px;
 }
 
@@ -1191,10 +1180,10 @@
   display: inline-block;
   position: relative;
   transform: translateX(-25px);
-  animation: dotRolling 3s infinite;
+  animation: dot-rolling 3s infinite;
 }
 
-@keyframes dotRolling {
+@keyframes dot-rolling {
   0% {
     content: '⚽';
     transform: translateX(-25px) rotateZ(0deg);
