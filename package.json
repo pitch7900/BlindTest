@@ -11,7 +11,8 @@
     "gulp": "^4.0.2",
     "gulp-connect-php": "^1.0.3",
     "nan": "^2.14.2",
-    "safer-buffer": "^2.1.2"
+    "safer-buffer": "^2.1.2",
+    "three-dots": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {

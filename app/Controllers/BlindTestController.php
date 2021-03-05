@@ -268,8 +268,7 @@ class BlindTestController extends AbstractTwigController
     private function  ComputePointsToWin(int $time):int
     { 
         $points =  floor(5 - 5 * log($time/100 + 1) / log(30 + 1)) + 1;
-        $this->logger->debug("BlindTestController::ComputePointsToWin time  : " . $time);
-        $this->logger->debug("BlindTestController::ComputePointsToWin points  : " . $points);
+
         if ($points<0) {
             return 0;
         }
@@ -334,7 +333,7 @@ class BlindTestController extends AbstractTwigController
             $currentgame->userid = Auth::getUserId();
             $currentgame->points = $pointswon;
             $currentgame->save();
-            $this->logger->debug("BlindTestController::postGameCheckCurrent points won : ".$pointswon);
+         
 
         $highscore = $this->getPlaylistHighScore($playlistid);
         return $this->withJson($response, [
@@ -410,10 +409,12 @@ class BlindTestController extends AbstractTwigController
                 $offset = Carbon::createFromTimestamp(time())->diffInMilliseconds(Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $currentgame->track_playtime));
             }
             $currentgamesuggestion = Game::getPossibleAnswers($gamesid);
+            $trackdata = $this->deezer->getTrackInformations($trackid);
 
             return $this->withJSON($response, [
                 'trackid' => $trackid,
                 'playlistid' => $playlistid,
+                'tracklink' => $trackdata['track_preview'],
                 'score' => $this->getCurrentUserScore($gamesid),
                 'highscore' => $this->getPlaylistHighScore($playlistid),
                 'offset' => $offset,

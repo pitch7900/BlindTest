@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 03, 2021 at 08:45 AM
+-- Generation Time: Mar 05, 2021 at 03:32 PM
 -- Server version: 5.7.31
 -- PHP Version: 7.4.9
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `blindtest`
 --
+CREATE DATABASE IF NOT EXISTS `blindtest` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `blindtest`;
 
 -- --------------------------------------------------------
 
@@ -155,20 +157,6 @@ CREATE TABLE IF NOT EXISTS `playlisttracks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `session`
---
-
-DROP TABLE IF EXISTS `session`;
-CREATE TABLE IF NOT EXISTS `session` (
-  `Session_Id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `Session_Expires` datetime NOT NULL,
-  `Session_Data` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
-  PRIMARY KEY (`Session_Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `sessions`
 --
 
@@ -198,6 +186,30 @@ CREATE TABLE IF NOT EXISTS `track` (
   `track_artist` bigint(20) DEFAULT NULL,
   `track_album` bigint(20) DEFAULT NULL,
   `track_duration` bigint(20) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `artist` (`track_artist`),
+  KEY `album` (`track_album`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `trackerrors`
+--
+
+DROP TABLE IF EXISTS `trackerrors`;
+CREATE TABLE IF NOT EXISTS `trackerrors` (
+  `id` bigint(20) NOT NULL,
+  `track_title` varchar(1024) DEFAULT NULL,
+  `track_link` varchar(1024) DEFAULT NULL,
+  `track_preview` varchar(1024) DEFAULT NULL,
+  `track_artist` bigint(20) DEFAULT NULL,
+  `track_album` bigint(20) DEFAULT NULL,
+  `track_duration` bigint(20) DEFAULT NULL,
+  `original_playlist` bigint(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

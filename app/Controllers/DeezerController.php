@@ -6,9 +6,7 @@ namespace App\Controllers;
 
 use App\MusicSources\Deezer\DeezerApiInterface;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
-use Psr\Log\LoggerInterface;
+use Slim\Http\ServerRequest as Request;
 use Psr\Container\ContainerInterface;
 /**
  * Description of DeezerController

@@ -114,6 +114,14 @@ a.dropdown-item,
   margin-right: auto;
 }
 
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
 .center-horizontal {
   margin-left: auto;
   margin-right: auto;
@@ -145,11 +153,11 @@ a.dropdown-item,
 
 #startbutton {
   height: 200px;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 .submitanswer {
@@ -177,7 +185,12 @@ a.dropdown-item,
   margin-left: 0px;
 }
 
-.carddata .card-body{
-  padding-left:0px;
-  padding-right:0px;
+.carddata .card-body {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.stage {
+  top: 50%;
+  position: fixed;
 }

@@ -43,7 +43,7 @@ class Game  extends AbstractModel
          return intval($track->game_order);
       }
    }
-   
+
    /**
     * getPossibleAnswers - return an array of possible answer for a given game
     * in the answers there will be the correct answer.
@@ -51,7 +51,7 @@ class Game  extends AbstractModel
     * @param  int $gamesid
     * @return array
     */
-   public static function getPossibleAnswers(int $gamesid) :array
+   public static function getPossibleAnswers(int $gamesid): array
    {
       $currentTrackIndex = Game::getCurrentTrackIndex($gamesid);
       $currentgamesuggestion = Game::where([
@@ -60,12 +60,11 @@ class Game  extends AbstractModel
       ])->get()->toArray();
       shuffle($currentgamesuggestion);
       $returnarray = array();
-      array_push($returnarray,$currentgamesuggestion[0]['game_track']);
-      array_push($returnarray,$currentgamesuggestion[1]['game_track']);
-      array_push($returnarray,$currentgamesuggestion[2]['game_track']);
-      array_push($returnarray,$currentgamesuggestion[3]['game_track']);
-      array_push($returnarray,$currentgamesuggestion[4]['game_track']);
-      array_push($returnarray,Game::where([
+      for ($i = 0; $i < 5 && $i < count($currentgamesuggestion); $i++) {
+         array_push($returnarray, $currentgamesuggestion[$i]['game_track']);
+      }
+     
+      array_push($returnarray, Game::where([
          ['game_gamesid', '=', $gamesid],
          ['game_order', '=', $currentTrackIndex]
       ])->first()->game_track);
