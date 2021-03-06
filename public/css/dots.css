@@ -176,6 +176,47 @@
   }
 }
 
+
+/*Special for ios... again*/
+@-webkit-keyframes dot-pulse-before {
+  0% {
+    box-shadow: 9954px 0 0 -5px #9880ff;
+  }
+  30% {
+    box-shadow: 9954px 0 0 2px #9880ff;
+  }
+  60%,
+  100% {
+    box-shadow: 9954px 0 0 -5px #9880ff;
+  }
+}
+
+@-webkit-keyframes dot-pulse {
+  0% {
+    box-shadow: 9999px 0 0 -5px #9880ff;
+  }
+  30% {
+    box-shadow: 9999px 0 0 2px #9880ff;
+  }
+  60%,
+  100% {
+    box-shadow: 9999px 0 0 -5px #9880ff;
+  }
+}
+
+@-webkit-keyframes dot-pulse-after {
+  0% {
+    box-shadow: 10044px 0 0 -5px #9880ff;
+  }
+  30% {
+    box-shadow: 10044px 0 0 2px #9880ff;
+  }
+  60%,
+  100% {
+    box-shadow: 10044px 0 0 -5px #9880ff;
+  }
+}
+
 /**
  * ==============================================
  * Dot Flashing
