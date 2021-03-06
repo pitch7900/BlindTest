@@ -1,31 +1,33 @@
 {# {{dump(suggestions) }} #}
 
 <div class="row">
-{% for suggestion in suggestions %}
-    <div class="col-6">
-	<div trackid="{{suggestion.id}}" class="submitanswer  card-light">
+	{% for suggestion in suggestions %}
+		<div class="col-6">
+			<div trackid="{{suggestion.id}}" class="submitanswer  card-light">
 
+				<div class="trackimagecontainer">
+					<img class="trackimage  center" src="{{suggestion.cover}}" alt="albumimage">
+					<div class="goldcoincontainer">
+					{% for i in 1..4 %}
+						<img class="invisible goldcoin  points_{{i}}" src="/img/golcoinanim.gif" width="30" height="30" alt="">
+					{% endfor %}
+					</div>
+				</div>
+				<div class="center">
 
-		<img class="trackimage  center" src="{{suggestion.cover}}" alt="albumimage">
+					<span class="suggestion">{{suggestion.artist}}</span>
+					<br>
+					<span class="suggestion">{{suggestion.song}}</span>
 
+					<div class="progress invisible">
 
-		<div class="center">
+						<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5"></div>
 
-			{{suggestion.artist}}
-			<br>
-			{{suggestion.song}}
-            {% for i in 1..4 %}
-			    <img class="invisible points_{{i}}" src="/img/golcoinanim.gif" width="30" height="30" alt="">
-            {% endfor %}
-			<div class="progress invisible">
+					</div>
 
-				<div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5"></div>
+				</div>
 
 			</div>
-
 		</div>
-
-	</div>
-    </div>
-{% endfor %}
+	{% endfor %}
 </div>

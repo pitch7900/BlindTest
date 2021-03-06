@@ -198,3 +198,19 @@ a.dropdown-item,
 .stage{
   margin-left: 50%;
 }
+.trackimagecontainer{
+  position: relative;
+
+
+}
+
+.suggestion{
+  font-weight: bold;
+}
+
+.goldcoincontainer{
+  position:absolute;
+  position: absolute;
+  top: 50%;
+  left: 35%;
+}
