@@ -153,11 +153,11 @@ a.dropdown-item,
 
 #startbutton {
   height: 200px;
-  margin: 0;
   position: absolute;
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
+  left: 30%;
 }
 
 .submitanswer {
@@ -190,7 +190,11 @@ a.dropdown-item,
   padding-right: 0px;
 }
 
-.stage {
+.stage-center-vertical {
   top: 50%;
   position: fixed;
+}
+
+.stage{
+  margin-left: 50%;
 }
