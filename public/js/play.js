@@ -180,6 +180,7 @@ var playtitle = function () {
             $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
             $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
             $.post("/errors/player", jsondata);
+            skipCurrentSong();
           });
       });
 
