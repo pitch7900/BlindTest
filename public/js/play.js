@@ -160,7 +160,7 @@ var playtitle = function () {
         updateHiscoreDisplay(jsondata.highscore);
         currenttrackid = jsondata.trackid;
         currentplaylistid = jsondata.playlistid;
-        audio.src = jsondata.tracklink ; //"/blindtest/play/" + jsondata.trackid + ".mp3";
+        audio.src = jsondata.tracklink; //"/blindtest/play/" + jsondata.trackid + ".mp3";
         audio.currentTime = Math.floor(jsondata.offset / 1000)
         audio
           .play()
@@ -179,15 +179,19 @@ var playtitle = function () {
             // console.log(jsondata);
             $("#ErrorMusicInfo").html("TrackID is : " + jsondata.trackid);
             $("#ErrorMusicInfo").attr("trackid", jsondata.trackid);
-            $.post("/errors/player", jsondata);
-            skipCurrentSong();
+            $.post("/errors/player", jsondata).done(function () {
+              $("#MainPage").removeClass("invisible");
+              $("#BrowserError").addClass("invisible");
+
+              playtitle();
+            });
           });
       });
 
     } else {
       //Last song of the game reached. Do an action
       $("#Finished").removeClass("invisible");
-      $("#interactionpane").addClass("invisible");
+      $("#Play").addClass("invisible");
       fireworks($("#fireworksplace")[0], false);
     }
   });
@@ -240,22 +244,6 @@ var moveObject = function (sourceObject, targetObject, speedInSeconds) {
     //and hide them
     sourceObject.addClass("hidden");
   }, speedInSeconds * 1000);
-}
-
-/**
- * Skip the current song in case of error
- * @param {int} trackid 
- */
-var skipCurrentSong = function (trackid) {
-  trackid = $("#ErrorMusicInfo").attr("trackid");
-  $.post("/blindtest/game/" + gamesid + "/skipsong.json", {
-    trackid: trackid
-  }).done(function (jsondata) {
-    // console.log("Track " + trackid + " skipped, play the next");
-    $("#MainPage").removeClass("invisible");
-    $("#BrowserError").addClass("invisible");
-    playtitle();
-  });
 }
 
 /**
@@ -313,9 +301,9 @@ var postcheckanswer = function (guessentered) {
         //Correct answer -- Do the animation for gold coins
         if ($(this).attr('trackid') == jsondata.guess && check) {
           var i;
-          for ( i=1; i<=jsondata.pointswon; i++ ){
-            $(this).find('.points_'+i).removeClass("invisible");
-            moveObject($(this).find('.points_'+i), $("#coinscore_" + userid), 1);
+          for (i = 1; i <= jsondata.pointswon; i++) {
+            $(this).find('.points_' + i).removeClass("invisible");
+            moveObject($(this).find('.points_' + i), $("#coinscore_" + userid), 1);
           }
         }
 
@@ -323,7 +311,7 @@ var postcheckanswer = function (guessentered) {
 
 
       $("#currentscore_" + userid).html(score);
-    
+
       $("#totalscore").html(totalscore);
 
 
@@ -359,10 +347,10 @@ var Catalog = (function () {
 
 
       if (!$(this).hasClass('boder')) {
-       
+
         $(this).addClass('boder border-primary border-5');
         guessentered = $(this).attr('trackid');
-        
+
         postcheckanswer(guessentered);
       }
     });
@@ -383,7 +371,7 @@ var Catalog = (function () {
     delete jsondata.userid;
     everyoneready = true;
     jQuery.each(jsondata, function (i, val) {
-    
+
       var icon_writing = "";
       var icon_read = "";
       var icon_online = "";
@@ -417,7 +405,7 @@ var Catalog = (function () {
   };
 
   var HandlerCheckPlayerMessages = function () {
-   
+
     $.get("/blindtest/game/" + gamesid + "/updateplayers.json")
       .done(function (jsondata) {
         UpdatePlayerData(jsondata);

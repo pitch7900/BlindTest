@@ -2,8 +2,8 @@
 
 
 {% block headers %}
-	<link rel="stylesheet" href="/css/circle.css" type="text/css">
 	<link rel="stylesheet" href="/css/fireworks.css" type="text/css">
+	<link href="/css/dots.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 
 
@@ -22,10 +22,13 @@
 			<p>We were not able to play this music</p>
 			<p id="ErrorMusicInfo" trackid=""></p>
 			<p class="mb-0">Please check your browser permissions or retry later</p>
-			<button class="btn btn-primary" type="button" onclick="skipCurrentSong();">
-				<i class="fas fa-forward"></i>
-				Skip this song
-			</button>
+			{# <button class="btn btn-primary" type="button" onclick="skipCurrentSong();">
+							<i class="fas fa-forward"></i>
+							Skip this song
+						</button> #}
+			<div class="stage">
+				<div class="dot-pulse"></div>
+			</div>
 
 		</div>
 	</div>
@@ -47,7 +50,7 @@
 			<div id="suggestionspane" class="col-12"></div>
 		</div>
 		<!-- Before the game start pane -->
-		<div id="Start" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
+		<div id="Start" class="col-12">
 			<button id="startbutton" class="btn btn-primary btn-block center" onclick="playtitle();" disabled>Start the Game</button>
 		</div>
 
