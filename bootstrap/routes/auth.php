@@ -27,12 +27,12 @@ return function (App $app) {
                 $group->get('/resetpassword/{uuid}', AuthController::class . ':resetpassword')
                         ->setName('auth.resetpassword');
                 $group->post('/resetpassword/{uuid}', AuthController::class . ':postresetpassword')
-                        ->setName('auth.resetpassword.post');
+                        ->setName('auth.post.resetpassword');
                 $group->post('/login', AuthController::class . ':postlogin')
-                        ->setName('auth.login');
+                        ->setName('auth.post.login');
                 $group->post('/forgotpassword', AuthController::class . ':postforgotpassword')
                         ->setName('auth.forgotpassword.post');
                 $group->post('/signin', AuthController::class . ':postsignin')
-                        ->setName('auth.signin.post');
+                        ->setName('auth.post.signin');
         });
 };
