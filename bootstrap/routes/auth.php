@@ -13,7 +13,9 @@ return function (App $app) {
                 $group->get('/signin', AuthController::class . ':signin')
                         ->setName('auth.signin');
                 $group->get('/signinconfirmation.html', AuthController::class . ':signinconfirmation')
-                ->setName('auth.signinconfirmation');
+                        ->setName('auth.signinconfirmation');
+                $group->post('/signinconfirmation', AuthController::class . ':signinconfirmation')
+                        ->setName('auth.post.signinconfirmation');
                 $group->get('/login', AuthController::class . ':login')
                         ->setName('auth.login');
                 $group->get('/forgotpassword', AuthController::class . ':forgotpassword')
