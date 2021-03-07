@@ -295,18 +295,19 @@ class AuthController extends AbstractTwigController
         return $this->withJSON($response, ['redirectTo'=>$this->getUrlFor($request,"auth.signinconfirmation")]);
        
     }
-
+    
     public function signinconfirmation(Request $request, Response $response, array $args = []): Response
     {
         $arguments['approval'] = false;
         if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
             $arguments['approval'] = true;
         }
+       
         return $this->render($response, 'auth/validateemail.twig');
     }
     /**
      * postsignin : Handle the signin page (Create a user) and send an email
-     * This action has a volontary 2s delay to avoir flood
+     * This action has a volontary 2s delay to avoir flood -- not necessary with google recaptcha
      * Display the confirmation page when the email is sent
      *
      * @param  mixed $request
@@ -328,15 +329,15 @@ class AuthController extends AbstractTwigController
             $email = $request->getParam('email');
             $nickname = $request->getParam('nickname');
             $password = password_hash($password, PASSWORD_DEFAULT);
-            sleep(2);
+            // sleep(2);
             Auth::addUser($email, $password, $nickname);
             
            
            
         } else {
             $this->logger->debug("AuthController::postsignin Recaptcha is not success");
-
         }
+        
         return $this->withJSON($response, ['redirectTo'=>$this->getUrlFor($request,"auth.signinconfirmation")]);
     }
 

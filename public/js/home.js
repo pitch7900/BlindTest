@@ -62,10 +62,10 @@ var Catalog = (function () {
     var ClickOnPlayList = function (){
         $('body').on('click', '.playlistlink', function () {
             
-            var CreatingGameModal = new bootstrap.Modal(document.getElementById('CreatingGameModal'), {
+            var WaitingModal = new bootstrap.Modal(document.getElementById('WaitingModal'), {
                 keyboard: false
               });
-              CreatingGameModal.show();
+              WaitingModal.show();
               
         });
     }

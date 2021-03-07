@@ -7,23 +7,21 @@
 
 	<div class="container-fluid row">
 		<div class="col-sm-8 mx-auto">
-			<img src="/img/deezer.png" class="title">
+			<img src="/img/blindtest.png" class="title center">
 			<h1 class="h3 mb-3 font-weight-normal center">Email validation</h1>
-			
+			<p class="center">An email will been sent to your email address, please check and click on the link provided</p>
 			{% if (approval) %}
-			<p>An email will been sent to your email address, please check and click on the link provided</p>
+			
 				<div class="card text-white bg-warning">
 					<div class="card-header">Registration</div>
 					<div class="card-body">
-						<h5 class="card-title">Warning
+						<h5 class="card-title center">Warning
 						</h5>
-						<p class="card-text">The registration should be approved by an administrator first.
+						<p class="card-text center">The registration should be approved by an administrator first.
 							<br>
 							As this process is manual, it can take long</p>
 					</div>
 				</div>
-			{% else %}
-			<p>An email has been sent to your email address, please check and click on the link provided</p>
 			{% endif %}
 		</div>
 
