@@ -398,6 +398,9 @@ class DeezerApi implements DeezerApiInterface
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
         $trackerror = TrackErrors::find($track['id']);
+        if (!is_null($trackerror)) {
+            return null;
+        }
         if (is_null($trackdb) && is_null($trackerror)) {
             // $this->logger->debug("DeezerApi::DBaddTrack Add track : " . $this->forceLatinChars($track['title']) . " (" . $track['id'] . ")");
             Track::updateOrCreate([
@@ -409,9 +412,9 @@ class DeezerApi implements DeezerApiInterface
                 'track_album' => $track['album']['id'],
                 'track_duration' => $track['duration']
             ]);
-            return intval($track['id']);
+            
         }
-        return null;
+        return intval($track['id']);
     }
 
     /**
