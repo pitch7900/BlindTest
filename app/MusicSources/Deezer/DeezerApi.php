@@ -389,15 +389,18 @@ class DeezerApi implements DeezerApiInterface
      * DBaddTrack : Add a track to database
      *
      * @param  mixed $track
-     * @return int
+     * @return mixed
      */
-    private function DBaddTrack(array $track): int
+    private function DBaddTrack(array $track)
     {
 
         $this->DBaddAlbum($track['album']);
         $this->DBaddArtist($track['artist']);
         $trackdb = Track::find($track['id']);
         $trackerror = TrackErrors::find($track['id']);
+        if (!is_null($trackerror)) {
+            return null;
+        }
         if (is_null($trackdb) && is_null($trackerror)) {
             // $this->logger->debug("DeezerApi::DBaddTrack Add track : " . $this->forceLatinChars($track['title']) . " (" . $track['id'] . ")");
             Track::updateOrCreate([
@@ -409,6 +412,7 @@ class DeezerApi implements DeezerApiInterface
                 'track_album' => $track['album']['id'],
                 'track_duration' => $track['duration']
             ]);
+            
         }
         return intval($track['id']);
     }
@@ -490,11 +494,13 @@ class DeezerApi implements DeezerApiInterface
             if (isset($track['preview'])) {
                 //Only add a track with a preview and that can be readed
                 if (strlen($track['preview']) > 0 && $track['readable']) {
-                    $this->DBaddTrack($track);
-                    PlaylistTracks::updateOrCreate([
-                        'playlisttracks_track' => $track['id'],
-                        'playlisttracks_playlist' => $playlistID
-                    ]);
+                    $trackid = $this->DBaddTrack($track);
+                    if (!is_null($trackid)) {
+                        PlaylistTracks::updateOrCreate([
+                            'playlisttracks_track' => $track['id'],
+                            'playlisttracks_playlist' => $playlistID
+                        ]);
+                    }
                 }
             }
         }
@@ -527,10 +533,10 @@ class DeezerApi implements DeezerApiInterface
         $trackerrors = TrackErrors::select('id')->get();
         $tmp_array = array();
         foreach ($trackerrors as $trackerror) {
-            array_push($tmp_array,$trackerror->id);
+            array_push($tmp_array, $trackerror->id);
         }
         $playlisttracks = PlaylistTracks::where('playlisttracks_playlist', $playlistID)
-        ->whereNotIn('playlisttracks_track', $tmp_array);
+            ->whereNotIn('playlisttracks_track', $tmp_array);
 
 
         //playlist is not in the DB yet, or there is no track, or the lateset update is more than one week old. Add or update it.
