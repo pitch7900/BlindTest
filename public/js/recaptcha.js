@@ -5,6 +5,7 @@ function onSubmitSecure(e) {
         keyboard: false
       });
       WaitingModal.show();
+      $('#pulselocation').addClass("dot-pulse");
     } catch(e)
     {}
     $.post(window.location, formdata)

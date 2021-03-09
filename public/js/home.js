@@ -66,6 +66,7 @@ var Catalog = (function () {
                 keyboard: false
               });
               WaitingModal.show();
+              $('#pulselocation').addClass("dot-pulse");
               
         });
     }
