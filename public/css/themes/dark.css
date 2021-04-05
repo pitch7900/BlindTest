@@ -41,6 +41,8 @@
     --btn-primary-background: transparent;
     --btn-primary-border-color: var(--text-primary);
     --btn-primary-text: var(--color-white);
+    --card-light-background : transparent;
+    --card-light-text : var(--text-primary);
 }
 :root, [data-theme="dark"] {
     --background-accent: var(--color-coral-500);

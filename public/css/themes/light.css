@@ -40,6 +40,8 @@
   --btn-primary-background: #0d6efd;
   --btn-primary-border-color: #0d6efd;
   --btn-primary-text: var(--color-white);
+  --card-light-background : #d0d7ff;
+  --card-light-text : var(--color-black);
 }
 :root,
 [data-theme="light--color-white"] {

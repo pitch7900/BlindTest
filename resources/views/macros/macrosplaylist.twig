@@ -22,7 +22,7 @@
 						{% endif %}
 					</span>
 					tracks
-					<button type="button" class="btn btn-light updatetracksaction" playlist="{{id}}">
+					<button type="button" class="btn updatetracksaction" playlist="{{id}}">
 						<i class="fas fa-sync"></i>
 					</button>
 				</div>
@@ -32,17 +32,14 @@
 				class="card-body">
 				<!-- Title -->
 
-				<button class="btn btn-light playlistname" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{id}}" aria-expanded="false" aria-controls="collapse{{id}}">
+				<button class="btn playlistname" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{id}}" aria-expanded="false" aria-controls="collapse{{id}}">
 					{{playlistname}} <i class="fas fa-caret-square-down"></i>
 				</button>
 				<div class="collapse" id="collapse{{id}}">
 					<p class="center">Played
 						{{played}}
 						times</p>
-					<!-- Button -->
-					{# <a href="/blindtest/play/{{id}}.html" class="btn btn-primary col-sm-12">
-											<i class="fas fa-play"></i>
-											Play</a> #}
+		
 					<a href="{{ link }}" target="_blank" class="center btn btn-light col-sm-12">
 						<i class="fab fa-deezer"></i>
 						Deezer</a>

@@ -366,4 +366,12 @@ class AuthController extends AbstractTwigController
         }
         return $this->withRedirect($response, $this->getUrlFor($request,"home"));
     }
+
+    public function postChangeDarkTheme(Request $request, Response $response, array $args = []): Response
+    {
+        $user = User::find(Authentication::CurrentUserID());
+        $user->darktheme = !($user->darktheme);
+        $user->save();
+        return $this->withJSON($response, ['darktheme' => $user->darktheme]);
+    }
 }

@@ -3,8 +3,6 @@ body {
   color: var(--text-primary);
 }
 
-
-
 .background-secondary {
   background-color: var(--background-secondary);
   color: var(--text-primary);
@@ -140,7 +138,6 @@ body {
 .card {
   background-color: transparent !important;
   color: var(--text-primary);
- 
 }
 
 ::-webkit-scrollbar {
@@ -263,18 +260,76 @@ textarea {
   border-bottom: 2px solid var(--text-primary);
 }
 
-.thumbnail-helper .progress-bar{
+.thumbnail-helper .progress-bar {
   background-color: var(--progress-bar-frontcolor);
 }
 
-.thumbnail-helper .progress{
+.thumbnail-helper .progress {
   background-color: var(--progress-bar-backcolor);
   height: 5px;
-  bottom : 0px;
+  bottom: 0px;
 }
 
-.password-strength__visibility{
+.password-strength__visibility {
   background-color: var(--background-input);
   color: var(--text-primary);
   border: var(--borders);
+}
+
+.navbar-text {
+  color: var(--text-primary) !important;
+}
+
+.form-control-plaintext {
+  color: var(--text-primary) !important;
+}
+
+.form-control::-webkit-input-placeholder {
+  /* Edge */
+  color: var(--text-primary) !important;
+}
+
+.form-control::-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: var(--text-primary) !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-primary) !important;
+}
+
+.card-light {
+  background: var(--card-light-background) !important;
+  color: var(--card-light-text) !important;
+}
+
+.card-success {
+  color: var(--color-black) !important;
+}
+
+.card-danger {
+  color: var(--color-black) !important;
+}
+.playlistname {
+  background-color: var(--button-light-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-style: normal;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 0.5em;
+  padding: 5px 10px;
+  display: inline-block;
+  width: 100%;
+}
+
+.image-helper-bottomright{
+  border: 0px;
+  padding-left: 10px;
+  padding-right: 0px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  background-color: var(--button-light-color);
+  color: var(--text-primary);
 }

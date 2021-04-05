@@ -48,15 +48,6 @@ a#ShowPlaylist.nav-link {
   opacity: 0.5;
 }
 
-.image-helper-bottomright {
-  border: 0px;
-  padding-left: 10px;
-  padding-right: 0px;
-  position: absolute;
-  right: 0px;
-  bottom: 0px;
-  background: lightgray;
-}
 
 .searchwarning {
   background-color: lightyellow !important;
