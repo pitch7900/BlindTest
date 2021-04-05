@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Config\StaticPlaylists;
 use App\Database\User;
 use App\Database\Playlist;
-use App\Authentication\Auth;
+use App\Authentication\Authentication;
 use Psr\Container\ContainerInterface;
 
 class HomeController extends AbstractTwigController
@@ -61,8 +61,8 @@ class HomeController extends AbstractTwigController
         //$arguments['playlists']=Playlist::orderBy('playlist_title','ASC')->get()->toArray();
         $arguments['playlists'] = Playlist::getPlaylists();
         //$this->deezer->DBAddPlaylist($this->staticplaylists->getPlaylists());
-        $arguments['userpoints'] = User::getUserTotalPoints(Auth::getUserId());
-        $arguments['userid'] = Auth::getUserId();
+        $arguments['userpoints'] = User::getUserTotalPoints(Authentication::getUserId());
+        $arguments['userid'] = Authentication::getUserId();
         //$this->logger->debug("HomeController::home arguments  " . json_encode($arguments, JSON_PRETTY_PRINT));
         $arguments['homescreen'] = true;
         // $this->logger->debug("HomeController::home arguments global " . var_export($arguments, true));

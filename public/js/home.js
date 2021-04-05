@@ -12,6 +12,15 @@ var AddCustomPlaylist = function () {
 
 };
 
+var change_user_darkmode = function () {
+    $.post("/user/darktheme", function (jsondata) {
+        if (jsondata.darktheme) {
+            $('body').attr('data-theme', 'dark');
+        } else {
+            $('body').attr('data-theme', 'light');
+        }
+    });
+}
 
 
 var Catalog = (function () {
@@ -66,6 +75,7 @@ var Catalog = (function () {
                 keyboard: false
               });
               WaitingModal.show();
+            //   $('#pulselocation').addClass("dot-pulse");
               
         });
     }

@@ -23,6 +23,8 @@ return function (App $app) {
                         ->setName('user.changepassword.post');
                 $group->post('/preferences', AuthController::class . ':postpreferences')
                         ->setName('user.preferences.post');
+                $group->post('/darktheme', AuthController::class . ':postChangeDarkTheme')
+                        ->setName('user.post.darktheme');
         })->add(new AuthMiddleware($app));
 
 };

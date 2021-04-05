@@ -15,7 +15,7 @@ use App\Database\Track;
 use App\Database\Playlist;
 use App\Database\User;
 use App\Database\GamePlayers;
-use App\Authentication\Auth;
+use App\Authentication\Authentication;
 use Carbon\Carbon;
 use Psr\Container\ContainerInterface;
 
@@ -80,7 +80,7 @@ class BlindTestController extends AbstractTwigController
     public function postGameWriting(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        $user = GamePlayers::where("userid", "=", Auth::getUserId())
+        $user = GamePlayers::where("userid", "=", Authentication::getUserId())
             ->where('gameid', '=', $gamesid)
             ->first();
         $user->writing = true;
@@ -99,7 +99,7 @@ class BlindTestController extends AbstractTwigController
     public function postUserIsReady(Request $request, Response $response, $args)
     {
         $gamesid = $args['gamesid'];
-        $user = GamePlayers::where("userid", "=", Auth::getUserId())
+        $user = GamePlayers::where("userid", "=", Authentication::getUserId())
             ->where('gameid', '=', $gamesid)
             ->first();
         $user->isready = true;
@@ -125,7 +125,7 @@ class BlindTestController extends AbstractTwigController
             sleep(500);
         }
         $payload = GamePlayers::getPlayers($gamesid);
-        $payload['userid'] = Auth::getUserId();
+        $payload['userid'] = Authentication::getUserId();
         return $this->withJSON($response, $payload);
     }
 
@@ -143,25 +143,25 @@ class BlindTestController extends AbstractTwigController
 
         $GamePlayer = GamePlayers::updateOrCreate([
             'gameid' => $gamesid,
-            'userid' => Auth::getUserId()
+            'userid' => Authentication::getUserId()
         ]);
         $GamePlayer->writing = false;
         $GamePlayer->isready = true;
         $GamePlayer->answered = false;
         $GamePlayer->save();
-        $arguments['userpoints'] = User::getUserTotalPoints(Auth::getUserId());
+        $arguments['userpoints'] = User::getUserTotalPoints(Authentication::getUserId());
         $playlistid = Games::find($gamesid)->games_playlist;
         $arguments['playlistname'] = Playlist::find($playlistid)->playlist_title;
 
         $arguments['playlistid'] = $playlistid;
         $arguments['gamesid'] = $gamesid;
-        $arguments['userid'] = Auth::getUserId();
+        $arguments['userid'] = Authentication::getUserId();
         $arguments['highscores'] = $this->getPlaylistHighScore($playlistid);
         $arguments['playlist_picture'] = Playlist::find($playlistid)->playlist_picture;
         $arguments['playlist_link'] = Playlist::find($playlistid)->playlist_link;
         $arguments['players'] = GamePlayers::getPlayers($gamesid);
         // $this->logger->debug("BlindTestController::getGameHTML " . print_r($arguments, true));
-        $currentuserid = Auth::getUserId();
+        $currentuserid = Authentication::getUserId();
 
         $this->logger->debug("BlindTestController::getGameHTML User $currentuserid joined game $gamesid");
         return $this->render($response, 'play.twig', $arguments);
@@ -254,7 +254,7 @@ class BlindTestController extends AbstractTwigController
             ['game_track', '=', $trackid]
         ])->first();
         $playlistid = Games::find($gamesid)->games_playlist;
-        $currentgame->userid = Auth::getUserId();
+        $currentgame->userid = Authentication::getUserId();
         $currentgame->points = 0;
         $currentgame->save();
     }
@@ -295,7 +295,7 @@ class BlindTestController extends AbstractTwigController
 
 
 
-        $GamePlayer = GamePlayers::where('userid', '=', Auth::getUserId())
+        $GamePlayer = GamePlayers::where('userid', '=', Authentication::getUserId())
             ->where('gameid', '=', $gamesid)
             ->first();
         $GamePlayer->answered = true;
@@ -330,7 +330,7 @@ class BlindTestController extends AbstractTwigController
 
 
      
-            $currentgame->userid = Auth::getUserId();
+            $currentgame->userid = Authentication::getUserId();
             $currentgame->points = $pointswon;
             $currentgame->save();
          
@@ -343,7 +343,7 @@ class BlindTestController extends AbstractTwigController
             'score' =>  $this->getCurrentUserScore($gamesid),
             'pointswon' => $pointswon,
             'highscore' => $highscore,
-            'totalscore' => User::getUserTotalPoints(Auth::getUserId()),
+            'totalscore' => User::getUserTotalPoints(Authentication::getUserId()),
             'answer' => $artist->artist_name . " - " . $track->track_title,
             'picture' => $album->album_cover,
             'track_link' => $track->track_link
@@ -358,7 +358,7 @@ class BlindTestController extends AbstractTwigController
      */
     private function getCurrentUserScore($gamesid): int
     {
-        return Game::getUserScore($gamesid, Auth::getUserId());
+        return Game::getUserScore($gamesid, Authentication::getUserId());
     }
 
 

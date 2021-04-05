@@ -1,0 +1,71 @@
+[data-theme="dark"] {
+    --background-primary: var(--color-dark-grey-900);
+    --background-intermediate: var(--color-dark-grey-700);
+    --background-secondary: var(--color-dark-grey-400);
+    --background-contrast: var(--color-dark-grey-400);
+    --background-input: var(--color-dark-grey-200);
+    --background-elevation: var(--color-dark-grey-300);
+    --text-primary: var(--color-white);
+    --text-intermediate: var(--color-light-grey-900);
+    --text-secondary: var(--color-light-grey-800);
+    --divider-primary: var(--color-dark-grey-500);
+    --divider-secondary: var(--color-dark-grey-300);
+    --sidebar-background-color: var(--background-intermediate);
+    --primary-color: #ef5466;
+    --primary-hover-color: #cb4757;
+    --label-album-color: var(--text-secondary);
+    --label-album-background-color: #efeff2;
+    --label-new-color: #ff8000;
+    --label-new-background-color: rgba(255,128,0,0.1);
+    --label-explicit-color: #92929d;
+    --shadow-border-color: #23232d;
+    --lyrics-gradient-color: 0,0,0;
+    --popper-shadow: 0 4px 20px 0 rgba(0,0,0,0.24);
+    --popper-marquee-gradient-color: rgb(50 50,61);
+    --marquee-gradient-transparent-color: rgba(35,35,45,0);
+    --modal-special-offers-primary-color: rgba(239,84,102,0.9);
+    --modal-special-offers-primary-hover-color: rgba(203,71,87,0.9);
+    --modal-sharebox-friend-hover-color: rgba(239,84,102,0.5);
+    --onboarding-header-shadow-color: rgba(0,0,0,0.08);
+    --onboarding-footer-shadow-color: rgba(0,0,0,0.08);
+    --scroller-shadow-color: rgba(0,0,0,0.3);
+    --button-light-color: var(--color-dark-grey-300);
+    --borders:var(--color-light-grey-900);
+    --tag-item-text-light: var(--color-orange-light);
+    --tag-item-text-dark: var(--color-orange-dark);
+    --dropdown-divider: 1px solid rgba(255,255,255,.15);
+    --dropdown-addelement: var(--color-dark-grey-200);
+    --transparency: 0.7;
+    --progress-bar-frontcolor: #ef5466;
+    --progress-bar-backcolor: #efeff2;
+    --btn-primary-background: transparent;
+    --btn-primary-border-color: var(--text-primary);
+    --btn-primary-text: var(--color-white);
+    --card-light-background : transparent;
+    --card-light-text : var(--text-primary);
+}
+:root, [data-theme="dark"] {
+    --background-accent: var(--color-coral-500);
+    --text-inverse: var(--background-primary);
+    --text-accent: var(--color-coral-500);
+    --divider-accent: var(--color-coral-500);
+    --color-accent: var(--color-coral-500);
+    --color-accent-hover: var(--color-coral-700);
+    --premium-color: #1daaa2;
+    --orange-color: #f60;
+    --download-color: #00d000;
+    --family-color: #fe447d;
+}
+
+[data-theme="dark"] .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+[data-theme="dark"] .navbar-toggler-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
