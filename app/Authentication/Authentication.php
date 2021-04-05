@@ -14,7 +14,7 @@ use PHPMailer\PHPMailer\Exception;
  * @author: Pierre Christensen
  * Manage authentication
  */
-class Auth
+class Authentication
 {
 
 
@@ -61,7 +61,7 @@ class Auth
      */
     public static function getUserEmail(): string
     {
-        $user = User::find(Auth::getUserId());
+        $user = User::find(Authentication::getUserId());
         return  $user->email;
     }
 
@@ -72,7 +72,7 @@ class Auth
      */
     public static function getUserNickName(): string
     {
-        return  User::find(Auth::getUserId())->nickname;
+        return  User::find(Authentication::getUserId())->nickname;
     }
 
     /**
@@ -96,7 +96,7 @@ class Auth
         }
      
         if (password_verify($password, $user->password)) {
-            Auth::setUserID($user->id);
+            Authentication::setUserID($user->id);
         
             return true;
         }
@@ -350,14 +350,14 @@ class Auth
 
             ]);
             if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
-                Auth::sendValidatorEmail($email, $v4uuid_validator);
+                Authentication::sendValidatorEmail($email, $v4uuid_validator);
             } else {
                 $user = User::where([
                     ['email', '=', $email]
                 ])->first();
                 $user->adminapproved = true;
-                Auth::sendAdminsitratorEmail($email);
-                Auth::sendValidationEmail($email, $v4uuid_user);
+                Authentication::sendAdminsitratorEmail($email);
+                Authentication::sendValidationEmail($email, $v4uuid_user);
             }
         }
         return true;
@@ -386,7 +386,7 @@ class Auth
                
                 $user->emailchecked = true;
                 $user->save();
-                Auth::setUserID($user->id);
+                Authentication::setUserID($user->id);
                 return true;
             } else {
                
@@ -407,7 +407,7 @@ class Auth
      */
     public static function setNickname(string $nickname)
     {
-        $user = User::find(Auth::getUserId());
+        $user = User::find(Authentication::getUserId());
         $user->nickname = $nickname;
         $user->save();
     }
@@ -419,7 +419,7 @@ class Auth
      */
     public static function CurrentUserName()
     {
-        return User::getUserName(Auth::CurrentUserID());
+        return User::getUserName(Authentication::CurrentUserID());
     }
     
     /**
@@ -431,7 +431,7 @@ class Auth
      */
     public static function resetPassword(string $uuid, string $encryptedpassword): void
     {
-        if (Auth::checkUUIDpasswordreset($uuid)) {
+        if (Authentication::checkUUIDpasswordreset($uuid)) {
             $user = User::where([
                 ['resetpasswordlink', 'like', $uuid]
             ])->first();
@@ -451,7 +451,7 @@ class Auth
      */
     public static function changePassword(string $newencryptedpasssword)
     {
-        User::find(Auth::getUserId())->password = $newencryptedpasssword;
+        User::find(Authentication::getUserId())->password = $newencryptedpasssword;
     }
 
     /**

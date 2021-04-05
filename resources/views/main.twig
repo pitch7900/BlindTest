@@ -5,7 +5,7 @@
         
 		{% block headers %}{% endblock %}
 	</head>
-	<body>
+	<body  {% if (user.darktheme) %} data-theme="dark" {% else %} data-theme="light" {% endif %}>
 
 		{% block menu %}{% endblock %}
 		

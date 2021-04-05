@@ -5,26 +5,17 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 
+use Slim\App;
+use App\Authentication\Authentication;
+use Slim\Psr7\Factory\ResponseFactory;
+use App\Controllers\AbstractController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Slim\App;
-use Psr\Log\LoggerInterface;
-use App\Authentication\Auth;
-use Slim\Psr7\Factory\ResponseFactory;
-use App\Database\User;
-use Carbon\Carbon;
 
-class AuthMiddleware
+class AuthMiddleware extends AbstractController
 {
 
-    /**
-     * Logger interface
-     * @var LoggerInterface;
-     */
-    private $logger;
-
-    private $container;
 
     private $app;
 
@@ -35,9 +26,12 @@ class AuthMiddleware
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->container = $this->app->getContainer();
+        $container = $this->app->getContainer();
+        $this->auth = $container->get(Authentication::class);
+    
 
-        $this->logger = $this->container->get(LoggerInterface::class);
+        parent::__construct($container);
+
         $this->logger->debug("AuthMiddleware::__construct() Called");
     }
 
@@ -48,13 +42,13 @@ class AuthMiddleware
      */
     private function checkAuthentified(): bool
     {
-        if (!Auth::IsAuthentified()) {
+        if (!Authentication::IsAuthentified()) {
 
             $this->logger->debug("AuthMiddleware::checkAuthentified() Not authentified. Should redirect to login page ");
             $this->logger->debug("AuthMiddleware::checkAuthentified() " . print_r($_SESSION, true));
             return false;
         } else {
-            $this->logger->debug("AuthMiddleware::checkAuthentified() User " . Auth::getUserId() . " Authentified. Continue");
+            $this->logger->debug("AuthMiddleware::checkAuthentified() User " . Authentication::getUserId() . " Authentified. Continue");
             return true;
         }
     }
@@ -85,8 +79,7 @@ class AuthMiddleware
         if (!$this->checkAuthentified()) {
             $responseFactory = new ResponseFactory();
             $response = $responseFactory->createResponse();
-            return $response->withHeader('Location',  $this->getLoginPath())
-                ->withStatus(303);
+            return $this->withRedirect($response,$this->getLoginPath(),303);
         }
 
         $response = $handler->handle($request);

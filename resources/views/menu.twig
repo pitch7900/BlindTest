@@ -12,7 +12,9 @@
 
 			</form>
 		{% else %}
-			<a class="nav-link" href="/"> <i class="fas fa-home"></i> Home</a>
+			<a class="nav-link" href="/">
+				<i class="fas fa-home"></i>
+				Home</a>
 		{% endif %}
 	</div>
 
@@ -21,7 +23,7 @@
 
 			<img id="cointotalscore" src="/img/goldcoin.png" width="30" height="30" alt="">
 			{% if userpoints %}
-				<span id="totalscore" userid="{{userid}}" >{{userpoints}}</span>
+				<span id="totalscore" userid="{{userid}}">{{userpoints}}</span>
 			{% else %}
 				<span id="totalscore" userid="{{userid}}">0</span>
 			{% endif %}
@@ -53,9 +55,17 @@
 					<a class="dropdown-item" href="{{ url_for('user.preferences') }}">User Preferences</a>
 
 					<a class="dropdown-item" href="{{ url_for('user.changepassword') }}">Change Password</a>
+
+					<div class="form-check dropdown-item">
+						<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+						<label class="form-check-label" for="defaultCheck1">
+							Default checkbox
+						</label>
+					</div>
+
+
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="{{ url_for('auth.signout') }}">Log Out</a>
-
 
 				</div>
 			</li>

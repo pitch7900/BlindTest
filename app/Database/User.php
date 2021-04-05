@@ -3,8 +3,7 @@
 namespace App\Database;
 
 use Carbon\Carbon;
-use App\Authentication\Auth;
-use Illuminate\Database\Eloquent\Model;
+use App\Authentication\Authentication;
 
 /**
  * Class Track for Illuminate (DB) queries
@@ -64,8 +63,8 @@ class User extends AbstractModel {
      */
     public static function isDarkTheme():bool
     {
-        if (Auth::IsAuthentified()) {
-            return boolval(User::find(Auth::CurrentUserID())->darktheme);
+        if (Authentication::IsAuthentified()) {
+            return boolval(User::find(Authentication::CurrentUserID())->darktheme);
         } else {
             return false;
         }
