@@ -333,3 +333,9 @@ textarea {
   background-color: var(--button-light-color);
   color: var(--text-primary);
 }
+
+
+.bg-light{
+  background-color: var(--background-secondary) !important;
+  color: var(--text-primary) !important;
+}

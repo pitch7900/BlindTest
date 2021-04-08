@@ -18,7 +18,7 @@ class Authentication
 {
 
 
-         /**
+    /**
      * IsAuthentified
      *
      * @return bool
@@ -31,7 +31,7 @@ class Authentication
             return false;
         }
     }
-    
+
 
     /**
      * setUserID : Set database user id for current session
@@ -94,25 +94,24 @@ class Authentication
             unset($_SESSION["userid"]);
             return false;
         }
-     
+
         if (password_verify($password, $user->password)) {
             Authentication::setUserID($user->id);
-        
+
             return true;
         }
-       
+
         return false;
     }
 
 
     public static function setOriginalRequestedPage(string $page)
     {
-        if (strcmp('/user/signout',$page)==0) {
+        if (strcmp('/user/signout', $page) == 0) {
             $_SESSION['OriginalRequestedPage'] = '/';
         } else {
             $_SESSION['OriginalRequestedPage'] = $page;
         }
-        
     }
 
     public static function getOriginalRequestedPage(): string
@@ -124,7 +123,7 @@ class Authentication
         }
     }
 
- 
+
 
     /**
      * signout user and remove all $_SESSION entries
@@ -133,7 +132,7 @@ class Authentication
      */
     public static function signout()
     {
-      
+
         unset($_SESSION['norobot']);
         unset($_SESSION["userid"]);
     }
@@ -157,13 +156,13 @@ class Authentication
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-              
+
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-             
+
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -187,9 +186,8 @@ class Authentication
                 $_ENV['PUBLIC_HOST'] . "/auth/checkmail/" . $v4uuid;
 
             $mail->send();
-
         } catch (Exception $e) {
-           
+
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
     }
@@ -211,13 +209,13 @@ class Authentication
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-               
+
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-               
+
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -239,8 +237,6 @@ class Authentication
 
 
             $mail->send();
-
-           
         } catch (Exception $e) {
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
@@ -257,8 +253,7 @@ class Authentication
         if (isset($_SESSION['userid'])) {
             return intval($_SESSION['userid']);
         } else {
-                return -1;
-            
+            return -1;
         }
     }
 
@@ -280,13 +275,13 @@ class Authentication
             $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
             if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-               
+
                 $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                 $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                 $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
             }
             if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-              
+
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             }
             $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -308,10 +303,8 @@ class Authentication
                 $_ENV['PUBLIC_HOST'] . "/auth/validate/" . $v4uuid;
 
             $mail->send();
-
-           
         } catch (Exception $e) {
-            
+
             die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
         }
     }
@@ -346,8 +339,8 @@ class Authentication
                 'resetpasswordlink' => null,
                 'resetpasswordlinktimeout' => null,
                 'approvaleuuid' => $v4uuid_validator,
-                'adminapproved' => false
-
+                'adminapproved' => false,
+                'darktheme' => true
             ]);
             if (strcmp($_ENV['REGISTRATION_REQUIRE_APPROVAL'], "true") == 0) {
                 Authentication::sendValidatorEmail($email, $v4uuid_validator);
@@ -380,16 +373,16 @@ class Authentication
 
             $validationtime = Carbon::createFromFormat(Carbon::DEFAULT_TO_STRING_FORMAT, $time);
             $currenttime =  Carbon::createFromTimestamp(time());
-           
+
             if ($validationtime->gte($currenttime)) {
                 //Mail is checked, we can trust this user
-               
+
                 $user->emailchecked = true;
                 $user->save();
                 Authentication::setUserID($user->id);
                 return true;
             } else {
-               
+
                 $user->emailchecked = false;
                 $user->save();
                 unset($_SESSION["userid"]);
@@ -413,7 +406,7 @@ class Authentication
     }
 
 
-     /**
+    /**
      * return current user name
      * @return string
      */
@@ -421,7 +414,7 @@ class Authentication
     {
         return User::getUserName(Authentication::CurrentUserID());
     }
-    
+
     /**
      * resetPassword : set a new password for the uuid passed
      *
@@ -506,13 +499,13 @@ class Authentication
                 $mail->Host = $_ENV['SMTP_SERVER'];                    // Set the SMTP server to send through
 
                 if (strcmp($_ENV['SMTP_USEAUTH'], "true") == 0) {
-                    
+
                     $mail->SMTPAuth = true;                                   // Enable SMTP authentication
                     $mail->Username =  $_ENV['SMTP_USERNAME'];                     // SMTP username
                     $mail->Password = $_ENV['SMTP_PASSSWORD'];                               // SMTP password
                 }
                 if (strcmp($_ENV['SMTP_USESSL'], "true") == 0) {
-                   
+
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
                 }
                 $mail->Port = $_ENV['SMTP_PORT'];                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
@@ -540,9 +533,8 @@ class Authentication
                     "Note : If you're not at the origin of this password reset, simply ignore this email" . "\r\n";;
 
                 $mail->send();
-
             } catch (Exception $e) {
-              
+
                 die("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
             }
         }
