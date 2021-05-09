@@ -27,7 +27,8 @@
         "nesbot/carbon": "^2.41",
         "phpmailer/phpmailer": "^6.1",
         "laravel/tinker": "^2.5",
-        "hamburgscleanest/guzzle-advanced-throttle": "^4.1"
+        "hamburgscleanest/guzzle-advanced-throttle": "^4.1",
+        "pitch7900/phpsqlsessionhandler": "dev-main"
     },
     "config": {
         "preferred-install": "dist"

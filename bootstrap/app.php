@@ -5,9 +5,8 @@ declare(strict_types=1);
 use Dotenv\Dotenv;
 use App\ContainerFactory;
 use Slim\Factory\AppFactory;
-use App\SessionsHandler\DBSessionsHandler;
 use Dotenv\Exception\InvalidPathException;
-
+use Pitch7900\SessionsHandler\DBSessionsHandler;
 
 // Set the absolute path to the root directory.
 $rootPath = realpath(__DIR__ . '/..');
@@ -33,7 +32,6 @@ ini_set("session.cookie_httponly", "1");
 session_name('BLINDTEST_SID');
 
 //Use a custom SessionHandler Based on database.
-// $handler = new DBSessionsHandler(3600,'user',$rootPath."/logs/sessions.log",true);
 $handler = new DBSessionsHandler(3600,'userid',$rootPath."/logs/sessions.log",false);
 session_set_save_handler($handler, true);
 session_start();
